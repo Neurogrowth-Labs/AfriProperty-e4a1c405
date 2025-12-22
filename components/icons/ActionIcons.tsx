@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 
 export const HeartIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -117,7 +115,6 @@ export const TruckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
         <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8a1 1 0 001-1z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8a1 1 0 001-1z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M17.999 16h.002a2 2 0 100-4h-.002a2 2 0 000 4z" />
     </svg>
 );
@@ -151,7 +148,6 @@ export const PhoneXMarkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) =
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75a1.5 1.5 0 011.5 1.5v13.5a1.5 1.5 0 01-1.5-1.5h-9a1.5 1.5 0 01-1.5-1.5V5.25a1.5 1.5 0 011.5-1.5h9z" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 10.5l3 3m0-3l-3 3" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 110-18 9 9 0 010 18z" transform="scale(0.5) translate(12, 12)" />
   </svg>
 );
 
@@ -332,4 +328,6 @@ export const PauseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 export const TrophyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9a9.75 9.75 0 100-13.5h9a9.75 9.75 0 000 13.5z" />
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75a9.75 9.75 0 00-9 0m9 0c1.206 0 2.316-.255 3.328-.718m-15.656 0c1.012.463 2.122.718 3.328.718m12.328 0V21m-15.656 0V21m12.328 0c.348 0 .69-.018 1.026-.052m-14.378 0c.336.034.678.052 1.026.052m1
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75a9.75 9.75 0 00-9 0m9 0c1.206 0 2.316-.255 3.328-.718m-15.656 0c1.012.463 2.122.718 3.328.718m12.328 0V21m-15.656 0V21m12.328 0c.348 0 .69-.018 1.026-.052m-14.378 0c.336.034.678.052 1.026.052m12.328 0h-9.972" />
+  </svg>
+);

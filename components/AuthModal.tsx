@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { CloseIcon } from './icons/NavIcons';
 import { authenticateUser, addUser } from '../lib/data';
@@ -18,7 +19,6 @@ interface AuthModalProps {
   onSwitchToPricing?: () => void;
 }
 
-// FIX: Moved all helper components and views before the AuthModal component to resolve declaration order issues.
 // --- Helper Components ---
 const InputField: React.FC<{label: string, id?: string, type?: string, value: string, name?: string, onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void, icon?: React.ElementType, onIconClick?: () => void, disabled?: boolean, placeholder?: string, containerClassName?: string, note?: string, required?: boolean}> = ({ label, id, type = 'text', value, name, onChange, icon: Icon, onIconClick, disabled, placeholder, containerClassName, note, required=true }) => (
     <div className={containerClassName}>
@@ -125,11 +125,12 @@ const LoginView: React.FC<{onLoginSuccess: (user: User) => void, onSwitchToSignu
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    // FIX: authenticateUser is async, must await it and mark handler as async.
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
-        const { user, error } = authenticateUser(email, password);
+        const { user, error } = await authenticateUser(email, password);
         if (user) {
             onLoginSuccess(user);
         } else {
@@ -182,14 +183,15 @@ const UserSignupView: React.FC<{onSignupSuccess: (user: User) => void, onSwitchT
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
-    const handleSignup = (e: React.FormEvent) => {
+    // FIX: addUser is async, must await it and mark handler as async.
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (!isPasswordStrong(formData.password).all) { setError("Password doesn't meet requirements."); return; }
         if (!formData.agreeToTerms) { setError("You must agree to the Terms & Conditions."); return; }
 
         const newUser: User = { username: formData.email, fullName: formData.fullName, email: formData.email, password: formData.password, role: 'user' };
-        const result = addUser(newUser);
+        const result = await addUser(newUser);
         if (result.success) onSignupSuccess(newUser); else setError(result.message);
     };
 
@@ -216,7 +218,8 @@ const AgentSignupView: React.FC<{ onSignupSuccess: () => void, onSwitchToLogin: 
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
-    const handleSignup = (e: React.FormEvent) => {
+    // FIX: addUser is async, must await it and mark handler as async.
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (!isPasswordStrong(formData.password).all) { setError("Password doesn't meet requirements."); return; }
@@ -224,7 +227,7 @@ const AgentSignupView: React.FC<{ onSignupSuccess: () => void, onSwitchToLogin: 
         if (!formData.agreeToTerms) { setError("You must agree to the Agent Terms & Conditions."); return; }
         
         const newAgent: User = { username: formData.email, fullName: formData.fullName, email: formData.email, password: formData.password, role: 'agent', phone: formData.phone, officeAddress: formData.officeAddress, businessRegNumber: formData.businessRegNumber, agentLicense: formData.agentLicense, idDocumentUrl: idDoc.name };
-        const result = addUser(newAgent);
+        const result = await addUser(newAgent);
         if (result.success) onSignupSuccess(); else setError(result.message);
     };
     
@@ -269,14 +272,15 @@ const InvestorSignupView: React.FC<{ onSignupSuccess: () => void, setError: (e: 
         setStep(step + 1);
     };
 
-    const handleSignup = (e: React.FormEvent) => {
+    // FIX: addUser is async, must await it and mark handler as async.
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (!idDoc) { setError("Please upload your Proof of Identity."); return; }
         if (!formData.agreeToTerms) { setError("You must agree to the Investor Terms & Conditions."); return; }
 
         const newInvestor: User = { username: formData.email, fullName: formData.fullName, email: formData.email, password: formData.password, role: 'investor', phone: formData.phone, investmentType: formData.investmentType as 'Individual' | 'Corporate', companyName: formData.companyName, proofOfIdentityUrl: idDoc.name };
-        const result = addUser(newInvestor);
+        const result = await addUser(newInvestor);
         if (result.success) onSignupSuccess(); else { setError(result.message); setStep(1); }
     };
 
@@ -354,6 +358,7 @@ const ResetConfirmationView: React.FC<{ onSwitchToLogin: () => void }> = ({ onSw
     </div>
 );
 
+// Main AuthModal component
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, initialView, onSwitchToPricing }) => {
     const [view, setView] = useState<AuthView>(initialView || 'login');
     const [error, setError] = useState('');

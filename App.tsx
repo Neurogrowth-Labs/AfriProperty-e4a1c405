@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,7 +5,7 @@ import Hero from './components/Hero';
 import PropertyList from './components/PropertyList';
 import { CATEGORIES, AGENT_ACHIEVEMENTS, INVESTOR_ACHIEVEMENTS } from './constants';
 import type { Property, SearchFilters, TourRequest, User, Message, Review, CalendarEvent, AgentProfile, Lead, Achievement, InvestorSettings, InvestmentRequest, BlogPost, Notification } from './types';
-import { ListingType, PropertyType, Language, Currency, PropertyStatus, NotificationType } from './types';
+import { ListingType, PropertyType, PropertyStatus, NotificationType } from './types';
 import CategoryCard from './components/CategoryCard';
 import Chatbot from './components/Chatbot';
 import MortgageCalculator from './components/MortgageCalculator';
@@ -17,7 +15,6 @@ import RecommendedProperties from './components/RecommendedProperties';
 import PropertyDetailModal from './components/PropertyDetailModal';
 import CompareBar from './components/CompareBar';
 import CompareModal from './components/CompareModal';
-// FIX: Changed to a named import to match the named export from AuthModal.tsx
 import { AuthModal } from './components/AuthModal';
 import UserDashboardModal from './components/UserDashboardModal';
 import PropertyFormModal from './components/PropertyFormModal';
@@ -37,7 +34,6 @@ import { useTranslations } from './contexts/LanguageContext';
 import InvestmentRequestModal from './components/InvestmentRequestModal';
 import { useCurrency } from './contexts/CurrencyContext';
 import UpgradeToInvestorModal from './components/UpgradeToInvestorModal';
-// FIX: Correct import for GoogleGenAI
 import { GoogleGenAI, Type } from "@google/genai";
 import PrivacyPolicyModal from './components/PrivacyPolicyModal';
 import TermsOfServiceModal from './components/TermsOfServiceModal';
@@ -51,7 +47,6 @@ import SessionTimeoutModal from './components/SessionTimeoutModal';
 import RealTimeNews from './components/RealTimeNews';
 import AIVoiceChat from './components/AIVoiceChat';
 import NewOfferings from './components/NewOfferings';
-import NotificationsPanel from './components/NotificationsPanel';
 
 // Page components
 import AboutPage from './components/pages/AboutPage';
@@ -116,6 +111,7 @@ const App: React.FC = () => {
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [investmentProperties, setInvestmentProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [isLoadingProperties, setIsLoadingProperties] = useState(true);
   
   // Auth State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -195,15 +191,12 @@ const App: React.FC = () => {
   const [providerServiceFilter, setProviderServiceFilter] = useState<string | undefined>(undefined);
   const [isAIVoiceChatOpen, setIsAIVoiceChatOpen] = useState(false);
   
-  // Blog State
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [isLoadingBlog, setIsLoadingBlog] = useState(true);
-
-  // Notification State
+  const [isSessionWarningOpen, setIsSessionWarningOpen] = useState(false);
+  const [sessionCountdown, setSessionCountdown] = useState(60);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [readNotificationIds, setReadNotificationIds] = useState<Set<string>>(new Set());
-
-  // Data States
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoadingBlog, setIsLoadingBlog] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [propertyToEdit, setPropertyToEdit] = useState<Property | null>(null);
   const [compareList, setCompareList] = useState<Property[]>([]);
@@ -215,55 +208,54 @@ const App: React.FC = () => {
   const [vrTourUrl, setVrTourUrl] = useState('');
   const [aiImprovementProperty, setAIImprovementProperty] = useState<Property | null>(null);
   const [applyingForJob, setApplyingForJob] = useState('');
-  const { t } = useTranslations();
   const [savedNeighborhoodIds, setSavedNeighborhoodIds] = useState<Set<string>>(new Set());
+  const { t } = useTranslations();
 
-  // Session Timeout State
-  const [isSessionWarningOpen, setIsSessionWarningOpen] = useState(false);
-  const [sessionCountdown, setSessionCountdown] = useState(60);
+  // Session Timeout Logic
   const warningTimerRef = useRef<number | null>(null);
   const logoutTimerRef = useRef<number | null>(null);
   const countdownIntervalRef = useRef<number | null>(null);
-  const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
-  const WARNING_TIMEOUT = 14 * 60 * 1000; // 14 minutes
+  const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
+  const WARNING_TIMEOUT = 14 * 60 * 1000;
 
   // Data Fetching and Initial Setup
   useEffect(() => {
-    const allProps = getProperties();
-    // FIX: allProperties state should contain all properties for filtering, not just general ones.
-    const investmentProps = allProps.filter(p => p.listingType === ListingType.FOR_INVESTMENT);
+    const fetchData = async () => {
+        setIsLoadingProperties(true);
+        const allProps = await getProperties();
+        const investmentProps = allProps.filter(p => p.listingType === ListingType.FOR_INVESTMENT);
 
-    setAllProperties(allProps); // Keep all properties in one state for easier filtering
-    setInvestmentProperties(investmentProps);
+        setAllProperties(allProps);
+        setInvestmentProperties(investmentProps);
+        setIsLoadingProperties(false);
 
-    if (currentUser) {
-        setSavedPropertyIds(getSavedPropertiesForUser(currentUser.username));
-        setTourRequests(getTourRequests(currentUser.username));
-        setSavedSearches(getSavedSearchesForUser(currentUser.username));
-        setMessages(getMessagesForUser(currentUser.username));
-        setNotifications(getNotifications(currentUser).map(n => ({...n, isRead: false })));
-        setReadNotificationIds(getReadNotificationIds(currentUser.username));
+        if (currentUser) {
+            setSavedPropertyIds(await getSavedPropertiesForUser(currentUser.username));
+            setTourRequests(await getTourRequests(currentUser.username));
+            setSavedSearches(await getSavedSearchesForUser(currentUser.username));
+            setMessages(await getMessagesForUser(currentUser.username));
+            setNotifications((await getNotifications(currentUser)).map(n => ({...n, isRead: false })));
+            setReadNotificationIds(await getReadNotificationIds(currentUser.username));
 
+            if(currentUser.role === 'agent') {
+                setCalendarEvents(await getEvents(currentUser.username));
+                const profile = await getAgentProfile(currentUser.username);
+                setAgentProfile(profile);
+                setAgentReviews(await getAllReviewsForAgent(currentUser.username));
+                setLeads(await getLeadsForAgent(currentUser.username));
+                setInvestmentRequests(await getInvestmentRequests());
+            }
 
-        if(currentUser.role === 'agent') {
-            setCalendarEvents(getEvents(currentUser.username));
-            const profile = getAgentProfile(currentUser.username);
-            setAgentProfile(profile);
-            setAgentReviews(getAllReviewsForAgent(currentUser.username));
-            setLeads(getLeadsForAgent(currentUser.username));
-            setInvestmentRequests(getInvestmentRequests());
+            if (currentUser.role === 'investor') {
+                setInvestorSettings(await getInvestorSettings(currentUser.username));
+            }
+        } else {
+            setSavedPropertyIds(new Set<string>());
+            setNotifications([]);
+            setReadNotificationIds(new Set<string>());
         }
-
-        if (currentUser.role === 'investor') {
-            setInvestorSettings(getInvestorSettings(currentUser.username));
-        }
-    } else {
-        // FIX: Explicitly type new Set() to avoid type pollution when user logs out.
-        setSavedPropertyIds(new Set<string>());
-        setNotifications([]);
-        // FIX: Explicitly type new Set() to avoid type pollution when user logs out.
-        setReadNotificationIds(new Set<string>());
     }
+    fetchData();
   }, [currentUser]);
 
   // AI Blog Generation
@@ -298,12 +290,12 @@ The other fields should follow these rules:
 - 'title': A clear, concise, and keyword-optimized title.
 - 'author': A realistic-sounding author name.
 - 'date': A recent date, e.g., "October 28, 2023".
-- 'image': A relevant, high-quality image URL from picsum.photos, e.g., https://picsum.photos/seed/blog1/800/600. Use a different seed for each post.
+- 'image': A relevant, high-quality image URL from picsum.photos, e.g., https://picsum.photos/seed/blog1/400/250. Use a different seed for each post.
 - 'summary': A concise one-sentence summary of the article.
 `;
                 
                 const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
+                    model: 'gemini-3-flash-preview',
                     contents: prompt,
                     config: { responseMimeType: 'application/json', responseSchema: blogSchema }
                 });
@@ -315,7 +307,6 @@ The other fields should follow these rules:
                 }
             } catch (error) {
                 console.error("Failed to generate blog posts:", error);
-                // In a real app, you might set fallback data here
             } finally {
                 setIsLoadingBlog(false);
             }
@@ -346,7 +337,6 @@ The other fields should follow these rules:
 
         if (isStaySearch) {
             const matchesGuests = !filters.guests || (p.guests || 0) >= filters.guests;
-            // Note: Date filtering is complex without a backend. This is a mock.
             return matchesLocation && [PropertyType.SHORT_TERM_RENTAL, PropertyType.HOTEL].includes(p.propertyType) && matchesGuests && matchesPrice;
         }
 
@@ -356,11 +346,9 @@ The other fields should follow these rules:
         }
 
         if (isWellnessSearch) {
-            // Note: Wellness filtering is simplified
             return matchesLocation && p.propertyType === filters.propertyType && matchesPrice;
         }
 
-        // Default case if no type is matched
         return matchesLocation && matchesPrice;
     });
     setFilteredProperties(filtered);
@@ -381,11 +369,8 @@ The other fields should follow these rules:
   }, [savedPropertyIds, allProperties]);
   
   const receivedInquiries = useMemo(() => {
-      if(currentUser?.role === 'agent') {
-        return getInquiriesForSeller(currentUser.username);
-      }
-      return [];
-  }, [currentUser, allProperties]);
+      return tourRequests; 
+  }, [tourRequests]);
   
   const notificationsWithReadStatus = useMemo(() => {
       return notifications
@@ -407,7 +392,7 @@ The other fields should follow these rules:
         Query: "${query}"`;
         
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3-flash-preview',
             contents: prompt,
             config: {
                 responseMimeType: 'application/json',
@@ -446,23 +431,17 @@ The other fields should follow these rules:
       }
   };
 
-  const handleOpenDetailModal = (property: Property) => {
-    withRoleGate(property, (p) => {
+  const handleOpenDetailModal = async (property: Property) => {
+    withRoleGate(property, async (p) => {
         setSelectedProperty(p);
         setIsDetailModalOpen(true);
-        // Increment view count optimistically
-        const newProperties = incrementPropertyView(p.id);
-        const newGeneral = newProperties.filter(prop => prop.listingType !== ListingType.FOR_INVESTMENT);
-        const newInvestment = newProperties.filter(prop => prop.listingType === ListingType.FOR_INVESTMENT);
-        setAllProperties(newProperties);
-        setInvestmentProperties(newInvestment);
-        // Also update filtered list if it's there
-        setFilteredProperties(prev => prev.map(fp => fp.id === p.id ? { ...fp, views: (fp.views || 0) + 1 } : fp));
+        await incrementPropertyView(p.id);
+        setAllProperties(prev => prev.map(item => item.id === p.id ? { ...item, views: (item.views || 0) + 1 } : item));
     });
   };
 
-  const handleSaveToggle = (propertyId: string) => {
-    withIdRoleGate(propertyId, (id) => {
+  const handleSaveToggle = async (propertyId: string) => {
+    withIdRoleGate(propertyId, async (id) => {
         if (!currentUser) {
             setAuthModalView('login');
             setIsAuthModalOpen(true);
@@ -478,9 +457,9 @@ The other fields should follow these rules:
             updatedProperties = updatedProperties.map(p => p.id === id ? {...p, saves: p.saves + 1} : p);
         }
         setSavedPropertyIds(newSaved);
-// FIX: The type of `[...newSaved]` was being inferred as `unknown[]`. Adding a type assertion to `string[]` to satisfy the `savePropertiesForUser` function signature.
-        savePropertiesForUser(currentUser.username, [...newSaved] as string[]);
-        saveProperties(updatedProperties);
+        // FIX: Added explicit type cast to string[] for Array.from result to fix line 460 error
+        await savePropertiesForUser(currentUser.username, Array.from(newSaved) as string[]);
+        await saveProperties(updatedProperties);
         setAllProperties(updatedProperties);
     });
   };
@@ -522,7 +501,8 @@ The other fields should follow these rules:
     withRoleGate(property, (p) => {
       setTargetPropertyForSimilar(p);
       setTimeout(() => {
-        document.getElementById('recommendations')?.scrollIntoView({ behavior: 'smooth' });
+        const recs = document.getElementById('recommendations');
+        if (recs) recs.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     });
   };
@@ -540,7 +520,7 @@ The other fields should follow these rules:
   const handleLogout = () => {
     setCurrentUser(null);
     setIsDashboardOpen(false);
-    setIsSessionWarningOpen(false); // Close warning modal on logout
+    setIsSessionWarningOpen(false);
   };
 
   const handleListPropertyClick = () => {
@@ -565,15 +545,15 @@ The other fields should follow these rules:
     setIsDashboardOpen(false);
   };
 
-  const handleDeleteProperty = (propertyId: string) => {
+  const handleDeleteProperty = async (propertyId: string) => {
       if (window.confirm("Are you sure you want to delete this property?")) {
         const newProperties = allProperties.filter(p => p.id !== propertyId);
         setAllProperties(newProperties);
-        saveProperties(newProperties);
+        await saveProperties(newProperties);
       }
   };
 
-  const handleSaveProperty = (property: Property) => {
+  const handleSaveProperty = async (property: Property) => {
     let newProperties;
     const existing = allProperties.find(p => p.id === property.id);
     if (existing) {
@@ -582,21 +562,21 @@ The other fields should follow these rules:
         newProperties = [...allProperties, property];
     }
     setAllProperties(newProperties);
-    saveProperties(newProperties);
+    await saveProperties(newProperties);
     setIsPropertyFormOpen(false);
-    setIsDashboardOpen(true); // Go back to dashboard after save
+    setIsDashboardOpen(true);
   };
   
-  const handleScheduleTour = (request: Omit<TourRequest, 'id' | 'username' | 'status' | 'timestamp'>) => {
+  const handleScheduleTour = async (request: Omit<TourRequest, 'id' | 'username' | 'status' | 'timestamp'>) => {
       if(currentUser) {
-          const newRequest = addTourRequest(currentUser.username, request.propertyId, request.propertyTitle, request.date, request.time);
+          const newRequest = await addTourRequest(currentUser.username, request.propertyId, request.propertyTitle, request.date, request.time);
           setTourRequests(prev => [...prev, newRequest]);
           setIsTourModalOpen(false);
           alert("Tour requested successfully! The agent will be in touch.");
       }
   };
   
-  const handleSaveSearch = () => {
+  const handleSaveSearch = async () => {
     if (!currentUser) {
       setAuthModalView('login');
       setIsAuthModalOpen(true);
@@ -604,15 +584,15 @@ The other fields should follow these rules:
     }
     const newSavedSearches = [...savedSearches, filters];
     setSavedSearches(newSavedSearches);
-    saveSearchesForUser(currentUser.username, newSavedSearches);
+    await saveSearchesForUser(currentUser.username, newSavedSearches);
     alert("Search saved!");
   };
 
-  const handleDeleteSearch = (searchToDelete: SearchFilters) => {
+  const handleDeleteSearch = async (searchToDelete: SearchFilters) => {
       if (!currentUser) return;
       const newSavedSearches = savedSearches.filter(s => JSON.stringify(s) !== JSON.stringify(searchToDelete));
       setSavedSearches(newSavedSearches);
-      saveSearchesForUser(currentUser.username, newSavedSearches);
+      await saveSearchesForUser(currentUser.username, newSavedSearches);
   };
   
   const handleRunSearch = (searchToRun: SearchFilters) => {
@@ -632,9 +612,9 @@ The other fields should follow these rules:
       });
   };
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = async (text: string) => {
       if(currentUser && selectedProperty) {
-          const newMessage = sendMessage({
+          const newMessage = await sendMessage({
               propertyId: selectedProperty.id,
               propertyTitle: selectedProperty.title,
               senderUsername: currentUser.username,
@@ -651,9 +631,9 @@ The other fields should follow these rules:
     setIsReviewModalOpen(true);
   };
   
-  const handleSubmitReview = (reviewData: Omit<Review, 'id'|'timestamp'|'reviewerUsername'|'agentName'>) => {
+  const handleSubmitReview = async (reviewData: Omit<Review, 'id'|'timestamp'|'reviewerUsername'|'agentName'>) => {
       if(currentUser && agentForReview) {
-          const newReview = addReview({
+          const newReview = await addReview({
               ...reviewData,
               agentName: agentForReview.name,
               reviewerUsername: currentUser.username,
@@ -675,27 +655,27 @@ The other fields should follow these rules:
     }
   };
 
-  const handleAddEvent = (eventData: Omit<CalendarEvent, 'id'>) => {
+  const handleAddEvent = async (eventData: Omit<CalendarEvent, 'id'>) => {
       if (!currentUser) return;
-      const newEvent = addEvent(currentUser.username, eventData);
+      const newEvent = await addEvent(currentUser.username, eventData);
       setCalendarEvents(prev => [...prev, newEvent]);
   };
   
-  const handleUpdateEvent = (event: CalendarEvent) => {
+  const handleUpdateEvent = async (event: CalendarEvent) => {
       if (!currentUser) return;
-      const updatedEvent = updateEvent(currentUser.username, event);
+      const updatedEvent = await updateEvent(currentUser.username, event);
       setCalendarEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
   };
   
-  const handleDeleteEvent = (eventId: string) => {
+  const handleDeleteEvent = async (eventId: string) => {
       if (!currentUser) return;
-      deleteEvent(currentUser.username, eventId);
+      await deleteEvent(currentUser.username, eventId);
       setCalendarEvents(prev => prev.filter(e => e.id !== eventId));
   };
 
-  const handleUpdateAgentProfile = (profile: AgentProfile) => {
+  const handleUpdateAgentProfile = async (profile: AgentProfile) => {
       if (!currentUser) return;
-      const updatedProfile = updateAgentProfile(currentUser.username, profile);
+      const updatedProfile = await updateAgentProfile(currentUser.username, profile);
       setAgentProfile(updatedProfile);
   };
   
@@ -704,15 +684,15 @@ The other fields should follow these rules:
     setIsAIImprovementModalOpen(true);
   };
   
-  const handleUpdateInvestorSettings = (settings: InvestorSettings) => {
+  const handleUpdateInvestorSettings = async (settings: InvestorSettings) => {
       if(!currentUser) return;
-      saveInvestorSettings(currentUser.username, settings);
+      await saveInvestorSettings(currentUser.username, settings);
       setInvestorSettings(settings);
   };
   
-  const handleSendInvestmentRequest = (details: string) => {
+  const handleSendInvestmentRequest = async (details: string) => {
       if (!currentUser) return;
-      const newRequest = addInvestmentRequest(currentUser.username, details);
+      const newRequest = await addInvestmentRequest(currentUser.username, details);
       setInvestmentRequests(prev => [newRequest, ...prev]);
       setIsInvestmentRequestModalOpen(false);
       alert('Your request has been sent to agents!');
@@ -720,7 +700,6 @@ The other fields should follow these rules:
 
   const handleUpgradeAccountRequest = () => {
       setIsUpgradeToInvestorModalOpen(false);
-      // In a real app, this would redirect to a signup flow
       handlePlanSelect('investor');
   };
   
@@ -759,7 +738,6 @@ The other fields should follow these rules:
         } else {
             newSet.add(neighborhoodId);
         }
-        // In a real app, this would be saved to localStorage or a backend
         return newSet;
     });
 };
@@ -771,7 +749,7 @@ The other fields should follow these rules:
   };
 
   const handleOpenProviderServices = (service: string) => {
-    setPage('home'); // Go back to home page to close services page
+    setPage('home');
     setProviderServiceFilter(service);
     setIsProviderServicesModalOpen(true);
   };
@@ -788,15 +766,17 @@ The other fields should follow these rules:
       setIsAuthModalOpen(true);
   };
   
-  const handleMarkAsRead = (id: string) => {
+  const handleMarkAsRead = async (id: string) => {
       if (!currentUser) return;
-      setReadNotificationIds(prev => markNotificationsAsRead(currentUser.username, [id]));
+      const updatedReadIds = await markNotificationsAsRead(currentUser.username, [id]);
+      setReadNotificationIds(updatedReadIds);
   };
   
-  const handleMarkAllAsRead = () => {
+  const handleMarkAllAsRead = async () => {
       if (!currentUser) return;
-      const allIds = notifications.map(n => n.id);
-      setReadNotificationIds(prev => markNotificationsAsRead(currentUser.username, allIds));
+      const allIds = (notifications as any[]).map(n => n.id) as string[];
+      const updatedReadIds = await markNotificationsAsRead(currentUser.username, allIds);
+      setReadNotificationIds(updatedReadIds);
   };
   
   const handleNotificationClick = (notification: Notification) => {
@@ -808,243 +788,245 @@ The other fields should follow these rules:
           }
       }
       if (notification.type === NotificationType.INQUIRY) {
-          // Open dashboard to the leads/inquiries tab
           setIsDashboardOpen(true);
       }
   };
   
-  // Session Timeout Logic
-    const clearTimers = () => {
-        if (warningTimerRef.current) clearTimeout(warningTimerRef.current);
-        if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
-        if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
-    };
+  const clearTimers = () => {
+      if (warningTimerRef.current) window.clearTimeout(warningTimerRef.current);
+      if (logoutTimerRef.current) window.clearTimeout(logoutTimerRef.current);
+      if (countdownIntervalRef.current) window.clearInterval(countdownIntervalRef.current);
+  };
 
-    const handleStayLoggedIn = () => {
-        setIsSessionWarningOpen(false);
-        resetTimer();
-    };
+  const handleStayLoggedIn = () => {
+      setIsSessionWarningOpen(false);
+      resetTimer();
+  };
 
-    const resetTimer = () => {
-        clearTimers();
-        if (currentUser) {
-            warningTimerRef.current = window.setTimeout(() => {
-                setSessionCountdown(60);
-                setIsSessionWarningOpen(true);
-                countdownIntervalRef.current = window.setInterval(() => {
-                    setSessionCountdown(prev => prev - 1);
-                }, 1000);
-            }, WARNING_TIMEOUT);
+  const resetTimer = () => {
+      clearTimers();
+      if (currentUser) {
+          warningTimerRef.current = window.setTimeout(() => {
+              setSessionCountdown(60);
+              setIsSessionWarningOpen(true);
+              countdownIntervalRef.current = window.setInterval(() => {
+                  setSessionCountdown(prev => prev - 1);
+              }, 1000);
+          }, WARNING_TIMEOUT);
 
-            logoutTimerRef.current = window.setTimeout(() => {
-                handleLogout();
-            }, INACTIVITY_TIMEOUT);
-        }
-    };
+          logoutTimerRef.current = window.setTimeout(() => {
+              handleLogout();
+          }, INACTIVITY_TIMEOUT);
+      }
+  };
 
-    useEffect(() => {
-        if (currentUser) {
-            const events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
-            events.forEach(event => window.addEventListener(event, resetTimer));
-            resetTimer();
+  useEffect(() => {
+      if (currentUser) {
+          const events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
+          events.forEach(event => window.addEventListener(event, resetTimer));
+          resetTimer();
 
-            return () => {
-                events.forEach(event => window.removeEventListener(event, resetTimer));
-                clearTimers();
-            };
-        } else {
-            clearTimers();
-        }
-    }, [currentUser]);
+          return () => {
+              events.forEach(event => window.removeEventListener(event, resetTimer));
+              clearTimers();
+          };
+      } else {
+          clearTimers();
+      }
+  }, [currentUser]);
 
-    const renderPage = () => {
-      switch(page) {
-        case 'about':
-            return <AboutPage />;
-        case 'services':
-            return <ServicesPage onServiceClick={handleOpenProviderServices} />;
-        case 'contact':
-            return <ContactPage />;
-        case 'pricing':
-            return <PricingPage onPlanSelect={handlePlanSelect} />;
-        case 'home':
-        default:
-            return (
-                <>
-                    <Hero 
-                        onSearch={handleAISearch} 
-                        isSearchingAI={isSearchingAI}
-                        filters={filters}
-                        onFilterChange={handleFilterChange}
-                    />
+  const renderPage = () => {
+    switch(page) {
+      case 'about':
+          return <AboutPage />;
+      case 'services':
+          return <ServicesPage onServiceClick={handleOpenProviderServices} />;
+      case 'contact':
+          return <ContactPage />;
+      case 'pricing':
+          return <PricingPage onPlanSelect={handlePlanSelect} />;
+      case 'home':
+      default:
+          return (
+              <>
+                  <Hero 
+                      onSearch={handleAISearch} 
+                      isSearchingAI={isSearchingAI}
+                      filters={filters}
+                      onFilterChange={handleFilterChange}
+                  />
 
-                    <NewOfferings />
-                    
-                    <section id="just-listed" className="py-12 lg:py-16 bg-white dark:bg-slate-900">
-                    <div className="container mx-auto px-4 sm:px-6">
-                        <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Just Listed</h2>
-                        <PropertyList 
-                            properties={recentProperties}
-                            currentUser={currentUser}
-                            onSaveToggle={handleSaveToggle}
-                            savedPropertyIds={savedPropertyIds}
-                            onOpenCalculator={handleOpenCalculator}
-                            onOpenTourModal={handleOpenTourModal}
-                            onFindSimilar={handleFindSimilar}
-                            onOpenDetailModal={handleOpenDetailModal}
-                            onToggleCompare={handleToggleCompare}
-                            onOpenVRTour={handleOpenVRTour}
-                            compareList={compareList}
-                            onEdit={handleEditProperty}
-                            onDelete={handleDeleteProperty}
-                        />
-                    </div>
-                    </section>
+                  <NewOfferings />
+                  
+                  <section id="just-listed" className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+                  <div className="container mx-auto px-4 sm:px-6">
+                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Just Listed</h2>
+                      <PropertyList 
+                          properties={recentProperties}
+                          currentUser={currentUser}
+                          onSaveToggle={handleSaveToggle}
+                          savedPropertyIds={savedPropertyIds}
+                          onOpenCalculator={handleOpenCalculator}
+                          onOpenTourModal={handleOpenTourModal}
+                          onFindSimilar={handleFindSimilar}
+                          onOpenDetailModal={handleOpenDetailModal}
+                          onToggleCompare={handleToggleCompare}
+                          onOpenVRTour={handleOpenVRTour}
+                          compareList={compareList}
+                          onEdit={handleEditProperty}
+                          onDelete={handleDeleteProperty}
+                          isLoading={isLoadingProperties}
+                      />
+                  </div>
+                  </section>
 
-                    <section id="featured-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark">
-                    <div className="container mx-auto px-4 sm:px-6">
-                        <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">{t.app.featuredListings}</h2>
-                        <PropertyList 
-                        properties={featuredProperties}
-                        currentUser={currentUser}
-                        onSaveToggle={handleSaveToggle}
-                        savedPropertyIds={savedPropertyIds}
-                        onOpenCalculator={handleOpenCalculator}
-                        onOpenTourModal={handleOpenTourModal}
-                        onFindSimilar={handleFindSimilar}
-                        onOpenDetailModal={handleOpenDetailModal}
-                        onToggleCompare={handleToggleCompare}
-                        onOpenVRTour={handleOpenVRTour}
-                        compareList={compareList}
-                        onEdit={handleEditProperty}
-                        onDelete={handleDeleteProperty}
-                        />
-                    </div>
-                    </section>
+                  <section id="featured-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark/40">
+                  <div className="container mx-auto px-4 sm:px-6">
+                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">{t.app.featuredListings}</h2>
+                      <PropertyList 
+                      properties={featuredProperties}
+                      currentUser={currentUser}
+                      onSaveToggle={handleSaveToggle}
+                      savedPropertyIds={savedPropertyIds}
+                      onOpenCalculator={handleOpenCalculator}
+                      onOpenTourModal={handleOpenTourModal}
+                      onFindSimilar={handleFindSimilar}
+                      onOpenDetailModal={handleOpenDetailModal}
+                      onToggleCompare={handleToggleCompare}
+                      onOpenVRTour={handleOpenVRTour}
+                      compareList={compareList}
+                      onEdit={handleEditProperty}
+                      onDelete={handleDeleteProperty}
+                      isLoading={isLoadingProperties}
+                      />
+                  </div>
+                  </section>
 
-                    <section className="py-12 lg:py-16 bg-white dark:bg-slate-900">
-                        <div className="container mx-auto px-4 sm:px-6">
-                            <div className="text-center mb-12">
-                                <h2 className="text-3xl md:text-4xl font-bold text-brand-dark dark:text-white">{t.app.exploreByLifestyle}</h2>
-                                <p className="text-center text-slate-500 dark:text-slate-400 mt-4 max-w-2xl mx-auto">{t.app.exploreByLifestyleSubtitle}</p>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                            {CATEGORIES.map(category => (
-                                <CategoryCard key={category.titleKey} title={t.categories[category.titleKey as keyof typeof t.categories]} description={t.categories[category.descriptionKey as keyof typeof t.categories]} Icon={category.Icon} />
-                            ))}
-                            </div>
-                        </div>
-                    </section>
+                  <section className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+                      <div className="container mx-auto px-4 sm:px-6">
+                          <div className="text-center mb-12">
+                              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark dark:text-white">{t.app.exploreByLifestyle}</h2>
+                              <p className="text-center text-slate-500 dark:text-slate-400 mt-4 max-w-2xl mx-auto">{t.app.exploreByLifestyleSubtitle}</p>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                          {CATEGORIES.map(category => (
+                              <CategoryCard key={category.titleKey} title={t.categories[category.titleKey as keyof typeof t.categories]} description={t.categories[category.descriptionKey as keyof typeof t.categories]} Icon={category.Icon} />
+                          ))}
+                          </div>
+                      </div>
+                  </section>
 
-                    <section id="all-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark">
-                    <div className="container mx-auto px-4 sm:px-6">
-                        <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-4">{t.app.findYourProperty}</h2>
-                        <div className="flex justify-center items-center gap-4 mb-10">
-                            <button onClick={() => setActiveTab('all')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${activeTab === 'all' ? 'bg-brand-primary text-white' : 'bg-white/50 text-brand-dark'}`}>{t.app.allListings}</button>
-                            <button onClick={() => setActiveTab('saved')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors relative ${activeTab === 'saved' ? 'bg-brand-primary text-white' : 'bg-white/50 text-brand-dark'}`}>
-                            {t.app.savedProperties}
-                            {savedPropertyIds.size > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-xs">{savedPropertyIds.size}</span>}
-                            </button>
-                        </div>
-                        {activeTab === 'all' && <p className="text-center text-slate-500 dark:text-slate-400 mb-8">{t.app.showingResults.replace('{{count}}', String(filteredProperties.length))}</p>}
-                        {activeTab === 'saved' && <p className="text-center text-slate-500 dark:text-slate-400 mb-8">{t.app.savedCount.replace('{{count}}', String(savedProperties.length))}</p>}
-                        
-                        <div className="flex justify-center mb-8">
-                            <button onClick={handleSaveSearch} className="flex items-center gap-2 bg-white/50 text-brand-dark dark:text-white px-4 py-2 rounded-lg font-semibold hover:bg-white transition-colors">
-                                <BookmarkIcon className="w-5 h-5" />
-                                {t.app.saveSearch}
-                            </button>
-                        </div>
+                  <section id="all-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark/40">
+                  <div className="container mx-auto px-4 sm:px-6">
+                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-4">{t.app.findYourProperty}</h2>
+                      <div className="flex justify-center items-center gap-4 mb-10">
+                          <button onClick={() => setActiveTab('all')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${activeTab === 'all' ? 'bg-brand-primary text-white' : 'bg-white/50 text-brand-dark'}`}>{t.app.allListings}</button>
+                          <button onClick={() => setActiveTab('saved')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors relative ${activeTab === 'saved' ? 'bg-brand-primary text-white' : 'bg-white/50 text-brand-dark'}`}>
+                          {t.app.savedProperties}
+                          {savedPropertyIds.size > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-accent text-white text-xs font-bold">{savedPropertyIds.size}</span>}
+                          </button>
+                      </div>
+                      {activeTab === 'all' && <p className="text-center text-slate-500 dark:text-slate-400 mb-8">{t.app.showingResults.replace('{{count}}', String(filteredProperties.length))}</p>}
+                      {activeTab === 'saved' && <p className="text-center text-slate-500 dark:text-slate-400 mb-8">{t.app.savedCount.replace('{{count}}', String(savedProperties.length))}</p>}
+                      
+                      <div className="flex justify-center mb-8">
+                          <button onClick={handleSaveSearch} className="flex items-center gap-2 bg-white/50 text-brand-dark dark:text-white px-4 py-2 rounded-lg font-semibold hover:bg-white transition-colors border border-brand-primary/20">
+                              <BookmarkIcon className="w-5 h-5 text-brand-primary" />
+                              {t.app.saveSearch}
+                          </button>
+                      </div>
 
-                        {activeTab === 'all' ? (
-                            filteredProperties.length > 0 ? (
-                                <PropertyList 
-                                    properties={filteredProperties}
-                                    currentUser={currentUser}
-                                    onSaveToggle={handleSaveToggle}
-                                    savedPropertyIds={savedPropertyIds}
-                                    onOpenCalculator={handleOpenCalculator}
-                                    onOpenTourModal={handleOpenTourModal}
-                                    onFindSimilar={handleFindSimilar}
-                                    onOpenDetailModal={handleOpenDetailModal}
-                                    onToggleCompare={handleToggleCompare}
-                                    onOpenVRTour={handleOpenVRTour}
-                                    compareList={compareList}
-                                    onEdit={handleEditProperty}
-                                    onDelete={handleDeleteProperty}
-                                />
-                            ) : <p className="text-center text-slate-500 dark:text-slate-400">{t.app.noPropertiesFound}<br/>{t.app.adjustFilters}</p>
-                        ) : (
-                            savedProperties.length > 0 ? (
-                                <PropertyList 
-                                    properties={savedProperties}
-                                    currentUser={currentUser}
-                                    onSaveToggle={handleSaveToggle}
-                                    savedPropertyIds={savedPropertyIds}
-                                    onOpenCalculator={handleOpenCalculator}
-                                    onOpenTourModal={handleOpenTourModal}
-                                    onFindSimilar={handleFindSimilar}
-                                    onOpenDetailModal={handleOpenDetailModal}
-                                    onToggleCompare={handleToggleCompare}
-                                    onOpenVRTour={handleOpenVRTour}
-                                    compareList={compareList}
-                                    onEdit={handleEditProperty}
-                                    onDelete={handleDeleteProperty}
-                                />
-                            ) : <p className="text-center text-slate-500 dark:text-slate-400">{t.app.noSavedProperties}</p>
-                        )}
+                      {activeTab === 'all' ? (
+                          filteredProperties.length > 0 ? (
+                              <PropertyList 
+                                  properties={filteredProperties}
+                                  currentUser={currentUser}
+                                  onSaveToggle={handleSaveToggle}
+                                  savedPropertyIds={savedPropertyIds}
+                                  onOpenCalculator={handleOpenCalculator}
+                                  onOpenTourModal={handleOpenTourModal}
+                                  onFindSimilar={handleFindSimilar}
+                                  onOpenDetailModal={handleOpenDetailModal}
+                                  onToggleCompare={handleToggleCompare}
+                                  onOpenVRTour={handleOpenVRTour}
+                                  compareList={compareList}
+                                  onEdit={handleEditProperty}
+                                  onDelete={handleDeleteProperty}
+                                  isLoading={isLoadingProperties}
+                              />
+                          ) : <p className="text-center text-slate-500 dark:text-slate-400">{t.app.noPropertiesFound}<br/>{t.app.adjustFilters}</p>
+                      ) : (
+                          savedProperties.length > 0 ? (
+                              <PropertyList 
+                                  properties={savedProperties}
+                                  currentUser={currentUser}
+                                  onSaveToggle={handleSaveToggle}
+                                  savedPropertyIds={savedPropertyIds}
+                                  onOpenCalculator={handleOpenCalculator}
+                                  onOpenTourModal={handleOpenTourModal}
+                                  onFindSimilar={handleFindSimilar}
+                                  onOpenDetailModal={handleOpenDetailModal}
+                                  onToggleCompare={handleToggleCompare}
+                                  onOpenVRTour={handleOpenVRTour}
+                                  compareList={compareList}
+                                  onEdit={handleEditProperty}
+                                  onDelete={handleDeleteProperty}
+                                  isLoading={isLoadingProperties}
+                              />
+                          ) : <p className="text-center text-slate-500 dark:text-slate-400">{t.app.noSavedProperties}</p>
+                      )}
 
-                    </div>
-                    </section>
-                    
-                    {currentUser && savedProperties.length > 0 && 
-                        <PersonalizedMatches 
-                            savedProperties={savedProperties}
-                            allProperties={allProperties}
-                            currentUser={currentUser}
-                            onSaveToggle={handleSaveToggle}
-                            savedPropertyIds={savedPropertyIds}
-                            onOpenCalculator={handleOpenCalculator}
-                            onOpenTourModal={handleOpenTourModal}
-                            onFindSimilar={handleFindSimilar}
-                            onOpenDetailModal={handleOpenDetailModal}
-                            onToggleCompare={handleToggleCompare}
-                            onOpenVRTour={handleOpenVRTour}
-                            compareList={compareList}
-                            onEdit={handleEditProperty}
-                            onDelete={handleDeleteProperty}
-                        />
-                    }
-                    
-                    <MarketInsights />
-                    <RealTimeNews />
+                  </div>
+                  </section>
+                  
+                  {currentUser && savedProperties.length > 0 && 
+                      <PersonalizedMatches 
+                          savedProperties={savedProperties}
+                          allProperties={allProperties}
+                          currentUser={currentUser}
+                          onSaveToggle={handleSaveToggle}
+                          savedPropertyIds={savedPropertyIds}
+                          onOpenCalculator={handleOpenCalculator}
+                          onOpenTourModal={handleOpenTourModal}
+                          onFindSimilar={handleFindSimilar}
+                          onOpenDetailModal={handleOpenDetailModal}
+                          onToggleCompare={handleToggleCompare}
+                          onOpenVRTour={handleOpenVRTour}
+                          compareList={compareList}
+                          onEdit={handleEditProperty}
+                          onDelete={handleDeleteProperty}
+                      />
+                  }
+                  
+                  <MarketInsights />
+                  <RealTimeNews />
 
-                    {targetPropertyForSimilar && 
-                        <RecommendedProperties
-                            targetProperty={targetPropertyForSimilar}
-                            allProperties={allProperties}
-                            currentUser={currentUser}
-                            onSaveToggle={handleSaveToggle}
-                            savedPropertyIds={savedPropertyIds}
-                            onOpenCalculator={handleOpenCalculator}
-                            onOpenTourModal={handleOpenTourModal}
-                            onFindSimilar={handleFindSimilar}
-                            onOpenDetailModal={handleOpenDetailModal}
-                            onToggleCompare={handleToggleCompare}
-                            onOpenVRTour={handleOpenVRTour}
-                            compareList={compareList}
-                            onEdit={handleEditProperty}
-                            onDelete={handleDeleteProperty}
-                        />
-                    }
+                  {targetPropertyForSimilar && 
+                      <RecommendedProperties
+                          targetProperty={targetPropertyForSimilar}
+                          allProperties={allProperties}
+                          currentUser={currentUser}
+                          onSaveToggle={handleSaveToggle}
+                          savedPropertyIds={savedPropertyIds}
+                          onOpenCalculator={handleOpenCalculator}
+                          onOpenTourModal={handleOpenTourModal}
+                          onFindSimilar={handleFindSimilar}
+                          onOpenDetailModal={handleOpenDetailModal}
+                          onToggleCompare={handleToggleCompare}
+                          onOpenVRTour={handleOpenVRTour}
+                          compareList={compareList}
+                          onEdit={handleEditProperty}
+                          onDelete={handleDeleteProperty}
+                      />
+                  }
 
-                    <FinancialServices />
-                    <NeighborhoodSection onOpenExplorer={handleOpenNeighborhoodExplorer} />
-                    <BlogSection posts={blogPosts} onPostClick={handleBlogClick} isLoading={isLoadingBlog}/>
-                </>
-            );
-        }
-    };
+                  <FinancialServices />
+                  <NeighborhoodSection onOpenExplorer={handleOpenNeighborhoodExplorer} />
+                  <BlogSection posts={blogPosts} onPostClick={handleBlogClick} isLoading={isLoadingBlog}/>
+              </>
+          );
+      }
+  };
 
 
   return (
@@ -1072,7 +1054,10 @@ The other fields should follow these rules:
         onContactClick={() => setPage('contact')}
         onBlogClick={() => {
             setPage('home');
-            setTimeout(() => document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth' }), 100);
+            setTimeout(() => {
+                const blog = document.getElementById('blog');
+                if (blog) blog.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
         }}
         onPrivacyPolicyClick={() => setIsPrivacyPolicyModalOpen(true)}
         onTermsOfServiceClick={() => setIsTermsOfServiceModalOpen(true)}
@@ -1084,7 +1069,7 @@ The other fields should follow these rules:
       <div className="fixed bottom-20 right-4 sm:right-6 z-50">
           <button
               onClick={() => setIsAIVoiceChatOpen(true)}
-              className="bg-brand-gold text-brand-dark rounded-full p-4 shadow-lg hover:scale-110 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 transition-transform duration-200"
+              className="bg-brand-gold text-brand-dark rounded-full p-4 shadow-lg hover:scale-110 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 transition-transform duration-200 border-4 border-white"
               aria-label="Start AI Voice Chat"
           >
               <ChatBubbleLeftRightIcon className="w-8 h-8" />
@@ -1092,7 +1077,6 @@ The other fields should follow these rules:
       </div>
       <AIVoiceChat isOpen={isAIVoiceChatOpen} onClose={() => setIsAIVoiceChatOpen(false)} />
 
-      {/* Modals */}
       {selectedProperty && <MortgageCalculator isOpen={isCalculatorOpen} onClose={() => setIsCalculatorOpen(false)} propertyPrice={selectedProperty.price} propertyTitle={selectedProperty.title} />}
       {selectedProperty && <ScheduleTourModal isOpen={isTourModalOpen} onClose={() => setIsTourModalOpen(false)} propertyTitle={selectedProperty.title} propertyId={selectedProperty.id} agentName={selectedProperty.agent.name} onSubmit={handleScheduleTour} />}
       {selectedProperty && <PropertyDetailModal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} property={selectedProperty} currentUser={currentUser} onOpenAgentContact={(mode, name) => { setAgentContactMode(mode); setAgentContactName(name); setIsAgentContactModalOpen(true); }} onOpenVRTour={handleOpenVRTour} onMessageAgent={handleMessageAgent} onLeaveReview={handleLeaveReview} />}
@@ -1150,7 +1134,6 @@ The other fields should follow these rules:
             onCompareClick={() => setIsCompareModalOpen(true)}
             onCurrencyChange={setCurrency}
             onUpgradeAccountRequest={handleUpgradeAccountRequest}
-            // FIX: Pass down PropertyList-related props to the UserDashboardModal.
             onSaveToggle={handleSaveToggle}
             savedPropertyIds={savedPropertyIds}
             onOpenCalculator={handleOpenCalculator}

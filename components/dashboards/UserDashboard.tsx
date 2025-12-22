@@ -1,7 +1,6 @@
 
-
-import React, { useState, useMemo } from 'react';
-import type { Property, TourRequest, User, SearchFilters, Message, PropertyAlert, UserDocument } from '../../types';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Property, TourRequest, User, SearchFilters, Message, PropertyAlert, UserDocument } from '../../types';
 import { ListingType, PropertyType } from '../../types';
 import { BookmarkIcon, CalendarIcon, ChatBubbleLeftRightIcon, TrashIcon, BanknotesIcon, BellIcon, ClipboardDocumentIcon as DocumentDuplicateIcon, ArrowUpTrayIcon } from '../icons/ActionIcons';
 import { SearchIcon } from '../icons/SearchIcons';
@@ -156,22 +155,27 @@ const MessagesView: React.FC<{ groupedMessages: Record<string, Message[]>, user:
 );
 
 const PropertyAlertsView: React.FC<{ user: User }> = ({ user }) => {
-    // FIX: `getPropertyAlerts` can return a non-array value from JSON.parse. Initialize state with a lazy function that ensures the value is always an array to prevent runtime errors.
-    const [alerts, setAlerts] = useState<PropertyAlert[]>(() => {
-        const data = getPropertyAlerts(user.username);
-        return Array.isArray(data) ? data : [];
-    });
+    const [alerts, setAlerts] = useState<PropertyAlert[]>([]);
     const [newAlertName, setNewAlertName] = useState('');
 
-    const handleAddAlert = (e: React.FormEvent) => {
+    useEffect(() => {
+        const fetchAlerts = async () => {
+            const data = await getPropertyAlerts(user.username);
+            // FIX: Ensure data is an array before setting state to prevent mapping errors.
+            setAlerts(Array.isArray(data) ? data : []);
+        };
+        fetchAlerts();
+    }, [user.username]);
+
+    const handleAddAlert = async (e: React.FormEvent) => {
         e.preventDefault();
-        const newAlert = addPropertyAlert(user.username, { name: newAlertName, criteria: {} });
+        const newAlert = await addPropertyAlert(user.username, { name: newAlertName, criteria: {} });
         setAlerts(prev => [newAlert, ...prev]);
         setNewAlertName('');
     };
 
-    const handleDeleteAlert = (id: string) => {
-        deletePropertyAlert(user.username, id);
+    const handleDeleteAlert = async (id: string) => {
+        await deletePropertyAlert(user.username, id);
         setAlerts(prev => prev.filter(a => a.id !== id));
     };
 
@@ -199,22 +203,27 @@ const PropertyAlertsView: React.FC<{ user: User }> = ({ user }) => {
 };
 
 const DocumentVaultView: React.FC<{ user: User }> = ({ user }) => {
-    // FIX: `getUserDocuments` can return a non-array value from JSON.parse. Initialize state with a lazy function that ensures the value is always an array to prevent runtime errors.
-    const [docs, setDocs] = useState<UserDocument[]>(() => {
-        const data = getUserDocuments(user.username);
-        return Array.isArray(data) ? data : [];
-    });
+    const [docs, setDocs] = useState<UserDocument[]>([]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        const fetchDocs = async () => {
+            const data = await getUserDocuments(user.username);
+            // FIX: Ensure data is an array before setting state to prevent mapping errors.
+            setDocs(Array.isArray(data) ? data : []);
+        };
+        fetchDocs();
+    }, [user.username]);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            const newDoc = addUserDocument(user.username, file);
+            const newDoc = await addUserDocument(user.username, file);
             setDocs(prev => [newDoc, ...prev]);
         }
     };
     
-    const handleDeleteDoc = (id: string) => {
-        deleteUserDocument(user.username, id);
+    const handleDeleteDoc = async (id: string) => {
+        await deleteUserDocument(user.username, id);
         setDocs(prev => prev.filter(d => d.id !== id));
     };
 

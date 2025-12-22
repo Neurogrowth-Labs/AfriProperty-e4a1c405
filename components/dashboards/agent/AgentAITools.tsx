@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
 import { blobToBase64 } from '../../../lib/utils';
@@ -26,17 +24,17 @@ const AgentAITools: React.FC = () => {
         <p className="text-slate-500 dark:text-slate-400 mt-1">Optimize your listings and marketing content with intelligent assistance.</p>
       </div>
       
-      <div className="mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-        <div className="p-2 bg-slate-100 dark:bg-slate-900/50 rounded-t-xl">
+      <div className="mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="p-2 bg-brand-primary rounded-t-xl">
           <div className="flex items-center gap-2 flex-wrap">
             {tools.map(tool => (
               <button
                 key={tool.id}
                 onClick={() => setActiveTab(tool.id)}
-                className={`flex-grow md:flex-1 flex items-center justify-center gap-2 px-3 py-3 text-xs font-semibold rounded-lg transition-colors ${
+                className={`flex-grow md:flex-1 flex items-center justify-center gap-2 px-3 py-3 text-xs font-bold rounded-lg transition-all duration-300 ${
                   activeTab === tool.id
-                    ? 'bg-white dark:bg-slate-700 text-brand-primary shadow'
-                    : 'text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700/50'
+                    ? 'bg-brand-gold text-brand-dark shadow-lg scale-105'
+                    : 'text-white/60 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <tool.icon className="w-5 h-5" />
@@ -90,8 +88,8 @@ const DescriptionGenerator: React.FC = () => {
                 - Key Features: ${descInputs.beds} bed, ${descInputs.baths} bath, ${descInputs.area} sqft
                 - Top Amenities: ${descInputs.amenities}
                 - Neighborhood Highlights: ${descInputs.neighborhood}`;
-            const result = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
-            setGeneratedDesc(result.text);
+            const result = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });
+            setGeneratedDesc(result.text || '');
         } catch (error) {
             console.error(error);
             setGeneratedDesc('Error generating description. Please try again.');
@@ -101,9 +99,15 @@ const DescriptionGenerator: React.FC = () => {
     };
 
     return (
-        <div className="space-y-4">
-            <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Property Description Generator</h4>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-6">
+            <div className="flex items-center gap-3">
+                <div className="bg-brand-gold p-2 rounded-lg">
+                    <SparklesIcon className="w-6 h-6 text-brand-dark" />
+                </div>
+                <h4 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">AI Write Agent</h4>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input name="title" onChange={handleDescChange} placeholder="Property Title" className="input col-span-2" />
                 <select name="type" onChange={handleDescChange} value={descInputs.type} className="input">
                     {Object.values(PropertyType).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
@@ -115,11 +119,31 @@ const DescriptionGenerator: React.FC = () => {
                 <input name="amenities" onChange={handleDescChange} placeholder="Key Amenities (e.g., Pool, Gym)" className="input" />
                 <textarea name="neighborhood" onChange={handleDescChange} placeholder="Neighborhood highlights" rows={2} className="input col-span-2" />
             </div>
-            <button onClick={handleGenerateDescription} disabled={isGeneratingDesc} className="w-full btn-primary">
-                {isGeneratingDesc ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : 'Generate Description'}
+            
+            <button onClick={handleGenerateDescription} disabled={isGeneratingDesc} className="w-full btn-write">
+                {isGeneratingDesc ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : (
+                    <><SparklesIcon className="w-5 h-5" /> Generate Premium Copy</>
+                )}
             </button>
-            <textarea value={generatedDesc} readOnly placeholder="Generated description will appear here..." rows={6} className="w-full input bg-slate-50 dark:bg-slate-700" />
-            <style>{`.input { @apply px-3 py-2 border border-slate-300 rounded-md focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-700/80; } .btn-primary { @apply w-full bg-brand-primary text-white font-semibold py-2.5 rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400; }`}</style>
+            
+            <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-brand-gold to-brand-primary rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                <textarea 
+                    value={generatedDesc} 
+                    readOnly 
+                    placeholder="Premium generated description will appear here..." 
+                    rows={8} 
+                    className="relative w-full input bg-white dark:bg-slate-900 border-2 border-brand-gold/30 font-medium leading-relaxed" 
+                />
+            </div>
+            
+            <style>{`
+                .input { @apply px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80 transition-all; }
+                .btn-write { 
+                    @apply w-full bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-4 rounded-xl 
+                    hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 shadow-xl; 
+                }
+            `}</style>
         </div>
     );
 };
@@ -144,11 +168,11 @@ const PricingRecommender: React.FC = () => {
                 - Size: ${priceInputs.beds} beds, ${priceInputs.baths} baths, ${priceInputs.area} sqft
                 - Condition: ${priceInputs.condition}`;
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
                 config: { responseMimeType: 'application/json', responseSchema: pricingRecommenderSchema }
             });
-            setPriceRec(JSON.parse(response.text.trim()));
+            setPriceRec(JSON.parse(response.text?.trim() || '{}'));
         } catch (error) {
             console.error(error);
         } finally {
@@ -171,21 +195,21 @@ const PricingRecommender: React.FC = () => {
                     <option>Good</option><option>Excellent</option><option>Needs work</option>
                 </select>
             </div>
-            <button onClick={handleRecommendPrice} disabled={isRecommendingPrice} className="w-full btn-primary">
-                 {isRecommendingPrice ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : 'Recommend Price'}
+            <button onClick={handleRecommendPrice} disabled={isRecommendingPrice} className="w-full btn-write">
+                 {isRecommendingPrice ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : 'Recommend Price'}
             </button>
             {priceRec && (
-                <div className="p-4 bg-brand-light dark:bg-slate-700/50 rounded-lg space-y-3">
-                    <p className="text-sm text-slate-600 dark:text-slate-300">Recommended Price</p>
-                    <p className="text-4xl font-bold text-brand-dark dark:text-white">${priceRec.recommended_price.toLocaleString()}</p>
-                    <div className="w-full bg-slate-200 rounded-full h-2.5">
-                        <div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${priceRec.confidence_score}%` }}></div>
+                <div className="p-6 bg-brand-primary dark:bg-slate-900 border-l-4 border-brand-gold rounded-r-xl space-y-3">
+                    <p className="text-sm text-white/70">Recommended Price</p>
+                    <p className="text-4xl font-black text-brand-gold">${priceRec.recommended_price?.toLocaleString()}</p>
+                    <div className="w-full bg-white/10 rounded-full h-2">
+                        <div className="bg-brand-gold h-2 rounded-full shadow-[0_0_10px_rgba(212,175,55,0.5)]" style={{ width: `${priceRec.confidence_score}%` }}></div>
                     </div>
-                    <p className="text-xs font-semibold text-right">Confidence: {priceRec.confidence_score}%</p>
-                    <p className="text-sm text-slate-700 dark:text-slate-200 pt-2 border-t border-blue-200 dark:border-slate-600">{priceRec.market_analysis}</p>
+                    <p className="text-xs font-bold text-brand-gold text-right uppercase tracking-widest">Confidence: {priceRec.confidence_score}%</p>
+                    <p className="text-sm text-white leading-relaxed pt-2 border-t border-white/10">{priceRec.market_analysis}</p>
                 </div>
             )}
-            <style>{`.input { @apply px-3 py-2 border border-slate-300 rounded-md focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-700/80; } .btn-primary { @apply w-full bg-brand-primary text-white font-semibold py-2.5 rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400; }`}</style>
+            <style>{`.input { @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80; } .btn-write { @apply w-full bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-3 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50; }`}</style>
         </div>
     );
 };
@@ -315,12 +339,11 @@ const ContentAnalyzer: React.FC = () => {
             }
             
             const response = await ai.models.generateContent({
-                // FIX: Updated model name to gemini-3-pro-preview for complex tasks.
                 model: 'gemini-3-pro-preview',
                 contents: [{ parts: contentParts }],
             });
 
-            setAnalysis(response.text);
+            setAnalysis(response.text || '');
 
         } catch (err: any) {
             console.error(err);
@@ -338,7 +361,7 @@ const ContentAnalyzer: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                     <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                     <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden border-2 border-brand-gold/20">
                         {fileType === 'video' && filePreview && <video ref={videoRef} src={filePreview} controls className="w-full h-full rounded-lg" />}
                         {fileType === 'image' && filePreview && <img src={filePreview} alt="Property preview" className="w-full h-full object-contain rounded-lg" />}
                         {!filePreview && (
@@ -349,7 +372,7 @@ const ContentAnalyzer: React.FC = () => {
                         )}
                      </div>
                      <input type="file" accept="video/*,image/*" onChange={handleFileChange} ref={fileInputRef} className="hidden" />
-                     <button onClick={() => fileInputRef.current?.click()} className="w-full text-center px-4 py-2.5 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-brand-primary">
+                     <button onClick={() => fileInputRef.current?.click()} className="w-full text-center px-4 py-2.5 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-brand-gold transition-all">
                         {filePreview ? 'Change Media' : 'Upload Image or Video'}
                      </button>
                 </div>
@@ -366,33 +389,33 @@ const ContentAnalyzer: React.FC = () => {
                         <label htmlFor="prompt" className="block text-sm font-medium text-slate-700 dark:text-slate-200">Your Prompt</label>
                         <textarea id="prompt" value={prompt} onChange={e => setPrompt(e.target.value)} rows={4} className="mt-1 w-full input" />
                     </div>
-                     <button onClick={handleAnalyze} disabled={isLoading || !file} className="mt-3 w-full btn-primary">
-                        {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <CpuChipIcon className="w-5 h-5"/>}
+                     <button onClick={handleAnalyze} disabled={isLoading || !file} className="mt-3 w-full btn-write">
+                        {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <CpuChipIcon className="w-5 h-5"/>}
                         {isLoading ? 'Analyzing...' : 'Analyze Content'}
                     </button>
                 </div>
             </div>
             <div className="mt-4">
                  <h5 className="font-semibold text-slate-700 dark:text-slate-200 mb-2">Analysis & Suggestions</h5>
-                 <div className="w-full min-h-[150px] bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                 <div className="w-full min-h-[150px] bg-brand-primary dark:bg-slate-900 rounded-xl p-6 border border-brand-gold/30 text-white shadow-xl">
                      {isLoading ? (
                         <div className="space-y-2 animate-pulse">
-                            <div className="h-3 bg-slate-200 dark:bg-slate-600 rounded w-5/6"></div>
-                            <div className="h-3 bg-slate-200 dark:bg-slate-600 rounded w-full"></div>
-                            <div className="h-3 bg-slate-200 dark:bg-slate-600 rounded w-3/4"></div>
+                            <div className="h-3 bg-white/20 rounded w-5/6"></div>
+                            <div className="h-3 bg-white/20 rounded w-full"></div>
+                            <div className="h-3 bg-white/20 rounded w-3/4"></div>
                         </div>
                      ) : error ? (
-                        <p className="text-sm text-red-500">{error}</p>
+                        <p className="text-sm text-red-400 font-bold">{error}</p>
                      ) : analysis ? (
-                        <p className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">{analysis}</p>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{analysis}</p>
                      ): (
-                        <p className="text-sm text-slate-400">AI analysis will appear here.</p>
+                        <p className="text-sm text-white/40">AI analysis will appear here.</p>
                      )}
                 </div>
             </div>
              <style>{`
-                .input { @apply px-3 py-2 bg-white dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }
-                .btn-primary { @apply w-full bg-brand-primary text-white font-semibold py-2.5 rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400 disabled:cursor-not-allowed; }
+                .input { @apply px-3 py-2 bg-white dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold; }
+                .btn-write { @apply w-full bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-3 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50; }
             `}</style>
         </div>
     );
@@ -403,17 +426,6 @@ const ImageGenerator: React.FC = () => {
     const [images, setImages] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const [hasKey, setHasKey] = useState(false);
-
-    useEffect(() => {
-        const checkKey = async () => {
-            if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
-                const hasApiKey = await window.aistudio.hasSelectedApiKey();
-                setHasKey(hasApiKey);
-            }
-        };
-        checkKey();
-    }, []);
 
     const handleGenerate = async () => {
         if (!prompt.trim()) return;
@@ -422,10 +434,6 @@ const ImageGenerator: React.FC = () => {
         setImages([]);
 
         try {
-            if (!hasKey) {
-                await window.aistudio.openSelectKey();
-                setHasKey(true); // Assume success
-            }
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
             const response = await ai.models.generateImages({
                 model: 'imagen-4.0-generate-001',
@@ -441,12 +449,7 @@ const ImageGenerator: React.FC = () => {
             setImages(imageUrls);
         } catch (err: any) {
             console.error(err);
-             if (err.message?.includes("Requested entity was not found")) {
-                setError("API Key error. Please select a valid API key.");
-                setHasKey(false);
-            } else {
-                setError('Failed to generate images. Please try again.');
-            }
+            setError('Failed to generate images. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -458,16 +461,16 @@ const ImageGenerator: React.FC = () => {
              <p className="text-sm text-slate-500 dark:text-slate-400">Generate high-quality, realistic images for your property listings or marketing materials from a simple text description.</p>
              <div className="flex items-center gap-2">
                 <input value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Enter a detailed prompt..." className="w-full input" />
-                <button onClick={handleGenerate} disabled={isLoading} className="btn-primary flex-shrink-0">
-                    {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
+                <button onClick={handleGenerate} disabled={isLoading} className="btn-write w-auto flex-shrink-0 px-6">
+                    {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
                 </button>
              </div>
              {error && <p className="text-sm text-red-500 text-center">{error}</p>}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {isLoading && [...Array(2)].map((_, i) => <div key={i} className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse"></div>)}
-                {images.map((src, i) => <img key={i} src={src} alt={`Generated image ${i + 1}`} className="w-full aspect-video object-cover rounded-lg"/>)}
+                {isLoading && [...Array(2)].map((_, i) => <div key={i} className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse border-2 border-brand-gold/10"></div>)}
+                {images.map((src, i) => <img key={i} src={src} alt={`Generated image ${i + 1}`} className="w-full aspect-video object-cover rounded-lg border-2 border-brand-gold shadow-xl"/>)}
              </div>
-              <style>{`.input { @apply px-3 py-2 border border-slate-300 rounded-md focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-700/80; } .btn-primary { @apply px-4 py-2.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400; }`}</style>
+              <style>{`.input { @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80; } .btn-write { @apply bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-2.5 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg; }`}</style>
         </div>
     );
 };
@@ -549,20 +552,25 @@ const VideoGenerator: React.FC = () => {
     return (
         <div className="space-y-4">
             <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Video Generation</h4>
-             <p className="text-sm text-slate-500 dark:text-slate-400">Create stunning, short video clips for social media or property listings. This feature requires selecting an API key. <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-brand-primary underline">Learn about billing</a>.</p>
+             <p className="text-sm text-slate-500 dark:text-slate-400">Create stunning, short video clips for social media or property listings. This feature requires selecting an API key. <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-brand-gold underline">Learn about billing</a>.</p>
              <div className="flex items-center gap-2">
                 <input value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Enter a detailed video prompt..." className="w-full input" />
-                <button onClick={handleGenerate} disabled={isLoading} className="btn-primary flex-shrink-0">
-                    {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
+                <button onClick={handleGenerate} disabled={isLoading} className="btn-write w-auto flex-shrink-0 px-6">
+                    {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
                 </button>
              </div>
              {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-             <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mt-4">
-                 {isLoading && <div className="text-center"><div className="w-8 h-8 border-4 border-slate-300 border-t-brand-primary rounded-full animate-spin mx-auto"></div><p className="mt-4 text-sm font-semibold text-slate-600 dark:text-slate-300">{loadingMessage}</p></div>}
+             <div className="aspect-video bg-brand-primary dark:bg-slate-950 rounded-xl flex items-center justify-center mt-4 border-2 border-brand-gold shadow-2xl relative">
+                 {isLoading && (
+                    <div className="text-center z-10">
+                        <div className="w-10 h-10 border-4 border-white/20 border-t-brand-gold rounded-full animate-spin mx-auto shadow-[0_0_15px_rgba(212,175,55,0.5)]"></div>
+                        <p className="mt-4 text-sm font-black text-brand-gold uppercase tracking-widest animate-pulse">{loadingMessage}</p>
+                    </div>
+                 )}
                  {videoUrl && <video src={videoUrl} controls autoPlay loop className="w-full h-full rounded-lg" />}
-                 {!isLoading && !videoUrl && !error && <p className="text-slate-400">Generated video will appear here.</p>}
+                 {!isLoading && !videoUrl && !error && <p className="text-white/30 font-bold uppercase tracking-widest">Premium AI Studio</p>}
              </div>
-              <style>{`.input { @apply px-3 py-2 border border-slate-300 rounded-md focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-700/80; } .btn-primary { @apply px-4 py-2.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400; }`}</style>
+              <style>{`.input { @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80; } .btn-write { @apply bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-2.5 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg; }`}</style>
         </div>
     );
 };

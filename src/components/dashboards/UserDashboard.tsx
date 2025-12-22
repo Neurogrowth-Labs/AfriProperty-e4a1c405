@@ -1,7 +1,6 @@
 
-
-import React, { useState, useMemo } from 'react';
-import type { Property, TourRequest, User, SearchFilters, Message, PropertyAlert, UserDocument } from '../../types';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Property, TourRequest, User, SearchFilters, Message, PropertyAlert, UserDocument } from '../../types';
 import { ListingType, PropertyType } from '../../types';
 import { BookmarkIcon, CalendarIcon, ChatBubbleLeftRightIcon, TrashIcon, BanknotesIcon, BellIcon, ClipboardDocumentIcon as DocumentDuplicateIcon, ArrowUpTrayIcon } from '../icons/ActionIcons';
 import { SearchIcon } from '../icons/SearchIcons';
@@ -57,7 +56,7 @@ const UserDashboard: React.FC<UserDashboardProps> = (props) => {
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
             lg:translate-x-0
         `}>
-        <nav className="w-64 p-5 border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto h-full">
+        <nav className="w-64 p-5 border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto h-full flex-shrink-0">
             <div className="flex items-center gap-3 mb-6">
                 <img src={user.profilePicture || `https://i.pravatar.cc/150?u=${user.username}`} alt="Profile" className="w-10 h-10 rounded-full object-cover"/>
                 <div>
@@ -93,7 +92,7 @@ const UserDashboard: React.FC<UserDashboardProps> = (props) => {
 
 const DashboardTab: React.FC<{id: UserDashboardTab, label: string, icon: React.ElementType, activeTab: UserDashboardTab, setActiveTab: (tab: UserDashboardTab) => void}> = ({ id, label, icon: Icon, activeTab, setActiveTab }) => (
     <li>
-        <button onClick={() => setActiveTab(id)} className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md font-medium text-sm transition-colors ${activeTab === id ? 'bg-brand-light text-brand-primary dark:bg-slate-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
+        <button onClick={() => setActiveTab(id)} className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md font-medium text-sm transition-colors ${activeTab === id ? 'bg-brand-primary/10 text-brand-primary dark:bg-slate-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
             <Icon className="w-5 h-5"/> {label}
         </button>
     </li>
@@ -173,22 +172,27 @@ const MessagesView: React.FC<{ groupedMessages: Record<string, Message[]>, user:
 );
 
 const PropertyAlertsView: React.FC<{ user: User }> = ({ user }) => {
-    // FIX: `getPropertyAlerts` can return a non-array value from JSON.parse. Initialize state with a lazy function that ensures the value is always an array to prevent runtime errors.
-    const [alerts, setAlerts] = useState<PropertyAlert[]>(() => {
-        const data = getPropertyAlerts(user.username);
-        return Array.isArray(data) ? data : [];
-    });
+    const [alerts, setAlerts] = useState<PropertyAlert[]>([]);
     const [newAlertName, setNewAlertName] = useState('');
 
-    const handleAddAlert = (e: React.FormEvent) => {
+    useEffect(() => {
+        const fetchAlerts = async () => {
+            const data = await getPropertyAlerts(user.username);
+            // FIX: Ensure data is an array before setting state to prevent mapping errors.
+            setAlerts(Array.isArray(data) ? data : []);
+        };
+        fetchAlerts();
+    }, [user.username]);
+
+    const handleAddAlert = async (e: React.FormEvent) => {
         e.preventDefault();
-        const newAlert = addPropertyAlert(user.username, { name: newAlertName, criteria: {} });
+        const newAlert = await addPropertyAlert(user.username, { name: newAlertName, criteria: {} });
         setAlerts(prev => [newAlert, ...prev]);
         setNewAlertName('');
     };
 
-    const handleDeleteAlert = (id: string) => {
-        deletePropertyAlert(user.username, id);
+    const handleDeleteAlert = async (id: string) => {
+        await deletePropertyAlert(user.username, id);
         setAlerts(prev => prev.filter(a => a.id !== id));
     };
 
@@ -216,22 +220,27 @@ const PropertyAlertsView: React.FC<{ user: User }> = ({ user }) => {
 };
 
 const DocumentVaultView: React.FC<{ user: User }> = ({ user }) => {
-    // FIX: `getUserDocuments` can return a non-array value from JSON.parse. Initialize state with a lazy function that ensures the value is always an array to prevent runtime errors.
-    const [docs, setDocs] = useState<UserDocument[]>(() => {
-        const data = getUserDocuments(user.username);
-        return Array.isArray(data) ? data : [];
-    });
+    const [docs, setDocs] = useState<UserDocument[]>([]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        const fetchDocs = async () => {
+            const data = await getUserDocuments(user.username);
+            // FIX: Ensure data is an array before setting state to prevent mapping errors.
+            setDocs(Array.isArray(data) ? data : []);
+        };
+        fetchDocs();
+    }, [user.username]);
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            const newDoc = addUserDocument(user.username, file);
+            const newDoc = await addUserDocument(user.username, file);
             setDocs(prev => [newDoc, ...prev]);
         }
     };
     
-    const handleDeleteDoc = (id: string) => {
-        deleteUserDocument(user.username, id);
+    const handleDeleteDoc = async (id: string) => {
+        await deleteUserDocument(user.username, id);
         setDocs(prev => prev.filter(d => d.id !== id));
     };
 

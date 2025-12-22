@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import type { User, Property, Achievement, InvestorSettings, Currency } from '../../../types';
 import { DashboardIcon, PortfolioIcon, DiscoveryIcon, ToolsIcon, MarketplaceIcon, CommunityIcon, SettingsIcon, Bars3Icon, XMarkIcon } from '../../icons/InvestorDashboardIcons';
@@ -8,7 +7,7 @@ import InvestorPortfolio from './InvestorPortfolio';
 import InvestorPropertyDiscovery from './InvestorPropertyDiscovery';
 import InvestorFinancialTools from './InvestorFinancialTools';
 import InvestorGlobalMarketplace from './InvestorGlobalMarketplace';
-// FIX: Changed to a named import to match the named export from InvestorCommunity.tsx
+// FIX: Corrected named import path for InvestorCommunity
 import { InvestorCommunity } from './InvestorCommunity';
 import InvestorSettingsPage from './InvestorSettings';
 import { ChartBarIcon, DocumentTextIcon, ChatBubbleLeftRightIcon } from '../../icons/ActionIcons';

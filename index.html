@@ -16,10 +16,12 @@
               sans: ['Inter', 'sans-serif'],
             },
             colors: {
-              'brand-primary': '#D95F18',
-              'brand-gold': '#F2B705',
-              'brand-light': '#F9F6F2',
-              'brand-dark': '#0D1B2A',
+              'brand-primary': '#111111', // Rich Black
+              'brand-secondary': '#0D9488', // Teal
+              'brand-accent': '#F43F5E', // Rose
+              'brand-gold': '#D4AF37', // Metallic Gold
+              'brand-light': '#F8F8F8', // Very Light Gray
+              'brand-dark': '#000000', // Pure Black
               'slate': {
                 50: '#f8fafc',
                 100: '#f1f5f9',
@@ -47,12 +49,13 @@
     "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/",
     "@google-ai/generativelanguage": "https://aistudiocdn.com/@google-ai/generativelanguage@^3.4.0",
     "react-markdown": "https://esm.sh/react-markdown@9",
-    "rehype-raw": "https://esm.sh/rehype-raw@7"
+    "rehype-raw": "https://esm.sh/rehype-raw@7",
+    "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
   }
 }
 </script>
 </head>
-  <body class="bg-brand-light dark:bg-slate-900 antialiased">
+  <body class="bg-slate-50 dark:bg-slate-900 antialiased">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

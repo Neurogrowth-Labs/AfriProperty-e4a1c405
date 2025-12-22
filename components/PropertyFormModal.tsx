@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import type { Property, User } from '../types';
@@ -35,7 +34,7 @@ const emptyProperty: Omit<Property, 'id' | 'agent' | 'featured' | 'smartContract
   verified: false,
   views: 0,
   status: PropertyStatus.DRAFT,
-  dateListed: 0, // This will be set dynamically when the form is opened for a new property.
+  dateListed: 0, 
   saves: 0,
 };
 
@@ -49,7 +48,6 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
         if (propertyToEdit) {
             setProperty(propertyToEdit);
         } else {
-            // Set a fresh timestamp for new properties when the modal is opened
             setProperty({...emptyProperty, dateListed: Date.now()});
         }
     }, [propertyToEdit, isOpen]);
@@ -112,13 +110,12 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
                 Keep it engaging and highlight the best features. Write only the description text.
             `;
             const result = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
             });
-            setProperty(prev => ({ ...prev, description: result.text }));
+            setProperty(prev => ({ ...prev, description: result.text || '' }));
         } catch (error) {
             console.error("Error generating description:", error);
-            // Optionally set an error state to show in the UI
         } finally {
             setIsGenerating(false);
         }
@@ -272,13 +269,18 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
                                 <button type="button" onClick={() => handleListen(property.description)} disabled={isListening || !property.description} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50">
                                     {isListening ? <PauseIcon className="w-4 h-4"/> : <SpeakerWaveIcon className="w-4 h-4" />}
                                 </button>
-                                <button type="button" onClick={handleGenerateDescription} disabled={isGenerating} className="text-sm font-semibold text-brand-primary hover:text-brand-dark flex items-center gap-1 disabled:opacity-50">
+                                <button 
+                                    type="button" 
+                                    onClick={handleGenerateDescription} 
+                                    disabled={isGenerating} 
+                                    className="text-xs font-black uppercase tracking-widest bg-brand-primary text-brand-gold border border-brand-gold px-3 py-1.5 rounded-lg hover:bg-brand-gold hover:text-brand-dark transition-all disabled:opacity-50 flex items-center gap-1 shadow-lg"
+                                >
                                     {isGenerating ? (
-                                        <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+                                        <div className="w-4 h-4 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div>
                                     ) : (
                                         <SparklesIcon className="w-4 h-4"/>
                                     )}
-                                    Generate with AI
+                                    Premium Write
                                 </button>
                             </div>
                         </div>
@@ -321,14 +323,14 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
                  <footer className="bg-slate-50 dark:bg-slate-800 p-4 rounded-b-xl flex justify-end sticky bottom-0">
                     <div className="flex space-x-3">
                          <button type="button" onClick={onClose} className="bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-lg font-semibold border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">Cancel</button>
-                         <button type="submit" className="bg-brand-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-opacity-90">Publish Listing</button>
+                         <button type="submit" className="bg-brand-primary text-brand-gold border-2 border-brand-gold px-5 py-2.5 rounded-lg font-bold hover:bg-brand-gold hover:text-brand-dark transition-all shadow-xl uppercase tracking-widest text-xs">Publish Listing</button>
                     </div>
                 </footer>
             </form>
         </div>
         <style>{`
             .input {
-                @apply px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary;
+                @apply px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold;
             }
             @keyframes fadeInScale {
                 from { opacity: 0; transform: scale(0.95); }
