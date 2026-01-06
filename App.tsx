@@ -55,7 +55,8 @@ import ServicesPage from './components/pages/ServicesPage';
 import PricingPage from './components/pages/PricingPage';
 
 
-type AuthView = 'login' | 'signup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
+// FIX: Added 'userSignup' to the AuthView type to allow setting this view state, resolving a TypeScript error.
+type AuthView = 'login' | 'signup' | 'userSignup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
 type Page = 'home' | 'about' | 'services' | 'contact' | 'pricing';
 
 const initialFilters: SearchFilters = {

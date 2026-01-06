@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
 import { blobToBase64 } from '../../../lib/utils';
@@ -89,8 +88,8 @@ const DescriptionGenerator: React.FC = () => {
                 - Key Features: ${descInputs.beds} bed, ${descInputs.baths} bath, ${descInputs.area} sqft
                 - Top Amenities: ${descInputs.amenities}
                 - Neighborhood Highlights: ${descInputs.neighborhood}`;
-            const result = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
-            setGeneratedDesc(result.text);
+            const result = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });
+            setGeneratedDesc(result.text || '');
         } catch (error) {
             console.error(error);
             setGeneratedDesc('Error generating description. Please try again.');
@@ -105,7 +104,8 @@ const DescriptionGenerator: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
                 <input name="title" onChange={handleDescChange} placeholder="Property Title" className="input col-span-2" />
                 <select name="type" onChange={handleDescChange} value={descInputs.type} className="input">
-                    {Object.values(PropertyType).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
+                    {/* FIX: Explicitly cast enum values to string array to satisfy map key and children types. */}
+                    {(Object.values(PropertyType) as string[]).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
                 </select>
                 <input name="location" onChange={handleDescChange} placeholder="City" className="input" />
                 <input name="beds" type="number" onChange={handleDescChange} placeholder="Beds" className="input" />
@@ -143,7 +143,7 @@ const PricingRecommender: React.FC = () => {
                 - Size: ${priceInputs.beds} beds, ${priceInputs.baths} baths, ${priceInputs.area} sqft
                 - Condition: ${priceInputs.condition}`;
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-3-flash-preview',
                 contents: prompt,
                 config: { responseMimeType: 'application/json', responseSchema: pricingRecommenderSchema }
             });
@@ -160,7 +160,8 @@ const PricingRecommender: React.FC = () => {
             <h4 className="text-lg font-bold text-slate-800 dark:text-white">Dynamic Pricing Recommender</h4>
             <div className="grid grid-cols-2 gap-4">
                 <select name="type" onChange={handlePriceChange} value={priceInputs.type} className="input">
-                     {Object.values(PropertyType).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
+                     {/* FIX: Explicitly cast enum values to string array to satisfy map key and children types. */}
+                     {(Object.values(PropertyType) as string[]).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
                 </select>
                 <input name="location" onChange={handlePriceChange} placeholder="City" className="input" value={priceInputs.location}/>
                 <input name="beds" type="number" onChange={handlePriceChange} placeholder="Beds" className="input" value={priceInputs.beds}/>
@@ -314,11 +315,11 @@ const ContentAnalyzer: React.FC = () => {
             }
             
             const response = await ai.models.generateContent({
-                model: 'gemini-2.5-pro',
+                model: 'gemini-3-pro-preview',
                 contents: [{ parts: contentParts }],
             });
 
-            setAnalysis(response.text);
+            setAnalysis(response.text || '');
 
         } catch (err: any) {
             console.error(err);
@@ -436,16 +437,16 @@ const ImageGenerator: React.FC = () => {
              <p className="text-sm text-slate-500 dark:text-slate-400">Generate high-quality, realistic images for your property listings or marketing materials from a simple text description.</p>
              <div className="flex items-center gap-2">
                 <input value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Enter a detailed prompt..." className="w-full input" />
-                <button onClick={handleGenerate} disabled={isLoading} className="btn-primary flex-shrink-0">
-                    {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
+                <button onClick={handleGenerate} disabled={isLoading} className="btn-write w-auto flex-shrink-0 px-6">
+                    {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
                 </button>
              </div>
              {error && <p className="text-sm text-red-500 text-center">{error}</p>}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {isLoading && [...Array(2)].map((_, i) => <div key={i} className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse"></div>)}
-                {images.map((src, i) => <img key={i} src={src} alt={`Generated image ${i + 1}`} className="w-full aspect-video object-cover rounded-lg"/>)}
+                {isLoading && [...Array(2)].map((_, i) => <div key={i} className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse border-2 border-brand-gold/10"></div>)}
+                {images.map((src, i) => <img key={i} src={src} alt={`Generated image ${i + 1}`} className="w-full aspect-video object-cover rounded-lg border-2 border-brand-gold shadow-xl"/>)}
              </div>
-              <style>{`.input { @apply px-3 py-2 border border-slate-300 rounded-md focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-700/80; } .btn-primary { @apply px-4 py-2.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400; }`}</style>
+              <style>{`.input { @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80; } .btn-write { @apply bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-2.5 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg; }`}</style>
         </div>
     );
 };
@@ -527,20 +528,25 @@ const VideoGenerator: React.FC = () => {
     return (
         <div className="space-y-4">
             <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Video Generation</h4>
-             <p className="text-sm text-slate-500 dark:text-slate-400">Create stunning, short video clips for social media or property listings. This feature requires selecting an API key. <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-brand-primary underline">Learn about billing</a>.</p>
+             <p className="text-sm text-slate-500 dark:text-slate-400">Create stunning, short video clips for social media or property listings. This feature requires selecting an API key. <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-brand-gold underline">Learn about billing</a>.</p>
              <div className="flex items-center gap-2">
                 <input value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Enter a detailed video prompt..." className="w-full input" />
-                <button onClick={handleGenerate} disabled={isLoading} className="btn-primary flex-shrink-0">
-                    {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
+                <button onClick={handleGenerate} disabled={isLoading} className="btn-write w-auto flex-shrink-0 px-6">
+                    {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
                 </button>
              </div>
              {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-             <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mt-4">
-                 {isLoading && <div className="text-center"><div className="w-8 h-8 border-4 border-slate-300 border-t-brand-primary rounded-full animate-spin mx-auto"></div><p className="mt-4 text-sm font-semibold text-slate-600 dark:text-slate-300">{loadingMessage}</p></div>}
+             <div className="aspect-video bg-brand-primary dark:bg-slate-950 rounded-xl flex items-center justify-center mt-4 border-2 border-brand-gold shadow-2xl relative">
+                 {isLoading && (
+                    <div className="text-center z-10">
+                        <div className="w-10 h-10 border-4 border-white/20 border-t-brand-gold rounded-full animate-spin mx-auto shadow-[0_0_15px_rgba(212,175,55,0.5)]"></div>
+                        <p className="mt-4 text-sm font-black text-brand-gold uppercase tracking-widest animate-pulse">{loadingMessage}</p>
+                    </div>
+                 )}
                  {videoUrl && <video src={videoUrl} controls autoPlay loop className="w-full h-full rounded-lg" />}
-                 {!isLoading && !videoUrl && !error && <p className="text-slate-400">Generated video will appear here.</p>}
+                 {!isLoading && !videoUrl && !error && <p className="text-white/30 font-bold uppercase tracking-widest">Premium AI Studio</p>}
              </div>
-              <style>{`.input { @apply px-3 py-2 border border-slate-300 rounded-md focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-700/80; } .btn-primary { @apply px-4 py-2.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:bg-slate-400; }`}</style>
+              <style>{`.input { @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80; } .btn-write { @apply bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-2.5 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg; }`}</style>
         </div>
     );
 };

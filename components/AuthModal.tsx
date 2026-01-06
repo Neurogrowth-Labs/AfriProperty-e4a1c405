@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { CloseIcon } from './icons/NavIcons';
 import { authenticateUser, addUser } from '../lib/data';
@@ -212,7 +211,8 @@ const AgentSignupView: React.FC<{ onSignupSuccess: () => void, onSwitchToLogin: 
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', phone: '', officeAddress: '', businessRegNumber: '', agentLicense: '', agreeToTerms: false });
     const [idDoc, setIdDoc] = useState<File | null>(null);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // FIX: Broadened event type to handle all possible form elements used in signup forms.
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
@@ -260,7 +260,8 @@ const InvestorSignupView: React.FC<{ onSignupSuccess: () => void, setError: (e: 
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', phone: '', investmentType: 'Individual', companyName: '', agreeToTerms: false });
     const [idDoc, setIdDoc] = useState<File | null>(null);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    // FIX: Broadened event type to handle all possible form elements used in signup forms.
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));

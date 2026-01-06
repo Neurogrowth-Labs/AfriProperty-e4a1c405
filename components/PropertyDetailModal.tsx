@@ -116,15 +116,20 @@ const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({ isOpen, onClo
       : formatCurrency(property.price);
 
   useEffect(() => {
-    if (isOpen) {
-      setActiveImage(property.images[0]);
-      setReviews(getReviewsForAgent(property.agent.name));
-      // Reset translation state
-      setTranslatedDescription(null);
-      setTranslatedNeighborhood(null);
-      setShowTranslatedDesc(false);
-      setShowTranslatedNeighborhood(false);
-    }
+    const initModal = async () => {
+      if (isOpen) {
+        setActiveImage(property.images[0]);
+        // FIX: getReviewsForAgent is an async function. We need to await its result before setting state.
+        const agentReviews = await getReviewsForAgent(property.agent.name);
+        setReviews(agentReviews);
+        // Reset translation state
+        setTranslatedDescription(null);
+        setTranslatedNeighborhood(null);
+        setShowTranslatedDesc(false);
+        setShowTranslatedNeighborhood(false);
+      }
+    };
+    initModal();
   }, [isOpen, property]);
   
   const handlePrevImage = () => {
@@ -168,7 +173,7 @@ const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({ isOpen, onClo
             Provide your response as a JSON object with "estimated_value" (number), "confidence" ('Low', 'Medium', or 'High'), and a "rationale" (string).
         `;
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-3-flash-preview",
             contents: prompt,
             config: {
                 responseMimeType: "application/json",

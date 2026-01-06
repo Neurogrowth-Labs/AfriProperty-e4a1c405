@@ -1,3 +1,4 @@
+
 import { ALL_PROPERTIES as initialProperties, MOCK_NOTIFICATIONS } from '../constants';
 import type { Property, TourRequest, User, SearchFilters, Message, Review, CalendarEvent, AgentProfile, Lead, InvestorSettings, InvestmentRequest, PropertyAlert, UserDocument, Notification } from '../types';
 import { ListingType, PropertyStatus } from '../types';
@@ -137,7 +138,6 @@ export const getProperties = async (): Promise<Property[]> => {
 export const saveProperties = async (properties: Property[]): Promise<void> => {
     const { error } = await supabase.from('properties').upsert(properties.map(p => ({
         ...p,
-        date_listed: p.dateListed,
         listing_type: p.listingType,
         property_type: p.propertyType
     })));

@@ -55,7 +55,8 @@ import ServicesPage from './components/pages/ServicesPage';
 import PricingPage from './components/pages/PricingPage';
 
 
-type AuthView = 'login' | 'signup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
+// FIX: Added 'userSignup' to the AuthView type to allow setting this view state, resolving a TypeScript error.
+type AuthView = 'login' | 'signup' | 'userSignup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
 type Page = 'home' | 'about' | 'services' | 'contact' | 'pricing';
 
 const initialFilters: SearchFilters = {
@@ -295,7 +296,7 @@ The other fields should follow these rules:
 `;
                 
                 const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
+                    model: 'gemini-3-flash-preview',
                     contents: prompt,
                     config: { responseMimeType: 'application/json', responseSchema: blogSchema }
                 });
@@ -457,6 +458,7 @@ The other fields should follow these rules:
             updatedProperties = updatedProperties.map(p => p.id === id ? {...p, saves: p.saves + 1} : p);
         }
         setSavedPropertyIds(newSaved);
+        // FIX: Added explicit type cast to string[] for Array.from result to fix line 460 error
         await savePropertiesForUser(currentUser.username, Array.from(newSaved) as string[]);
         await saveProperties(updatedProperties);
         setAllProperties(updatedProperties);
@@ -773,7 +775,7 @@ The other fields should follow these rules:
   
   const handleMarkAllAsRead = async () => {
       if (!currentUser) return;
-      const allIds = notifications.map(n => n.id) as string[];
+      const allIds = (notifications as any[]).map(n => n.id) as string[];
       const updatedReadIds = await markNotificationsAsRead(currentUser.username, allIds);
       setReadNotificationIds(updatedReadIds);
   };
