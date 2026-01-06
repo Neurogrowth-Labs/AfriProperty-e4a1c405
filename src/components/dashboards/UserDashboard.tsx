@@ -128,9 +128,9 @@ const formatSearchFilters = (filters: SearchFilters) => {
 
 const SavedSearchesView: React.FC<{ savedSearches: SearchFilters[], onRunSearch: (f: SearchFilters) => void, onDeleteSearch: (f: SearchFilters) => void }> = ({ savedSearches, onRunSearch, onDeleteSearch }) => (
      <div>
-        <h2 className="text-2xl font-bold text-brand-dark dark:text-white mb-4">Saved Searches ({savedSearches.length})</h2>
+        <h2 className="text-2xl font-bold text-brand-dark dark:text-white mb-4">Saved Searches ({savedSearches?.length || 0})</h2>
         <div className="space-y-4">
-            {savedSearches.length > 0 ? savedSearches.map((search, index) => (
+            {savedSearches && Array.isArray(savedSearches) && savedSearches.length > 0 ? (savedSearches as SearchFilters[]).map((search, index) => (
                 <div key={index} className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                         <BookmarkIcon className="w-6 h-6 text-brand-primary flex-shrink-0" />
@@ -152,7 +152,7 @@ const MessagesView: React.FC<{ groupedMessages: Record<string, Message[]>, user:
     <div>
         <h2 className="text-2xl font-bold text-brand-dark dark:text-white mb-4">Agent Messages</h2>
         <div className="space-y-6">
-            {Object.keys(groupedMessages).length > 0 ? Object.entries(groupedMessages).map(([propertyId, msgs]) => (
+            {Object.keys(groupedMessages).length > 0 ? Object.entries(groupedMessages).map(([propertyId, msgs]: [string, Message[]]) => (
                 <div key={propertyId} className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
                     <h3 className="font-bold text-brand-dark dark:text-white mb-3 border-b pb-2 dark:border-slate-700">{msgs[0].propertyTitle}</h3>
                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
@@ -179,7 +179,7 @@ const PropertyAlertsView: React.FC<{ user: User }> = ({ user }) => {
         const fetchAlerts = async () => {
             const data = await getPropertyAlerts(user.username);
             // FIX: Ensure data is an array before setting state to prevent mapping errors.
-            setAlerts(Array.isArray(data) ? data : []);
+            setAlerts(Array.isArray(data) ? (data as PropertyAlert[]) : []);
         };
         fetchAlerts();
     }, [user.username]);
@@ -226,7 +226,7 @@ const DocumentVaultView: React.FC<{ user: User }> = ({ user }) => {
         const fetchDocs = async () => {
             const data = await getUserDocuments(user.username);
             // FIX: Ensure data is an array before setting state to prevent mapping errors.
-            setDocs(Array.isArray(data) ? data : []);
+            setDocs(Array.isArray(data) ? (data as UserDocument[]) : []);
         };
         fetchDocs();
     }, [user.username]);

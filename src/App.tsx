@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -5,7 +6,7 @@ import Hero from './components/Hero';
 import PropertyList from './components/PropertyList';
 import { CATEGORIES, AGENT_ACHIEVEMENTS, INVESTOR_ACHIEVEMENTS } from './constants';
 import type { Property, SearchFilters, TourRequest, User, Message, Review, CalendarEvent, AgentProfile, Lead, Achievement, InvestorSettings, InvestmentRequest, BlogPost, Notification } from './types';
-import { ListingType, PropertyType, Language, Currency, PropertyStatus, NotificationType } from './types';
+import { ListingType, PropertyType, PropertyStatus, NotificationType } from './types';
 import CategoryCard from './components/CategoryCard';
 import Chatbot from './components/Chatbot';
 import MortgageCalculator from './components/MortgageCalculator';
@@ -116,6 +117,7 @@ const App: React.FC = () => {
   
   // Auth State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [postLoginDestination, setPostLoginDestination] = useState<'dashboard' | 'stay'>('dashboard');
 
   // Saved Properties State
   const [savedPropertyIds, setSavedPropertyIds] = useState<Set<string>>(new Set());
@@ -161,6 +163,7 @@ const App: React.FC = () => {
   
   // AI Search State
   const [isSearchingAI, setIsSearchingAI] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   // Modal States
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
@@ -198,6 +201,8 @@ const App: React.FC = () => {
   const [readNotificationIds, setReadNotificationIds] = useState<Set<string>>(new Set());
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoadingBlog, setIsLoadingBlog] = useState(true);
+  const [blogError, setBlogError] = useState<string | null>(null);
+
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [propertyToEdit, setPropertyToEdit] = useState<Property | null>(null);
   const [compareList, setCompareList] = useState<Property[]>([]);
@@ -263,6 +268,7 @@ const App: React.FC = () => {
     useEffect(() => {
         const generateAndCacheBlogPosts = async () => {
             setIsLoadingBlog(true);
+            setBlogError(null);
             const cachedPosts = localStorage.getItem('blogPosts');
             if (cachedPosts) {
                 setBlogPosts(JSON.parse(cachedPosts));
@@ -308,6 +314,7 @@ The other fields should follow these rules:
                 }
             } catch (error) {
                 console.error("Failed to generate blog posts:", error);
+                setBlogError("We're unable to load the latest market insights at the moment. Please check back later.");
             } finally {
                 setIsLoadingBlog(false);
             }
@@ -387,6 +394,7 @@ The other fields should follow these rules:
   const handleAISearch = async (query: string) => {
     if (!query.trim()) return;
     setIsSearchingAI(true);
+    setSearchError(null);
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
         const prompt = `Parse the following user query into a JSON object of search filters. Use the provided schema. If a value isn't specified, omit the key.
@@ -409,7 +417,7 @@ The other fields should follow these rules:
 
     } catch (error) {
         console.error("AI Search Error:", error);
-        alert("Sorry, I couldn't understand that search. Please try rephrasing.");
+        setSearchError("Sorry, we couldn't quite understand that. Try phrases like '2 bed apartment in Cape Town' or 'Luxury villa with pool'.");
     } finally {
         setIsSearchingAI(false);
     }
@@ -444,6 +452,7 @@ The other fields should follow these rules:
   const handleSaveToggle = async (propertyId: string) => {
     withIdRoleGate(propertyId, async (id) => {
         if (!currentUser) {
+            setPostLoginDestination('stay');
             setAuthModalView('login');
             setIsAuthModalOpen(true);
             return;
@@ -489,6 +498,7 @@ The other fields should follow these rules:
   const handleOpenTourModal = (property: Property) => {
     withRoleGate(property, (p) => {
       if (!currentUser) {
+        setPostLoginDestination('stay');
         setAuthModalView('login');
         setIsAuthModalOpen(true);
         return;
@@ -516,6 +526,9 @@ The other fields should follow these rules:
   const handleLogin = (user: User) => {
       setCurrentUser(user);
       setIsAuthModalOpen(false);
+      if (postLoginDestination === 'dashboard') {
+          setIsDashboardOpen(true);
+      }
   };
   
   const handleLogout = () => {
@@ -579,6 +592,7 @@ The other fields should follow these rules:
   
   const handleSaveSearch = async () => {
     if (!currentUser) {
+      setPostLoginDestination('stay');
       setAuthModalView('login');
       setIsAuthModalOpen(true);
       return;
@@ -604,6 +618,7 @@ The other fields should follow these rules:
   const handleMessageAgent = (property: Property) => {
       withRoleGate(property, (p) => {
           if (!currentUser) {
+            setPostLoginDestination('stay');
             setAuthModalView('login');
             setIsAuthModalOpen(true);
             return;
@@ -728,6 +743,7 @@ The other fields should follow these rules:
   
   const handleSaveNeighborhoodToggle = (neighborhoodId: string) => {
     if (!currentUser) {
+        setPostLoginDestination('stay');
         setAuthModalView('login');
         setIsAuthModalOpen(true);
         return;
@@ -757,6 +773,7 @@ The other fields should follow these rules:
 
   const handlePlanSelect = (role: 'user' | 'agent' | 'investor') => {
       setPage('home');
+      setPostLoginDestination('dashboard');
       if (role === 'user') {
           setAuthModalView('userSignup');
       } else if (role === 'agent') {
@@ -855,13 +872,14 @@ The other fields should follow these rules:
                       isSearchingAI={isSearchingAI}
                       filters={filters}
                       onFilterChange={handleFilterChange}
+                      searchError={searchError}
                   />
 
                   <NewOfferings />
                   
-                  <section id="just-listed" className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+                  <section id="just-listed" className="py-8 lg:py-12 bg-white dark:bg-slate-900">
                   <div className="container mx-auto px-4 sm:px-6">
-                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Just Listed</h2>
+                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-10">Just Listed</h2>
                       <PropertyList 
                           properties={recentProperties}
                           currentUser={currentUser}
@@ -881,9 +899,9 @@ The other fields should follow these rules:
                   </div>
                   </section>
 
-                  <section id="featured-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark/40">
+                  <section id="featured-listings" className="py-8 lg:py-12 bg-brand-light dark:bg-brand-dark/40">
                   <div className="container mx-auto px-4 sm:px-6">
-                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">{t.app.featuredListings}</h2>
+                      <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-10">{t.app.featuredListings}</h2>
                       <PropertyList 
                       properties={featuredProperties}
                       currentUser={currentUser}
@@ -903,9 +921,9 @@ The other fields should follow these rules:
                   </div>
                   </section>
 
-                  <section className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+                  <section className="py-8 lg:py-12 bg-white dark:bg-slate-900">
                       <div className="container mx-auto px-4 sm:px-6">
-                          <div className="text-center mb-12">
+                          <div className="text-center mb-10">
                               <h2 className="text-3xl md:text-4xl font-bold text-brand-dark dark:text-white">{t.app.exploreByLifestyle}</h2>
                               <p className="text-center text-slate-500 dark:text-slate-400 mt-4 max-w-2xl mx-auto">{t.app.exploreByLifestyleSubtitle}</p>
                           </div>
@@ -917,10 +935,10 @@ The other fields should follow these rules:
                       </div>
                   </section>
 
-                  <section id="all-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark/40">
+                  <section id="all-listings" className="py-8 lg:py-12 bg-brand-light dark:bg-brand-dark/40">
                   <div className="container mx-auto px-4 sm:px-6">
                       <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-4">{t.app.findYourProperty}</h2>
-                      <div className="flex justify-center items-center gap-4 mb-10">
+                      <div className="flex justify-center items-center gap-4 mb-8">
                           <button onClick={() => setActiveTab('all')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors ${activeTab === 'all' ? 'bg-brand-primary text-white' : 'bg-white/50 text-brand-dark'}`}>{t.app.allListings}</button>
                           <button onClick={() => setActiveTab('saved')} className={`px-4 py-2 text-sm font-semibold rounded-full transition-colors relative ${activeTab === 'saved' ? 'bg-brand-primary text-white' : 'bg-white/50 text-brand-dark'}`}>
                           {t.app.savedProperties}
@@ -1023,7 +1041,7 @@ The other fields should follow these rules:
 
                   <FinancialServices />
                   <NeighborhoodSection onOpenExplorer={handleOpenNeighborhoodExplorer} />
-                  <BlogSection posts={blogPosts} onPostClick={handleBlogClick} isLoading={isLoadingBlog}/>
+                  <BlogSection posts={blogPosts} onPostClick={handleBlogClick} isLoading={isLoadingBlog} error={blogError} />
               </>
           );
       }
@@ -1036,7 +1054,7 @@ The other fields should follow these rules:
         currentUser={currentUser}
         notifications={notificationsWithReadStatus}
         readNotificationIds={readNotificationIds}
-        onLoginClick={() => { setAuthModalView('login'); setIsAuthModalOpen(true); }}
+        onLoginClick={() => { setPostLoginDestination('dashboard'); setAuthModalView('login'); setIsAuthModalOpen(true); }}
         onSignUpClick={() => setPage('pricing')}
         onDashboardClick={() => setIsDashboardOpen(true)}
         onListPropertyClick={handleListPropertyClick}

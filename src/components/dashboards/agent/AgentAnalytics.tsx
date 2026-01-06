@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import type { Property, TourRequest, User } from '../../../types';
 import { ListingType } from '../../../types';
@@ -76,17 +77,15 @@ export const AgentAnalytics: React.FC<AgentAnalyticsProps> = ({ user, allPropert
         const sales = Math.floor(totalInquiries * 0.1);
 
         const leadDemographics = {
-            // FIX: Untyped function calls may not accept type arguments. Explicitly typing the accumulator and its initial value resolves this.
-            byLocation: receivedInquiries.reduce<Record<string, number>>((acc, inquiry) => {
+            byLocation: receivedInquiries.reduce((acc: Record<string, number>, inquiry) => {
                 const prop = allProperties.find(p => p.id === inquiry.propertyId);
                 if (prop) {
                     const city = prop.address.city;
                     acc[city] = (acc[city] || 0) + 1;
                 }
                 return acc;
-            }, {}),
-            // FIX: Untyped function calls may not accept type arguments. Explicitly typing the accumulator and its initial value resolves this.
-            byBudget: receivedInquiries.reduce<Record<string, number>>((acc, inquiry) => {
+            }, {} as Record<string, number>),
+            byBudget: receivedInquiries.reduce((acc: Record<string, number>, inquiry) => {
                  const prop = allProperties.find(p => p.id === inquiry.propertyId);
                  if (prop) {
                      // FIX: Use enum for comparison instead of string literal
@@ -98,7 +97,7 @@ export const AgentAnalytics: React.FC<AgentAnalyticsProps> = ({ user, allPropert
                      acc[bracket] = (acc[bracket] || 0) + 1;
                  }
                  return acc;
-            }, {}),
+            }, {} as Record<string, number>),
         };
         
         const listingPerformance = userProperties.map(p => {

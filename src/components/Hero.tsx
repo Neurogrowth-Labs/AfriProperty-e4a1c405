@@ -9,6 +9,7 @@ interface HeroProps {
     isSearchingAI: boolean;
     filters: SearchFilters;
     onFilterChange: (key: keyof SearchFilters, value: any) => void;
+    searchError?: string | null;
 }
 
 const Hero: React.FC<HeroProps> = (props) => {

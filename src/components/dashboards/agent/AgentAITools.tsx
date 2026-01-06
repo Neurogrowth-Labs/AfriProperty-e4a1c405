@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Type } from "@google/genai";
 import { blobToBase64 } from '../../../lib/utils';
-import { VideoCameraIcon, CameraIcon, SparklesIcon, CpuChipIcon } from '../../icons/ActionIcons';
+import { VideoCameraIcon, CameraIcon, SparklesIcon, CpuChipIcon, PencilIcon } from '../../icons/ActionIcons';
 import { PropertyType } from '../../../types';
 
 type AITab = 'descGen' | 'priceRec' | 'contentAnalyzer' | 'imageGen' | 'videoGen';
@@ -13,8 +13,8 @@ const AgentAITools: React.FC = () => {
     { id: 'descGen', label: 'Description Generator', icon: SparklesIcon },
     { id: 'priceRec', label: 'Pricing Recommender', icon: CpuChipIcon },
     { id: 'contentAnalyzer', label: 'Content Analyzer', icon: CpuChipIcon },
-    { id: 'imageGen', label: 'Image Generation', icon: CameraIcon },
-    { id: 'videoGen', label: 'Video Generation', icon: VideoCameraIcon },
+    { id: 'imageGen', label: 'Image Studio', icon: CameraIcon },
+    { id: 'videoGen', label: 'Video Studio', icon: VideoCameraIcon },
   ];
 
   return (
@@ -104,7 +104,6 @@ const DescriptionGenerator: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
                 <input name="title" onChange={handleDescChange} placeholder="Property Title" className="input col-span-2" />
                 <select name="type" onChange={handleDescChange} value={descInputs.type} className="input">
-                    {/* FIX: Explicitly cast enum values to string array to satisfy map key and children types. */}
                     {(Object.values(PropertyType) as string[]).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
                 </select>
                 <input name="location" onChange={handleDescChange} placeholder="City" className="input" />
@@ -147,7 +146,7 @@ const PricingRecommender: React.FC = () => {
                 contents: prompt,
                 config: { responseMimeType: 'application/json', responseSchema: pricingRecommenderSchema }
             });
-            setPriceRec(JSON.parse(response.text.trim()));
+            setPriceRec(JSON.parse(response.text?.trim() || '{}'));
         } catch (error) {
             console.error(error);
         } finally {
@@ -160,7 +159,6 @@ const PricingRecommender: React.FC = () => {
             <h4 className="text-lg font-bold text-slate-800 dark:text-white">Dynamic Pricing Recommender</h4>
             <div className="grid grid-cols-2 gap-4">
                 <select name="type" onChange={handlePriceChange} value={priceInputs.type} className="input">
-                     {/* FIX: Explicitly cast enum values to string array to satisfy map key and children types. */}
                      {(Object.values(PropertyType) as string[]).filter(t => t !== PropertyType.ALL).map(t => <option key={t}>{t}</option>)}
                 </select>
                 <input name="location" onChange={handlePriceChange} placeholder="City" className="input" value={priceInputs.location}/>
@@ -314,6 +312,7 @@ const ContentAnalyzer: React.FC = () => {
                  throw new Error("Unsupported file type or media element not ready.");
             }
             
+            // Use gemini-3-pro-preview for advanced video/image analysis
             const response = await ai.models.generateContent({
                 model: 'gemini-3-pro-preview',
                 contents: [{ parts: contentParts }],
@@ -333,11 +332,11 @@ const ContentAnalyzer: React.FC = () => {
         <div className="space-y-4">
             <div>
                 <h4 className="text-lg font-bold text-slate-800 dark:text-white">Content Analyzer</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Upload a property image or video to get AI-powered feedback and suggestions for improvement.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Upload a property image or video to get AI-powered feedback and suggestions using Gemini 3 Pro.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                     <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                     <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden border-2 border-brand-gold/20">
                         {fileType === 'video' && filePreview && <video ref={videoRef} src={filePreview} controls className="w-full h-full rounded-lg" />}
                         {fileType === 'image' && filePreview && <img src={filePreview} alt="Property preview" className="w-full h-full object-contain rounded-lg" />}
                         {!filePreview && (
@@ -365,27 +364,27 @@ const ContentAnalyzer: React.FC = () => {
                         <label htmlFor="prompt" className="block text-sm font-medium text-slate-700 dark:text-slate-200">Your Prompt</label>
                         <textarea id="prompt" value={prompt} onChange={e => setPrompt(e.target.value)} rows={4} className="mt-1 w-full input" />
                     </div>
-                     <button onClick={handleAnalyze} disabled={isLoading || !file} className="mt-3 w-full btn-primary">
-                        {isLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <CpuChipIcon className="w-5 h-5"/>}
+                     <button onClick={handleAnalyze} disabled={isLoading || !file} className="mt-3 w-full btn-write">
+                        {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <CpuChipIcon className="w-5 h-5"/>}
                         {isLoading ? 'Analyzing...' : 'Analyze Content'}
                     </button>
                 </div>
             </div>
             <div className="mt-4">
                  <h5 className="font-semibold text-slate-700 dark:text-slate-200 mb-2">Analysis & Suggestions</h5>
-                 <div className="w-full min-h-[150px] bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                 <div className="w-full min-h-[150px] bg-brand-primary dark:bg-slate-900 rounded-xl p-6 border border-brand-gold/30 text-white shadow-xl">
                      {isLoading ? (
                         <div className="space-y-2 animate-pulse">
-                            <div className="h-3 bg-slate-200 dark:bg-slate-600 rounded w-5/6"></div>
-                            <div className="h-3 bg-slate-200 dark:bg-slate-600 rounded w-full"></div>
-                            <div className="h-3 bg-slate-200 dark:bg-slate-600 rounded w-3/4"></div>
+                            <div className="h-3 bg-white/20 rounded w-5/6"></div>
+                            <div className="h-3 bg-white/20 rounded w-full"></div>
+                            <div className="h-3 bg-white/20 rounded w-3/4"></div>
                         </div>
                      ) : error ? (
-                        <p className="text-sm text-red-500">{error}</p>
+                        <p className="text-sm text-red-400 font-bold">{error}</p>
                      ) : analysis ? (
-                        <p className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap">{analysis}</p>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{analysis}</p>
                      ): (
-                        <p className="text-sm text-slate-400">AI analysis will appear here.</p>
+                        <p className="text-sm text-white/40">AI analysis will appear here.</p>
                      )}
                 </div>
             </div>
@@ -398,10 +397,36 @@ const ContentAnalyzer: React.FC = () => {
 };
 
 const ImageGenerator: React.FC = () => {
-    const [prompt, setPrompt] = useState('A cinematic, photorealistic image of a modern, eco-friendly house in a lush South African forest at sunset');
+    const [prompt, setPrompt] = useState('A modern, eco-friendly house in a lush South African forest at sunset');
     const [images, setImages] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [mode, setMode] = useState<'generate' | 'edit'>('generate');
+    const [sourceImage, setSourceImage] = useState<File | null>(null);
+    const [sourceImagePreview, setSourceImagePreview] = useState<string | null>(null);
+    const [aspectRatio, setAspectRatio] = useState('16:9');
+    const [imageSize, setImageSize] = useState('1K');
+    const [hasKey, setHasKey] = useState(false);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const checkKey = async () => {
+             if ((window as any).aistudio && typeof (window as any).aistudio.hasSelectedApiKey === 'function') {
+                const hasApiKey = await (window as any).aistudio.hasSelectedApiKey();
+                setHasKey(hasApiKey);
+            }
+        };
+        checkKey();
+    }, []);
+
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSourceImage(file);
+            setSourceImagePreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleGenerate = async () => {
         if (!prompt.trim()) return;
@@ -411,21 +436,78 @@ const ImageGenerator: React.FC = () => {
 
         try {
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-            const response = await ai.models.generateImages({
-                model: 'imagen-4.0-generate-001',
-                prompt: prompt,
-                config: {
-                    numberOfImages: 2,
-                    outputMimeType: 'image/jpeg',
-                    aspectRatio: '16:9',
-                },
-            });
+            
+            if (mode === 'edit' && sourceImage) {
+                // Use gemini-2.5-flash-image for editing
+                const base64Data = await blobToBase64(sourceImage);
+                const response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash-image',
+                    contents: {
+                        parts: [
+                            { inlineData: { mimeType: sourceImage.type, data: base64Data } },
+                            { text: prompt },
+                        ],
+                    },
+                });
 
-            const imageUrls = response.generatedImages.map(img => `data:image/jpeg;base64,${img.image.imageBytes}`);
-            setImages(imageUrls);
+                 // Parse response for image
+                const parts = response.candidates?.[0]?.content?.parts;
+                if (parts) {
+                    for (const part of parts) {
+                        if (part.inlineData) {
+                            const imageUrl = `data:image/png;base64,${part.inlineData.data}`;
+                            setImages([imageUrl]);
+                            break;
+                        }
+                    }
+                }
+                if (images.length === 0 && !response.candidates?.[0]?.content?.parts?.find(p => p.inlineData)) {
+                    // Fallback if no image returned
+                     console.warn("No image returned from edit request");
+                     setError('No edited image returned. The model might have refused the edit.');
+                }
+
+            } else {
+                // Use gemini-3-pro-image-preview for high quality generation
+                 if (!hasKey) {
+                    await (window as any).aistudio.openSelectKey();
+                    setHasKey(true);
+                }
+
+                 // Must create new instance for updated key if selected
+                 const aiWithKey = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+
+                const response = await aiWithKey.models.generateContent({
+                    model: 'gemini-3-pro-image-preview',
+                    contents: { parts: [{ text: prompt }] },
+                    config: {
+                        imageConfig: {
+                            aspectRatio: aspectRatio,
+                            imageSize: imageSize
+                        }
+                    },
+                });
+                
+                const parts = response.candidates?.[0]?.content?.parts;
+                if (parts) {
+                    for (const part of parts) {
+                        if (part.inlineData) {
+                            const imageUrl = `data:image/png;base64,${part.inlineData.data}`;
+                            setImages([imageUrl]);
+                            break;
+                        }
+                    }
+                }
+            }
+
         } catch (err: any) {
             console.error(err);
-            setError('Failed to generate images. Please try again.');
+            if (err.message?.includes("Requested entity was not found")) {
+                setError("API Key error. Please select a valid API key.");
+                setHasKey(false);
+            } else {
+                setError('Failed to generate image. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -433,18 +515,51 @@ const ImageGenerator: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Image Generation</h4>
-             <p className="text-sm text-slate-500 dark:text-slate-400">Generate high-quality, realistic images for your property listings or marketing materials from a simple text description.</p>
-             <div className="flex items-center gap-2">
-                <input value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Enter a detailed prompt..." className="w-full input" />
-                <button onClick={handleGenerate} disabled={isLoading} className="btn-write w-auto flex-shrink-0 px-6">
-                    {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : <SparklesIcon className="w-5 h-5" />} Generate
+            <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Image Studio</h4>
+             <p className="text-sm text-slate-500 dark:text-slate-400">Generate high-quality images or edit existing ones using advanced Gemini models.</p>
+             
+             <div className="flex gap-4 border-b border-slate-200 dark:border-slate-700 pb-2 mb-4">
+                <button onClick={() => setMode('generate')} className={`text-sm font-semibold pb-2 ${mode === 'generate' ? 'text-brand-primary border-b-2 border-brand-primary' : 'text-slate-500'}`}>Generate New</button>
+                <button onClick={() => setMode('edit')} className={`text-sm font-semibold pb-2 ${mode === 'edit' ? 'text-brand-primary border-b-2 border-brand-primary' : 'text-slate-500'}`}>Edit Image</button>
+             </div>
+
+             {mode === 'edit' && (
+                 <div className="mb-4">
+                    <input type="file" accept="image/*" onChange={handleImageUpload} ref={imageInputRef} className="hidden" />
+                    <button onClick={() => imageInputRef.current?.click()} className="w-full py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold text-slate-500 hover:border-brand-primary transition-colors">
+                        {sourceImage ? 'Change Image' : 'Upload Source Image'}
+                    </button>
+                    {sourceImagePreview && <img src={sourceImagePreview} alt="Source" className="mt-2 h-32 object-contain rounded-lg border border-slate-200" />}
+                 </div>
+             )}
+
+             <div className="flex flex-col gap-3">
+                 {mode === 'generate' && (
+                    <div className="flex gap-4">
+                        <select value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)} className="input text-sm">
+                            <option value="1:1">1:1 (Square)</option>
+                            <option value="16:9">16:9 (Landscape)</option>
+                            <option value="9:16">9:16 (Portrait)</option>
+                            <option value="4:3">4:3</option>
+                            <option value="3:4">3:4</option>
+                        </select>
+                         <select value={imageSize} onChange={(e) => setImageSize(e.target.value)} className="input text-sm">
+                            <option value="1K">1K Resolution</option>
+                            <option value="2K">2K Resolution</option>
+                            <option value="4K">4K Resolution</option>
+                        </select>
+                    </div>
+                 )}
+                <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={mode === 'generate' ? "Describe the image you want to create..." : "Describe the edits (e.g., 'Add a pool', 'Make it sunset')..."} rows={3} className="w-full input" />
+                <button onClick={handleGenerate} disabled={isLoading || (mode === 'edit' && !sourceImage)} className="btn-write w-full">
+                    {isLoading ? <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin"></div> : (mode === 'edit' ? <PencilIcon className="w-5 h-5"/> : <SparklesIcon className="w-5 h-5" />)} 
+                    {mode === 'edit' ? 'Edit Image' : 'Generate Image'}
                 </button>
              </div>
              {error && <p className="text-sm text-red-500 text-center">{error}</p>}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {isLoading && [...Array(2)].map((_, i) => <div key={i} className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse border-2 border-brand-gold/10"></div>)}
-                {images.map((src, i) => <img key={i} src={src} alt={`Generated image ${i + 1}`} className="w-full aspect-video object-cover rounded-lg border-2 border-brand-gold shadow-xl"/>)}
+                {isLoading && <div className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse border-2 border-brand-gold/10"></div>}
+                {images.map((src, i) => <img key={i} src={src} alt={`Result ${i + 1}`} className="w-full aspect-video object-contain rounded-lg border-2 border-brand-gold shadow-xl bg-black"/>)}
              </div>
               <style>{`.input { @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-gold focus:border-brand-gold dark:bg-slate-700/80; } .btn-write { @apply bg-brand-primary text-brand-gold border-2 border-brand-gold font-black uppercase tracking-widest py-2.5 rounded-xl hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg; }`}</style>
         </div>
@@ -458,18 +573,29 @@ const VideoGenerator: React.FC = () => {
     const [loadingMessage, setLoadingMessage] = useState('');
     const [error, setError] = useState('');
     const [hasKey, setHasKey] = useState(false);
+    const [sourceImage, setSourceImage] = useState<File | null>(null);
+    const [sourceImagePreview, setSourceImagePreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const loadingMessages = [ "Warming up the virtual cameras...", "Scouting digital locations...", "Rendering the first few frames...", "This can take a few minutes, hang tight...", "Applying cinematic color grading...", "Almost there, finalizing the video file..." ];
 
     useEffect(() => {
         const checkKey = async () => {
-             if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
-                const hasApiKey = await window.aistudio.hasSelectedApiKey();
+             if ((window as any).aistudio && typeof (window as any).aistudio.hasSelectedApiKey === 'function') {
+                const hasApiKey = await (window as any).aistudio.hasSelectedApiKey();
                 setHasKey(hasApiKey);
             }
         };
         checkKey();
     }, []);
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSourceImage(file);
+            setSourceImagePreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleGenerate = async () => {
         if (!prompt.trim()) return;
@@ -480,13 +606,24 @@ const VideoGenerator: React.FC = () => {
 
         try {
             if (!hasKey) {
-                await window.aistudio.openSelectKey();
+                await (window as any).aistudio.openSelectKey();
                 setHasKey(true);
             }
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+            
+            let imagePart = undefined;
+            if (sourceImage) {
+                const base64Data = await blobToBase64(sourceImage);
+                imagePart = {
+                    imageBytes: base64Data,
+                    mimeType: sourceImage.type
+                };
+            }
+
             let operation = await ai.models.generateVideos({
                 model: 'veo-3.1-fast-generate-preview',
                 prompt: prompt,
+                image: imagePart,
                 config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' }
             });
 
@@ -527,8 +664,17 @@ const VideoGenerator: React.FC = () => {
     
     return (
         <div className="space-y-4">
-            <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Video Generation</h4>
-             <p className="text-sm text-slate-500 dark:text-slate-400">Create stunning, short video clips for social media or property listings. This feature requires selecting an API key. <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-brand-gold underline">Learn about billing</a>.</p>
+            <h4 className="text-lg font-bold text-slate-800 dark:text-white">AI Video Studio (Veo)</h4>
+             <p className="text-sm text-slate-500 dark:text-slate-400">Create stunning video clips from text or animate an existing image. Requires API Key selection.</p>
+             
+             <div className="mb-4">
+                <input type="file" accept="image/*" onChange={handleImageUpload} ref={fileInputRef} className="hidden" />
+                <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-sm font-semibold text-slate-500 hover:border-brand-primary transition-colors">
+                    {sourceImage ? 'Change Input Image' : 'Upload Image to Animate (Optional)'}
+                </button>
+                {sourceImagePreview && <img src={sourceImagePreview} alt="Source for video" className="mt-2 h-32 object-contain rounded-lg border border-slate-200" />}
+             </div>
+
              <div className="flex items-center gap-2">
                 <input value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Enter a detailed video prompt..." className="w-full input" />
                 <button onClick={handleGenerate} disabled={isLoading} className="btn-write w-auto flex-shrink-0 px-6">

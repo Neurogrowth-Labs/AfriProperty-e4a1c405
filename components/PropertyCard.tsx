@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import type { Property } from '../types';
 import { BedIcon, BathIcon, AreaIcon } from './icons/PropertyIcons';
@@ -142,62 +143,62 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
     const showStandardActions = property.propertyType !== PropertyType.TRANSPORT && property.propertyType !== PropertyType.WELLNESS;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] group flex flex-col border border-slate-100 dark:border-slate-700">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group flex flex-col border border-slate-200 dark:border-slate-700">
       <div className="relative overflow-hidden group/image">
         <button onClick={() => onOpenDetailModal(property)} className="absolute inset-0 z-0"></button>
-        <img src={property.images[currentImageIndex] || 'https://picsum.photos/seed/placeholder/800/600'} alt={property.title} className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" />
+        <img src={property.images[currentImageIndex] || 'https://picsum.photos/seed/placeholder/800/600'} alt={property.title} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
         
         {property.images.length > 1 && (
             <>
-                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-sm text-white p-2 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-black/60">
-                    <ChevronLeftIcon className="w-5 h-5" />
+                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-sm text-white p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-black/60">
+                    <ChevronLeftIcon className="w-4 h-4" />
                 </button>
-                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-sm text-white p-2 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-black/60">
-                    <ChevronRightIcon className="w-5 h-5" />
+                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-sm text-white p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-black/60">
+                    <ChevronRightIcon className="w-4 h-4" />
                 </button>
-                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                     {property.images.map((_, index) => (
-                        <div key={index} className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentImageIndex ? 'bg-white w-4' : 'bg-white/50'}`} />
+                        <div key={index} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === currentImageIndex ? 'bg-white w-3' : 'bg-white/50'}`} />
                     ))}
                 </div>
             </>
         )}
 
-        <div className="absolute top-4 right-4 flex flex-col space-y-2" ref={shareRef}>
+        <div className="absolute top-3 right-3 flex flex-col space-y-2" ref={shareRef}>
             <button
                 onClick={(e) => handleIdActionClick(e, onSaveToggle)}
-                className="bg-white/90 backdrop-blur-sm p-2.5 rounded-full text-slate-700 hover:text-brand-accent hover:bg-white shadow-sm transition-all duration-300 z-10"
+                className="bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:text-brand-accent hover:bg-white shadow-sm transition-all duration-300 z-10"
                 aria-label={isSaved ? "Unsave property" : "Save property"}
             >
                 {isSaved ? (
-                    <HeartIconSolid className="w-6 h-6 text-brand-accent animate-pulse" />
+                    <HeartIconSolid className="w-5 h-5 text-brand-accent animate-pulse" />
                 ) : (
-                    <HeartIcon className="w-6 h-6" />
+                    <HeartIcon className="w-5 h-5" />
                 )}
             </button>
             <button
                 onClick={(e) => handleActionClick(e, onToggleCompare)}
-                className={`bg-white/90 backdrop-blur-sm p-2.5 rounded-full text-slate-700 hover:bg-white shadow-sm transition-all duration-300 z-10 ${isCompared ? 'text-brand-primary' : ''}`}
+                className={`bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:bg-white shadow-sm transition-all duration-300 z-10 ${isCompared ? 'text-brand-primary' : ''}`}
                 aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
             >
-                <Square2StackIcon className="w-6 h-6" />
+                <Square2StackIcon className="w-5 h-5" />
             </button>
             {property.vrTourUrl && (
                 <button
                     onClick={handleVrTourClick}
-                    className="bg-brand-primary text-white p-2.5 rounded-full shadow-lg hover:scale-110 transition-all duration-300 z-10"
+                    className="bg-brand-primary text-white p-2 rounded-full shadow-lg hover:scale-105 transition-all duration-300 z-10"
                     aria-label="Open VR Tour"
                 >
-                    <VrHeadsetIcon className="w-6 h-6" />
+                    <VrHeadsetIcon className="w-5 h-5" />
                 </button>
             )}
              <div className="relative">
                 <button
                     onClick={(e) => {e.stopPropagation(); setIsShareMenuOpen(prev => !prev);}}
-                    className="bg-white/90 backdrop-blur-sm p-2.5 rounded-full text-slate-700 hover:text-brand-primary hover:bg-white shadow-sm transition-all duration-300 z-10"
+                    className="bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:text-brand-primary hover:bg-white shadow-sm transition-all duration-300 z-10"
                     aria-label="Share property"
                 >
-                    <ShareIcon className="w-6 h-6" />
+                    <ShareIcon className="w-5 h-5" />
                 </button>
                 {isShareMenuOpen && (
                     <ShareMenu propertyTitle={property.title} propertyUrl={`${window.location.href.split('?')[0]}?propertyId=${property.id}`} />
@@ -206,95 +207,91 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
         </div>
 
         {isOwner && (
-            <div className="absolute bottom-4 left-4 flex space-x-2 z-10">
-                <button onClick={(e) => handleActionClick(e, onEdit)} className="bg-white/90 text-blue-600 p-2.5 rounded-full shadow-lg hover:bg-blue-600 hover:text-white transition-all">
-                    <PencilIcon className="w-5 h-5" />
+            <div className="absolute bottom-3 left-3 flex space-x-2 z-10">
+                <button onClick={(e) => handleActionClick(e, onEdit)} className="bg-white/90 text-blue-600 p-2 rounded-full shadow-lg hover:bg-blue-600 hover:text-white transition-all">
+                    <PencilIcon className="w-4 h-4" />
                 </button>
-                <button onClick={(e) => handleIdActionClick(e, onDelete)} className="bg-white/90 text-brand-accent p-2.5 rounded-full shadow-lg hover:bg-brand-accent hover:text-white transition-all">
-                    <TrashIcon className="w-5 h-5" />
+                <button onClick={(e) => handleIdActionClick(e, onDelete)} className="bg-white/90 text-brand-accent p-2 rounded-full shadow-lg hover:bg-brand-accent hover:text-white transition-all">
+                    <TrashIcon className="w-4 h-4" />
                 </button>
             </div>
         )}
 
-        <div className="absolute top-4 left-4 flex flex-col items-start gap-y-2">
-            <div className="flex items-center gap-x-2">
-                <div className={`px-3 py-1 text-xs font-bold text-white rounded-full shadow-md uppercase tracking-wider ${property.listingType === 'For Sale' ? 'bg-emerald-500' : 'bg-brand-secondary'}`}>
+        <div className="absolute top-3 left-3 flex flex-col items-start gap-y-1.5">
+            <div className="flex items-center gap-x-1.5">
+                <div className={`px-2.5 py-0.5 text-[10px] font-bold text-white rounded-full shadow-sm uppercase tracking-wider ${property.listingType === 'For Sale' ? 'bg-emerald-600' : 'bg-brand-secondary'}`}>
                     {property.listingType}
                 </div>
                 {property.verified && (
-                    <div className="flex items-center gap-1 bg-brand-gold text-brand-dark px-3 py-1 text-xs font-bold rounded-full shadow-md uppercase tracking-wider">
-                        <CheckBadgeIcon className="w-4 h-4" />
+                    <div className="flex items-center gap-0.5 bg-brand-primary text-white px-2 py-0.5 text-[10px] font-bold rounded-full shadow-sm uppercase tracking-wider">
+                        <CheckBadgeIcon className="w-3 h-3" />
                         <span>Verified</span>
                     </div>
                 )}
             </div>
             {property.smartContractReady && (
-                <div className="flex items-center gap-1 bg-brand-dark/80 backdrop-blur-sm text-white px-3 py-1 text-xs font-bold rounded-full shadow-md uppercase tracking-wider">
-                    <CubeTransparentIcon className="w-4 h-4 text-brand-secondary" />
+                <div className="flex items-center gap-0.5 bg-brand-dark/90 backdrop-blur-sm text-white px-2 py-0.5 text-[10px] font-bold rounded-full shadow-sm uppercase tracking-wider">
+                    <CubeTransparentIcon className="w-3 h-3 text-brand-accent" />
                     <span>Smart Ready</span>
                 </div>
             )}
         </div>
       </div>
-      <button onClick={() => onOpenDetailModal(property)} className="p-6 flex-grow flex flex-col text-left">
-        <div className="flex justify-between items-start mb-3">
-            <span className="text-xs font-bold text-brand-primary uppercase tracking-widest">{property.propertyType}</span>
-            <p className="text-2xl font-black text-brand-dark dark:text-white">{formattedPrice}</p>
+      <button onClick={() => onOpenDetailModal(property)} className="p-4 flex-grow flex flex-col text-left">
+        <div className="flex justify-between items-start mb-2">
+            <span className="text-[10px] font-bold text-brand-primary uppercase tracking-widest">{property.propertyType}</span>
+            <p className="text-xl font-bold text-brand-dark dark:text-white">{formattedPrice}</p>
         </div>
-        <h3 className="text-xl font-bold text-brand-dark dark:text-white mb-2 truncate group-hover:text-brand-primary transition-colors">{property.title}</h3>
-        <div className="flex items-center text-slate-500 dark:text-slate-400 mb-6 text-sm">
-          <LocationPinIcon className="w-4 h-4 mr-1.5 text-brand-accent flex-shrink-0" />
+        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1 truncate group-hover:text-brand-primary transition-colors">{property.title}</h3>
+        <div className="flex items-center text-slate-500 dark:text-slate-400 mb-4 text-xs">
+          <LocationPinIcon className="w-3.5 h-3.5 mr-1 text-slate-400 flex-shrink-0" />
           <span className="truncate">{property.address.street}, {property.address.city}</span>
         </div>
         
-        <div className="grid grid-cols-3 gap-2 text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl mb-6">
+        <div className="grid grid-cols-3 gap-2 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/30 p-3 rounded-lg mb-4 text-xs">
             <div className="flex flex-col items-center border-r border-slate-200 dark:border-slate-600">
-                <BedIcon className="w-5 h-5 text-brand-primary mb-1"/>
-                <span className="text-xs font-bold">{property.details.beds} Beds</span>
+                <BedIcon className="w-4 h-4 text-brand-primary mb-1"/>
+                <span className="font-semibold">{property.details.beds} Beds</span>
             </div>
             <div className="flex flex-col items-center border-r border-slate-200 dark:border-slate-600">
-                <BathIcon className="w-5 h-5 text-brand-primary mb-1"/>
-                <span className="text-xs font-bold">{property.details.baths} Baths</span>
+                <BathIcon className="w-4 h-4 text-brand-primary mb-1"/>
+                <span className="font-semibold">{property.details.baths} Baths</span>
             </div>
             <div className="flex flex-col items-center">
-                <AreaIcon className="w-5 h-5 text-brand-primary mb-1"/>
-                <span className="text-xs font-bold">{property.details.area.toLocaleString()} sqft</span>
+                <AreaIcon className="w-4 h-4 text-brand-primary mb-1"/>
+                <span className="font-semibold">{property.details.area.toLocaleString()} sqft</span>
             </div>
         </div>
 
-        <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
+        <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-brand-light dark:bg-slate-700 flex items-center justify-center text-brand-primary font-bold text-xs uppercase">
+                <div className="w-6 h-6 rounded-full bg-brand-light dark:bg-slate-700 flex items-center justify-center text-brand-primary font-bold text-[10px] uppercase">
                     {property.agent.name.charAt(0)}
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-800 dark:text-white">{property.agent.name}</span>
-                    <div className="flex items-center gap-1">
-                        <StarIcon className="w-3 h-3 text-brand-gold" />
-                        <span className="text-[10px] font-bold text-slate-500">{property.agent.rating}</span>
-                    </div>
+                    <span className="text-[10px] font-bold text-slate-700 dark:text-white truncate max-w-[80px]">{property.agent.name}</span>
                 </div>
             </div>
-            <div className="flex items-center gap-1.5 text-slate-400">
-                <EyeIcon className="w-4 h-4"/>
-                <span className="text-xs font-bold">{property.views}</span>
+            <div className="flex items-center gap-1 text-slate-400">
+                <EyeIcon className="w-3.5 h-3.5"/>
+                <span className="text-[10px] font-bold">{property.views}</span>
             </div>
         </div>
 
         {showStandardActions && (
-            <div className="mt-6 flex items-center gap-2">
+            <div className="mt-4 flex items-center gap-2">
                 <button 
                     onClick={(e) => handleActionClick(e, onOpenTourModal)}
-                    className="flex-1 bg-brand-primary text-white font-bold py-3 rounded-xl hover:bg-brand-dark transition-all transform active:scale-95 shadow-md shadow-brand-primary/20"
+                    className="flex-1 bg-brand-primary text-white text-xs font-bold py-2.5 rounded-lg hover:bg-brand-secondary transition-all shadow-sm"
                 >
                     Book Tour
                 </button>
                 <button 
                     onClick={(e) => handleActionClick(e, onFindSimilar)}
-                    className="p-3 bg-brand-light dark:bg-slate-700 text-brand-primary rounded-xl hover:bg-brand-primary hover:text-white transition-all transform active:scale-95"
+                    className="p-2.5 bg-brand-light dark:bg-slate-700 text-brand-primary rounded-lg hover:bg-brand-primary hover:text-white transition-all"
                     title="Find Similar"
                 >
-                    <SparklesIcon className="w-5 h-5" />
+                    <SparklesIcon className="w-4 h-4" />
                 </button>
             </div>
         )}

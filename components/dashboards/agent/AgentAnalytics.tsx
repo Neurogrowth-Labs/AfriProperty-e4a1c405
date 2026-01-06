@@ -1,6 +1,7 @@
 
 import React, { useMemo } from 'react';
 import type { Property, TourRequest, User } from '../../../types';
+import { ListingType } from '../../../types';
 import { DownloadIcon } from '../../icons/AgentDashboardIcons';
 import { ArrowUpIcon, ArrowDownIcon, CpuChipIcon, ChartBarIcon } from '../../icons/ActionIcons';
 
@@ -76,7 +77,6 @@ export const AgentAnalytics: React.FC<AgentAnalyticsProps> = ({ user, allPropert
         const sales = Math.floor(totalInquiries * 0.1);
 
         const leadDemographics = {
-            // FIX: Untyped function calls may not accept type arguments. Explicitly typing the accumulator in the callback resolves this.
             byLocation: receivedInquiries.reduce((acc: Record<string, number>, inquiry) => {
                 const prop = allProperties.find(p => p.id === inquiry.propertyId);
                 if (prop) {
@@ -85,11 +85,11 @@ export const AgentAnalytics: React.FC<AgentAnalyticsProps> = ({ user, allPropert
                 }
                 return acc;
             }, {} as Record<string, number>),
-            // FIX: Untyped function calls may not accept type arguments. Explicitly typing the accumulator in the callback resolves this.
             byBudget: receivedInquiries.reduce((acc: Record<string, number>, inquiry) => {
                  const prop = allProperties.find(p => p.id === inquiry.propertyId);
                  if (prop) {
-                     const price = prop.listingType === 'For Sale' ? prop.price : (prop.price * 40); // Estimate sale price for rentals
+                     // FIX: Use enum for comparison instead of string literal
+                     const price = prop.listingType === ListingType.SALE ? prop.price : (prop.price * 40); // Estimate sale price for rentals
                      let bracket = "1M+";
                      if (price < 150000) bracket = "<150k";
                      else if (price < 500000) bracket = "150k-500k";
