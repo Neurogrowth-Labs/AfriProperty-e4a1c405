@@ -161,7 +161,7 @@ export const AgentAnalytics: React.FC<AgentAnalyticsProps> = ({ user, allPropert
                     <h3 className="text-lg font-semibold text-slate-800 mb-4">Leads by Location</h3>
                     <div className="flex justify-around items-center">
                     {Object.entries(analytics.leadDemographics.byLocation).map(([city, count]) => (
-                        <div key={city} className="text-center"><p className="text-2xl font-bold text-brand-primary">{count}</p><p className="text-sm text-slate-500">{city}</p></div>
+                        <div key={city} className="text-center"><p className="text-2xl font-bold text-brand-primary">{count as number}</p><p className="text-sm text-slate-500">{city}</p></div>
                     ))}
                     </div>
                 </div>

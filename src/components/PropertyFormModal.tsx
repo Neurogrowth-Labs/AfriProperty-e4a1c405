@@ -1,12 +1,14 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import type { Property, User } from '../types';
 import { ListingType, PropertyType, PropertyStatus } from '../types';
 import { CloseIcon } from './icons/NavIcons';
 import { ALL_AMENITIES } from '../constants';
-import { SparklesIcon, SpeakerWaveIcon, PauseIcon, MicrophoneIcon } from './icons/ActionIcons';
-import { decode, decodeAudioData, encode } from '../lib/audioUtils';
+import { SparklesIcon, SpeakerWaveIcon, PauseIcon, MicrophoneIcon, CameraIcon, TrashIcon } from './icons/ActionIcons';
+import { decode, decodeAudioData } from '../lib/audioUtils';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { blobToBase64 } from '../lib/utils';
 
 
 interface PropertyFormModalProps {
@@ -43,6 +45,12 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
     const [isGenerating, setIsGenerating] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
+    
+    // Image Upload State
+    const [isDragging, setIsDragging] = useState(false);
+    const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const { currency } = useCurrency();
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -95,6 +103,86 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
           return { ...prev, amenities: newAmenities };
       });
     };
+
+    // --- Image Upload Handlers ---
+
+    const processFiles = async (files: FileList | null) => {
+        if (!files) return;
+        
+        const newImages: string[] = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type.startsWith('image/')) {
+                try {
+                    const base64 = await blobToBase64(file);
+                    newImages.push(`data:${file.type};base64,${base64}`);
+                } catch (err) {
+                    console.error("Error converting file to base64", err);
+                }
+            }
+        }
+
+        if (newImages.length > 0) {
+            setProperty(prev => ({
+                ...prev,
+                images: [...prev.images, ...newImages]
+            }));
+        }
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = async (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        await processFiles(e.dataTransfer.files);
+    };
+
+    const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        await processFiles(e.target.files);
+    };
+
+    const removeImage = (index: number) => {
+        setProperty(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }));
+    };
+
+    // --- Image Reordering Handlers ---
+
+    const handleImageDragStart = (e: React.DragEvent, index: number) => {
+        setDraggedImageIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+        // Ghost image transparency if needed
+    };
+
+    const handleImageDragOver = (e: React.DragEvent, index: number) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    };
+
+    const handleImageDrop = (e: React.DragEvent, dropIndex: number) => {
+        e.preventDefault();
+        if (draggedImageIndex === null || draggedImageIndex === dropIndex) return;
+
+        setProperty(prev => {
+            const newImages = [...prev.images];
+            const [draggedItem] = newImages.splice(draggedImageIndex, 1);
+            newImages.splice(dropIndex, 0, draggedItem);
+            return { ...prev, images: newImages };
+        });
+        setDraggedImageIndex(null);
+    };
+
 
     const handleGenerateDescription = async () => {
         setIsGenerating(true);
@@ -192,18 +280,6 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
         }
     };
 
-    const blobToBase64 = (blob: Blob): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64data = reader.result as string;
-                resolve(base64data.split(',')[1]);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    };
-
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -262,7 +338,7 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
                         <div>
                             <label htmlFor="propertyType" className="block text-sm font-medium text-slate-700 dark:text-slate-200">Property Type</label>
                             <select name="propertyType" value={property.propertyType} onChange={handleChange} className="mt-1 w-full input">
-                                {Object.values(PropertyType).filter(t => t !== PropertyType.ALL).map(type => <option key={type} value={type}>{type}</option>)}
+                                {(Object.values(PropertyType) as string[]).filter(t => t !== PropertyType.ALL).map(type => <option key={type} value={type}>{type}</option>)}
                             </select>
                         </div>
                     </div>
@@ -354,16 +430,64 @@ const PropertyFormModal: React.FC<PropertyFormModalProps> = ({ isOpen, onClose, 
                         <textarea name="neighborhoodInfo" value={property.neighborhoodInfo} onChange={handleChange} rows={2} className="mt-1 w-full input"></textarea>
                     </div>
                     
-                    {/* Media */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         <div>
-                            <label htmlFor="images" className="block text-sm font-medium text-slate-700 dark:text-slate-200">Image URL</label>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Enter one URL. More can be added later.</p>
-                            <input type="text" name="images" value={property.images[0] || ''} onChange={(e) => setProperty(p => ({...p, images: [e.target.value]}))} placeholder="https://picsum.photos/seed/new/800/600" className="mt-1 w-full input"/>
+                    {/* Media Drag and Drop */}
+                    <div className="space-y-3">
+                         <div className="flex justify-between items-center">
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">Property Images</label>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">{property.images.length} images uploaded</span>
+                         </div>
+                        
+                        <div 
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors ${isDragging ? 'border-brand-primary bg-brand-light/50 dark:bg-slate-800' : 'border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                        >
+                            <CameraIcon className={`w-8 h-8 mb-2 ${isDragging ? 'text-brand-primary' : 'text-slate-400'}`} />
+                            <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">Drag & Drop or Click to Upload</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Supports multiple JPG, PNG images</p>
+                            <input 
+                                type="file" 
+                                multiple 
+                                accept="image/*" 
+                                className="hidden" 
+                                ref={fileInputRef} 
+                                onChange={handleFileInputChange}
+                            />
                         </div>
-                         <div>
+
+                        {property.images.length > 0 && (
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mt-4">
+                                {property.images.map((img, index) => (
+                                    <div 
+                                        key={index} 
+                                        draggable
+                                        onDragStart={(e) => handleImageDragStart(e, index)}
+                                        onDragOver={(e) => handleImageDragOver(e, index)}
+                                        onDrop={(e) => handleImageDrop(e, index)}
+                                        className="relative aspect-square group rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 cursor-move"
+                                    >
+                                        <img src={img} alt={`Uploaded ${index}`} className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                                        <button 
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                            title="Remove image"
+                                        >
+                                            <TrashIcon className="w-3 h-3" />
+                                        </button>
+                                        <div className="absolute bottom-1 left-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 pointer-events-none">
+                                            {index === 0 ? 'Cover' : `#${index + 1}`}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div>
                             <label htmlFor="vrTourUrl" className="block text-sm font-medium text-slate-700 dark:text-slate-200">Virtual Tour URL</label>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Link to a YouTube video or VR host.</p>
                             <input type="text" name="vrTourUrl" value={property.vrTourUrl || ''} onChange={handleChange} placeholder="https://youtube.com/embed/..." className="mt-1 w-full input"/>
                         </div>
                     </div>

@@ -43,7 +43,12 @@ export const getAgentProfile = async (username: string): Promise<AgentProfile> =
             handleError(error, 'fetching agent profile');
         }
 
-        if (data) return data;
+        if (data) {
+            return {
+                ...data,
+                profilePicture: data.profile_picture || data.profilePicture,
+            };
+        }
     } catch (e) {
         // Silent fail to default
     }
@@ -62,7 +67,11 @@ export const updateAgentProfile = async (username: string, updatedProfile: Agent
     try {
         const { error } = await supabase
             .from('agent_profiles')
-            .update(updatedProfile)
+            .upsert({ 
+                ...updatedProfile, 
+                username,
+                profile_picture: updatedProfile.profilePicture 
+            })
             .eq('username', username);
         
         if (error) throw error;
@@ -85,7 +94,11 @@ export const getReviews = async (): Promise<Review[]> => {
             handleError(error, 'fetching reviews');
             return [];
         }
-        return data || [];
+        return (data || []).map(r => ({
+            ...r,
+            agentName: r.agent_name || r.agentName,
+            reviewerUsername: r.reviewer_username || r.reviewerUsername
+        }));
     } catch (e) {
         return [];
     }
@@ -100,10 +113,13 @@ export const getReviewsForAgent = async (agentName: string): Promise<Review[]> =
             .order('timestamp', { ascending: false });
         
         if (error) {
-            // Use mock data if fetch fails for demo purposes
             return [];
         }
-        return data || [];
+        return (data || []).map(r => ({
+            ...r,
+            agentName: r.agent_name || r.agentName,
+            reviewerUsername: r.reviewer_username || r.reviewerUsername
+        }));
     } catch (e) {
         return [];
     }
@@ -111,9 +127,11 @@ export const getReviewsForAgent = async (agentName: string): Promise<Review[]> =
 
 export const addReview = async (reviewData: Omit<Review, 'id' | 'timestamp'>): Promise<Review> => {
     const newReview: any = {
-        ...reviewData,
+        agent_name: reviewData.agentName,
+        reviewer_username: reviewData.reviewerUsername,
+        rating: reviewData.rating,
+        comment: reviewData.comment,
         timestamp: Date.now(),
-        id: `rev_${Date.now()}` // Optimistic ID
     };
     try {
         const { data, error } = await supabase
@@ -123,17 +141,20 @@ export const addReview = async (reviewData: Omit<Review, 'id' | 'timestamp'>): P
             .single();
         
         if (error) throw error;
-        return data;
+        return {
+            ...data,
+            agentName: data.agent_name,
+            reviewerUsername: data.reviewer_username
+        };
     } catch (error) {
         handleError(error, 'adding review');
-        return newReview; // Return optimistic review
+        return { ...reviewData, id: `rev_${Date.now()}`, timestamp: Date.now() } as Review; // Return optimistic review
     }
 };
 
 // --- Property Management ---
 export const getProperties = async (): Promise<Property[]> => {
     try {
-        // Fetch properties without sorting by specific columns to avoid 'column does not exist' errors
         const { data, error } = await supabase
             .from('properties')
             .select('*');
@@ -147,8 +168,6 @@ export const getProperties = async (): Promise<Property[]> => {
 
         const mappedData = data.map(p => ({
             ...p,
-            // Robust mapping to handle snake_case DB columns vs camelCase App types
-            // Fallback to created_at or Date.now() if dateListed is missing
             dateListed: p.dateListed ?? p.date_listed ?? (p.created_at ? new Date(p.created_at).getTime() : Date.now()),
             listingType: p.listingType ?? p.listing_type,
             propertyType: p.propertyType ?? p.property_type,
@@ -162,14 +181,19 @@ export const getProperties = async (): Promise<Property[]> => {
             marketROI: p.marketROI ?? p.market_roi,
             perNightPrice: p.perNightPrice ?? p.per_night_price,
             packageIncludes: p.packageIncludes ?? p.package_includes,
-            vehicleType: p.vehicleType ?? p.vehicle_type
+            vehicleType: p.vehicleType ?? p.vehicle_type,
+            // Handle JSON fields if they come back as strings (rare with supabase-js but possible with some configs)
+            address: typeof p.address === 'string' ? JSON.parse(p.address) : p.address,
+            details: typeof p.details === 'string' ? JSON.parse(p.details) : p.details,
+            amenities: typeof p.amenities === 'string' ? JSON.parse(p.amenities) : p.amenities,
+            images: typeof p.images === 'string' ? JSON.parse(p.images) : p.images,
+            agent: typeof p.agent === 'string' ? JSON.parse(p.agent) : p.agent,
+            financials: typeof p.financials === 'string' ? JSON.parse(p.financials) : p.financials,
         }));
 
-        // Client-side sort by dateListed (descending) to ensure correct ordering regardless of DB schema
         return mappedData.sort((a, b) => b.dateListed - a.dateListed);
 
     } catch (criticalErr: any) {
-        // Explicitly handle "Failed to fetch" to suppress noise
         if (criticalErr.message && (criticalErr.message.includes('Failed to fetch') || criticalErr.message.includes('Network request failed'))) {
             console.warn('[AfriProperty] Backend unreachable (fetch exception). Using mock data.');
         } else {
@@ -181,12 +205,25 @@ export const getProperties = async (): Promise<Property[]> => {
 
 export const saveProperties = async (properties: Property[]): Promise<void> => {
     try {
-        const { error } = await supabase.from('properties').upsert(properties.map(p => ({
+        const dbProperties = properties.map(p => ({
             ...p,
             listing_type: p.listingType,
             property_type: p.propertyType,
-            date_listed: p.dateListed
-        })));
+            date_listed: p.dateListed,
+            purchase_price: p.purchasePrice,
+            neighborhood_info: p.neighborhoodInfo,
+            virtual_tour_url: p.virtualTourUrl,
+            vr_tour_url: p.vrTourUrl,
+            smart_contract_ready: p.smartContractReady,
+            price_history: p.priceHistory,
+            occupancy_rate: p.occupancyRate,
+            market_roi: p.marketROI,
+            per_night_price: p.perNightPrice,
+            package_includes: p.packageIncludes,
+            vehicle_type: p.vehicleType
+        }));
+
+        const { error } = await supabase.from('properties').upsert(dbProperties);
         if (error) throw error;
     } catch (error) {
         handleError(error, 'upserting properties');
@@ -195,9 +232,15 @@ export const saveProperties = async (properties: Property[]): Promise<void> => {
 
 export const incrementPropertyView = async (propertyId: string): Promise<void> => {
     try {
-        await supabase.rpc('increment_views', { prop_id: propertyId });
+        const { error } = await supabase.rpc('increment_views', { prop_id: propertyId });
+        if (error) {
+             const { data } = await supabase.from('properties').select('views').eq('id', propertyId).single();
+             if (data) {
+                 await supabase.from('properties').update({ views: (data.views || 0) + 1 }).eq('id', propertyId);
+             }
+        }
     } catch (e) {
-        // Ignore view increment errors in demo/offline
+        // Ignore
     }
 };
 
@@ -213,11 +256,18 @@ export const getUsers = async (): Promise<User[]> => {
 export const addUser = async (user: User): Promise<{ success: boolean, message: string }> => {
     try {
         const { error } = await supabase.from('profiles').insert({
-            ...user,
-            is_verified: user.role === 'user'
+            username: user.username,
+            full_name: user.fullName,
+            email: user.email,
+            password: user.password,
+            role: user.role,
+            is_verified: user.role === 'user',
+            phone: user.phone,
+            office_address: user.officeAddress,
+            company_name: user.companyName,
+            // Add other fields mapping as needed
         });
         if (error) {
-             // Mock success for demo if table doesn't exist or network error
              if (error.message.includes('Failed to fetch')) return { success: true, message: "Demo User created (Offline Mode)" };
              return { success: false, message: error.message };
         }
@@ -237,25 +287,32 @@ export const authenticateUser = async (email: string, password: string): Promise
             .single();
 
         if (error) {
-            if (error.message.includes('Failed to fetch')) {
-                 // Mock Login for Demo when Offline
+            if (error.message.includes('Failed to fetch') || error.code === 'PGRST116') {
                  if (email === 'peter.vdm@example.com' && password === 'Password123!') {
                      return { user: { username: 'Peter Van der Merwe', fullName: 'Peter Van der Merwe', email, role: 'agent', isVerified: true, profilePicture: 'https://i.pravatar.cc/150?u=Peter' } as any };
                  }
-                 return { user: null, error: 'Network Error: Backend unreachable.' };
+                 if (error.message.includes('Failed to fetch')) return { user: null, error: 'Network Error: Backend unreachable.' };
             }
             return { user: null, error: 'Invalid email or password.' };
         }
         
         if (!data) return { user: null, error: 'Invalid email or password.' };
         
-        if ((data.role === 'agent' || data.role === 'investor') && !data.is_verified) {
-            return { user: null, error: `pending_verification_${data.role}` };
+        const user = {
+            ...data,
+            isVerified: data.is_verified || data.isVerified,
+            fullName: data.full_name || data.fullName,
+            officeAddress: data.office_address,
+            companyName: data.company_name,
+            profilePicture: data.profile_picture || data.profilePicture,
+        } as User;
+
+        if ((user.role === 'agent' || user.role === 'investor') && !user.isVerified) {
+            return { user: null, error: `pending_verification_${user.role}` };
         }
         
-        return { user: data };
+        return { user };
     } catch (e) {
-        // Fallback mock login for demo
         if (email === 'peter.vdm@example.com') {
              return { user: { username: 'Peter Van der Merwe', fullName: 'Peter Van der Merwe', email, role: 'agent', isVerified: true, profilePicture: 'https://i.pravatar.cc/150?u=Peter' } as any };
         }
@@ -297,7 +354,7 @@ export const getSavedSearchesForUser = async (username: string): Promise<SearchF
             .eq('username', username);
         
         if (error) return [];
-        return data.map(item => item.filters);
+        return data.map(item => typeof item.filters === 'string' ? JSON.parse(item.filters) : item.filters);
     } catch (e) { return []; }
 };
 
@@ -319,7 +376,11 @@ export const getTourRequests = async (username: string): Promise<TourRequest[]> 
             .eq('username', username);
         
         if (error) return [];
-        return data || [];
+        return data.map(r => ({
+            ...r,
+            propertyId: r.property_id || r.propertyId,
+            propertyTitle: r.property_title || r.propertyTitle
+        })) || [];
     } catch (e) { return []; }
 };
 
@@ -335,7 +396,11 @@ export const getInquiriesForSeller = async (username: string): Promise<TourReque
             .in('property_id', sellerPropertyIds);
         
         if (error) return [];
-        return data || [];
+        return data.map(r => ({
+             ...r,
+             propertyId: r.property_id || r.propertyId,
+             propertyTitle: r.property_title || r.propertyTitle
+        })) || [];
     } catch (e) { return []; }
 };
 
@@ -348,16 +413,19 @@ export const addTourRequest = async (username: string, propertyId: string, prope
         time,
         status: 'Pending',
         timestamp: Date.now(),
-        id: `tr_${Date.now()}`
     };
     
     try {
         const { data, error } = await supabase.from('tour_requests').insert(newRequest).select().single();
         if (error) throw error;
-        return data;
+        return {
+            ...data,
+            propertyId: data.property_id,
+            propertyTitle: data.property_title
+        };
     } catch (error) {
         handleError(error, 'adding tour request');
-        return newRequest; // Optimistic return
+        return { ...newRequest, propertyId, propertyTitle, id: `tr_${Date.now()}` }; // Optimistic return
     }
 };
 
@@ -371,23 +439,38 @@ export const getMessagesForUser = async (username: string): Promise<Message[]> =
             .order('timestamp', { ascending: true });
         
         if (error) return [];
-        return data || [];
+        return data.map(m => ({
+            ...m,
+            propertyId: m.property_id || m.propertyId,
+            propertyTitle: m.property_title || m.propertyTitle,
+            senderUsername: m.sender_username || m.senderUsername,
+            receiverUsername: m.receiver_username || m.receiverUsername
+        })) || [];
     } catch (e) { return []; }
 };
 
 export const sendMessage = async (msgData: Omit<Message, 'id' | 'timestamp'>): Promise<Message> => {
     const newMessage: any = {
-        ...msgData,
+        property_id: msgData.propertyId,
+        property_title: msgData.propertyTitle,
+        sender_username: msgData.senderUsername,
+        receiver_username: msgData.receiverUsername,
+        text: msgData.text,
         timestamp: Date.now(),
-        id: `msg_${Date.now()}`
     };
     try {
         const { data, error } = await supabase.from('messages').insert(newMessage).select().single();
         if(error) throw error;
-        return data;
+        return {
+            ...data,
+            propertyId: data.property_id,
+            propertyTitle: data.property_title,
+            senderUsername: data.sender_username,
+            receiverUsername: data.receiver_username
+        };
     } catch (error) {
         handleError(error, 'sending message');
-        return newMessage;
+        return { ...msgData, timestamp: Date.now(), id: `msg_${Date.now()}` };
     }
 };
 
@@ -396,26 +479,47 @@ export const getEvents = async (username: string): Promise<CalendarEvent[]> => {
     try {
         const { data, error } = await supabase.from('calendar_events').select('*').eq('username', username);
         if (error) return [];
-        return data || [];
+        return data.map(e => ({
+            ...e,
+            startTime: e.start_time || e.startTime,
+            endTime: e.end_time || e.endTime
+        })) || [];
     } catch (e) { return []; }
 };
 
 export const addEvent = async (username: string, eventData: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> => {
-    const optimisticEvent = { ...eventData, username, id: `evt_${Date.now()}` };
+    const optimisticEvent = { 
+        ...eventData, 
+        username, 
+        start_time: eventData.startTime,
+        end_time: eventData.endTime
+    };
     try {
         const { data, error } = await supabase.from('calendar_events').insert(optimisticEvent).select().single();
         if (error) throw error;
-        return data;
+        return {
+             ...data,
+             startTime: data.start_time,
+             endTime: data.end_time
+        };
     } catch (e) {
-        return optimisticEvent as CalendarEvent;
+        return { ...eventData, id: `evt_${Date.now()}` } as CalendarEvent;
     }
 };
 
 export const updateEvent = async (username: string, event: CalendarEvent): Promise<CalendarEvent> => {
     try {
-        const { data, error } = await supabase.from('calendar_events').update(event).eq('id', event.id).select().single();
+        const { data, error } = await supabase.from('calendar_events').update({
+            ...event,
+            start_time: event.startTime,
+            end_time: event.endTime
+        }).eq('id', event.id).select().single();
         if (error) throw error;
-        return data;
+        return {
+             ...data,
+             startTime: data.start_time,
+             endTime: data.end_time
+        };
     } catch (e) { return event; }
 };
 
@@ -430,11 +534,14 @@ export const getNotifications = async (user: User): Promise<Notification[]> => {
     try {
         const { data, error } = await supabase.from('notifications').select('*').eq('username', user.username);
         if (error) {
-             // Return mock if fetch fails
              if (error.message.includes('Failed to fetch')) return MOCK_NOTIFICATIONS as any;
              throw error;
         }
-        return data || (MOCK_NOTIFICATIONS as any);
+        return data.map(n => ({
+            ...n,
+            isRead: n.is_read,
+            propertyId: n.property_id
+        })) || (MOCK_NOTIFICATIONS as any);
     } catch (e) {
         return (MOCK_NOTIFICATIONS as any);
     }
@@ -457,7 +564,7 @@ export const getReadNotificationIds = async (username: string): Promise<Set<stri
 
 // --- Leads ---
 export const getLeadsForAgent = async (agentUsername: string): Promise<Lead[]> => {
-    return [];
+    return []; // Future implementation
 };
 
 // --- Investor Settings ---
@@ -478,13 +585,16 @@ export const saveInvestorSettings = async (username: string, settings: InvestorS
 export const getInvestmentRequests = async (): Promise<InvestmentRequest[]> => {
     try {
         const { data } = await supabase.from('investment_requests').select('*').order('timestamp', { ascending: false });
-        return data || [];
+        return data.map(r => ({
+            ...r,
+            investorUsername: r.investor_username,
+            requestDetails: r.request_details
+        })) || [];
     } catch (e) { return []; }
 };
 
 export const addInvestmentRequest = async (username: string, requestDetails: string): Promise<InvestmentRequest> => {
     const optimistic = {
-        id: `ir_${Date.now()}`,
         investor_username: username,
         request_details: requestDetails,
         timestamp: Date.now(),
@@ -492,8 +602,12 @@ export const addInvestmentRequest = async (username: string, requestDetails: str
     };
     try {
         const { data } = await supabase.from('investment_requests').insert(optimistic).select().single();
-        return data || optimistic;
-    } catch(e) { return optimistic as any; }
+        return {
+            ...data,
+            investorUsername: data.investor_username,
+            requestDetails: data.request_details
+        };
+    } catch(e) { return { ...optimistic, id: `ir_${Date.now()}` } as any; }
 };
 
 export const getInvestorReturns = () => {
@@ -513,7 +627,10 @@ export const getInvestorDocuments = () => {
 export const getUserDocuments = async (username: string): Promise<UserDocument[]> => {
     try {
         const { data } = await supabase.from('user_documents').select('*').eq('username', username);
-        return data || [];
+        return data.map(d => ({
+            ...d,
+            uploadDate: d.upload_date
+        })) || [];
     } catch (e) { return []; }
 };
 
@@ -524,15 +641,14 @@ export const addUserDocument = async (username: string, file: File): Promise<Use
         upload_date: Date.now(),
         url: '#',
         username,
-        id: `doc_${Date.now()}`
     };
     try {
         const { data, error } = await supabase.from('user_documents').insert(newDoc).select().single();
         if (error) throw error;
-        return data;
+        return { ...data, uploadDate: data.upload_date };
     } catch (error) {
         handleError(error, 'adding document');
-        return newDoc as any;
+        return { ...newDoc, id: `doc_${Date.now()}`, uploadDate: newDoc.upload_date } as any;
     }
 };
 
@@ -545,16 +661,22 @@ export const deleteUserDocument = async (username: string, docId: string): Promi
 export const getPropertyAlerts = async (username: string): Promise<PropertyAlert[]> => {
     try {
         const { data } = await supabase.from('property_alerts').select('*').eq('username', username);
-        return data || [];
+        return data.map(a => ({
+            ...a,
+            criteria: typeof a.criteria === 'string' ? JSON.parse(a.criteria) : a.criteria
+        })) || [];
     } catch (e) { return []; }
 };
 
 export const addPropertyAlert = async (username: string, alertData: Omit<PropertyAlert, 'id'>): Promise<PropertyAlert> => {
-    const optimistic = { ...alertData, username, id: `alert_${Date.now()}` };
+    const optimistic = { ...alertData, username };
     try {
         const { data } = await supabase.from('property_alerts').insert(optimistic).select().single();
-        return data || optimistic;
-    } catch (e) { return optimistic; }
+        return {
+             ...data,
+             criteria: typeof data.criteria === 'string' ? JSON.parse(data.criteria) : data.criteria
+        };
+    } catch (e) { return { ...optimistic, id: `alert_${Date.now()}` } as any; }
 };
 
 export const deletePropertyAlert = async (username: string, alertId: string): Promise<void> => {

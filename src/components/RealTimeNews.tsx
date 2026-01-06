@@ -6,8 +6,8 @@ import rehypeRaw from 'https://esm.sh/rehype-raw@7';
 
 interface GroundingChunk {
   web?: {
-    uri: string;
-    title: string;
+    uri?: string;
+    title?: string;
   };
 }
 
@@ -34,7 +34,7 @@ const RealTimeNews: React.FC = () => {
               },
           });
           
-          const text = response.text;
+          const text = response.text || '';
           const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
 
           setResult({ text, sources });
