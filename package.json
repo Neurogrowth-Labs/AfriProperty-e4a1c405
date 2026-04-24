@@ -9,14 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "@google-ai/generativelanguage": "^3.4.0",
     "@google/genai": "^1.17.0",
     "@heroicons/react": "^2.2.0",
-    "@google-ai/generativelanguage": "^3.4.0",
+    "@supabase/supabase-js": "latest",
+    "firebase": "^12.12.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-markdown": "9",
-    "rehype-raw": "7",
-    "@supabase/supabase-js": "latest"
+    "rehype-raw": "7"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

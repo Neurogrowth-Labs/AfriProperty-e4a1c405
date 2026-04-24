@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CloseIcon } from './icons/NavIcons';
-import { authenticateUser, addUser } from '../lib/data';
+import { addUser } from '../lib/data';
 import type { User } from '../types';
 import { GoogleIcon, AppleIcon } from './icons/SocialIcons';
 import { EyeIcon, EyeSlashIcon, CheckIcon, CameraIcon, ArrowUpTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 import { BuildingStorefrontIcon, UserIcon } from '@heroicons/react/24/solid';
 import { BanknotesIcon } from './icons/ActionIcons';
-
+import { auth, googleProvider, signInWithPopup } from '../lib/firebase';
 
 type AuthView = 'login' | 'signup' | 'userSignup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
 
@@ -119,58 +119,62 @@ const PasswordStrengthMeter: React.FC<{ criteria: PasswordCriteria }> = ({ crite
 // --- Sub-components for each view ---
 
 const LoginView: React.FC<{onLoginSuccess: (user: User) => void, onSwitchToSignup: () => void, onSwitchToForgotPassword: () => void, setError: (e: string) => void}> = ({ onLoginSuccess, onSwitchToSignup, onSwitchToForgotPassword, setError }) => {
-    const [email, setEmail] = useState('peter.vdm@example.com');
-    const [password, setPassword] = useState('Password123!');
-    const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
-
-    // FIX: authenticateUser is async, must await it and mark handler as async.
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleGoogleLogin = async () => {
         setError('');
-
-        const { user, error } = await authenticateUser(email, password);
-        if (user) {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const firebaseUser = result.user;
+            
+            // Map Firebase user to app User structure
+            const user: User = {
+                username: firebaseUser.email || firebaseUser.uid,
+                fullName: firebaseUser.displayName || 'Google User',
+                email: firebaseUser.email || '',
+                role: 'user', // Default role
+            };
+            
+            // optionally save user to our app's mock database
+            await addUser(user);
+            
             onLoginSuccess(user);
-        } else {
-            if (error === 'pending_verification_agent' || error === 'pending_verification_investor') {
-                setError("Your account is pending verification. We'll notify you upon approval.");
+        } catch (error: any) {
+            console.error("Firebase Login Error", error);
+            if (error.code === 'auth/popup-closed-by-user') {
+                setError(''); // Ignore if user just closed the popup
             } else {
-                setError("Invalid email or password.");
+                setError(error.message || "Failed to log in with Google.");
             }
         }
     };
 
     return (
-        <div className="space-y-4 animate-fade-in">
-            <p className="text-sm text-center text-slate-500 dark:text-slate-400">Log in with a pre-created account or sign up.</p>
-            <form onSubmit={handleLogin} className="space-y-4">
-                 <InputField label="Email Address" id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
-                 <InputField label="Password" id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} icon={showPassword ? EyeSlashIcon : EyeIcon} onIconClick={() => setShowPassword(!showPassword)} />
-                 
-                 <div className="flex items-center justify-between">
-                     <Checkbox id="rememberMe" name="rememberMe" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)}>Remember me</Checkbox>
-                     <button type="button" onClick={onSwitchToForgotPassword} className="text-sm font-semibold text-brand-primary hover:underline">Forgot password?</button>
-                 </div>
-                 
-                 <button type="submit" className="btn-primary">Log In</button>
-            </form>
-            <div className="flex items-center text-xs text-slate-400"><div className="flex-grow border-t dark:border-slate-700"></div><span className="flex-shrink mx-4">OR</span><div className="flex-grow border-t dark:border-slate-700"></div></div>
-            <SocialLogins onLoginSuccess={onLoginSuccess} />
-            <p className="text-center text-sm text-slate-500 dark:text-slate-400">Don't have an account? <button onClick={onSwitchToSignup} className="font-semibold text-brand-primary hover:underline">Sign up</button></p>
+        <div className="space-y-4 animate-fade-in text-center py-6">
+            <p className="text-sm text-slate-500 pb-4">Log in to view saved properties and schedule tours.</p>
+            <button 
+                onClick={handleGoogleLogin} 
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                type="button"
+            >
+                <GoogleIcon className="w-5 h-5"/>
+                Continue with Google
+            </button>
+            <div className="pt-4 flex items-center justify-center gap-2">
+                <span className="text-sm text-slate-500">Not an investor/user yet?</span>
+                <button type="button" onClick={onSwitchToSignup} className="text-sm font-semibold text-brand-primary hover:underline focus:outline-none">Sign up</button>
+            </div>
         </div>
     );
 };
 
-const SignupView: React.FC<{ onSwitchToLogin: () => void; onSwitchToUserSignup: () => void; onSwitchToAgentSignup: () => void; onSwitchToInvestorSignup: () => void; }> = ({ onSwitchToLogin, onSwitchToUserSignup, onSwitchToAgentSignup, onSwitchToInvestorSignup }) => (
-    <div className="animate-fade-in space-y-4">
-        <p className="text-center text-slate-500 dark:text-slate-400">Choose your account type to get started.</p>
+const SignupView: React.FC<{ onSwitchToLogin: () => void; onSignupRole: (role: 'user'|'agent'|'investor') => void; }> = ({ onSwitchToLogin, onSignupRole }) => (
+    <div className="animate-fade-in space-y-4 text-center py-4">
+        <p className="text-center text-slate-500 pb-2">Choose your account type to sign up with Google.</p>
         <div className="space-y-3">
-            <SignupOptionCard icon={UserIcon} title="Property Seeker" description="Browse, save, and tour properties." onClick={onSwitchToUserSignup} />
-            <SignupOptionCard icon={BuildingStorefrontIcon} title="Agent / Agency" description="List and manage your properties." onClick={onSwitchToAgentSignup} />
-            <SignupOptionCard icon={BanknotesIcon} title="Investor" description="Access exclusive investment deals." onClick={onSwitchToInvestorSignup} />
+            <SignupOptionCard icon={UserIcon} title="Property Seeker" description="Browse, save, and tour properties." onClick={() => onSignupRole('user')} />
+            <SignupOptionCard icon={BuildingStorefrontIcon} title="Agent / Agency" description="List and manage your properties." onClick={() => onSignupRole('agent')} />
+            <SignupOptionCard icon={BanknotesIcon} title="Investor" description="Access exclusive investment deals." onClick={() => onSignupRole('investor')} />
         </div>
-        <p className="text-center text-sm text-slate-500 dark:text-slate-400 pt-2">Already have an account? <button onClick={onSwitchToLogin} className="font-semibold text-brand-primary hover:underline">Log In</button></p>
+        <p className="text-center text-sm text-slate-500 pt-2">Already have an account? <button type="button" onClick={onSwitchToLogin} className="font-semibold text-brand-primary hover:underline focus:outline-none">Log In</button></p>
     </div>
 );
 
@@ -396,6 +400,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     
     const currentTitle = titles[view] || 'Welcome';
 
+    const handleSignupRole = async (role: 'user' | 'agent' | 'investor') => {
+        setError('');
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const firebaseUser = result.user;
+            
+            const user: User = {
+                username: firebaseUser.email || firebaseUser.uid,
+                fullName: firebaseUser.displayName || 'Google User',
+                email: firebaseUser.email || '',
+                role: role,
+            };
+            
+            await addUser(user);
+            handleLoginSuccess(user);
+        } catch (error: any) {
+            console.error("Firebase Signup Error", error);
+            if (error.code === 'auth/popup-closed-by-user') {
+                setError(''); // Ignore if user just closed the popup
+            } else {
+                setError(error.message || "Failed to sign up with Google.");
+            }
+        }
+    };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4 animate-fade-in" onClick={onClose}>
         <div 
@@ -411,18 +440,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 </button>
             </header>
             
-            <div className="p-6 max-h-[75vh] overflow-y-auto">
+            <div className="p-6 max-h-[75vh] overflow-y-auto bg-white">
                 {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-4 text-sm" role="alert">{error}</div>}
 
                 {view === 'login' && <LoginView onLoginSuccess={handleLoginSuccess} onSwitchToSignup={() => switchView('signup')} onSwitchToForgotPassword={() => switchView('forgotPassword')} setError={setError} />}
-                {view === 'signup' && <SignupView onSwitchToLogin={() => switchView('login')} onSwitchToUserSignup={() => switchView('userSignup')} onSwitchToAgentSignup={() => switchView('agentSignup')} onSwitchToInvestorSignup={() => switchView('investorSignup')} />}
-                {view === 'userSignup' && <UserSignupView onSignupSuccess={handleLoginSuccess} onSwitchToLogin={() => switchView('login')} setError={setError} />}
-                {view === 'agentSignup' && <AgentSignupView onSignupSuccess={() => switchView('pendingVerificationAgent')} onSwitchToLogin={() => switchView('login')} setError={setError} />}
-                {view === 'investorSignup' && <InvestorSignupView onSignupSuccess={() => switchView('pendingVerificationInvestor')} setError={setError} onSwitchToLogin={() => switchView('login')} />}
-                {view === 'pendingVerificationAgent' && <PendingVerificationView onSwitchToLogin={() => switchView('login')} userType="agent" />}
-                {view === 'pendingVerificationInvestor' && <PendingVerificationView onSwitchToLogin={() => switchView('login')} userType="investor" />}
-                {view === 'forgotPassword' && <ForgotPasswordView onResetSent={() => switchView('resetConfirmation')} onBackToLogin={() => switchView('login')} />}
-                {view === 'resetConfirmation' && <ResetConfirmationView onSwitchToLogin={() => switchView('login')} />}
+                {view === 'signup' && <SignupView onSwitchToLogin={() => switchView('login')} onSignupRole={handleSignupRole} />}
             </div>
         </div>
         <style>{`

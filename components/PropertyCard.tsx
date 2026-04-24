@@ -150,11 +150,11 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
         
         {property.images.length > 1 && (
             <>
-                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-sm text-white p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-black/60">
-                    <ChevronLeftIcon className="w-4 h-4" />
+                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-md text-black p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-white/80 shadow-sm">
+                    <ChevronLeftIcon className="w-4 h-4 text-black" />
                 </button>
-                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 backdrop-blur-sm text-white p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-black/60">
-                    <ChevronRightIcon className="w-4 h-4" />
+                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 backdrop-blur-md text-black p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-white/80 shadow-sm">
+                    <ChevronRightIcon className="w-4 h-4 text-black" />
                 </button>
                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                     {property.images.map((_, index) => (
@@ -186,7 +186,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
             {property.vrTourUrl && (
                 <button
                     onClick={handleVrTourClick}
-                    className="bg-brand-primary text-white p-2 rounded-full shadow-lg hover:scale-105 transition-all duration-300 z-10"
+                    className="bg-white/80 backdrop-blur-md text-black p-2 rounded-full shadow-sm hover:scale-105 hover:bg-white transition-all duration-300 z-10"
                     aria-label="Open VR Tour"
                 >
                     <VrHeadsetIcon className="w-5 h-5" />
@@ -219,19 +219,19 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
 
         <div className="absolute top-3 left-3 flex flex-col items-start gap-y-1.5">
             <div className="flex items-center gap-x-1.5">
-                <div className={`px-2.5 py-0.5 text-[10px] font-bold text-white rounded-full shadow-sm uppercase tracking-wider ${property.listingType === 'For Sale' ? 'bg-emerald-600' : 'bg-brand-secondary'}`}>
+                <div className={`glass-badge px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider`}>
                     {property.listingType}
                 </div>
                 {property.verified && (
-                    <div className="flex items-center gap-0.5 bg-brand-primary text-white px-2 py-0.5 text-[10px] font-bold rounded-full shadow-sm uppercase tracking-wider">
-                        <CheckBadgeIcon className="w-3 h-3" />
+                    <div className="glass-badge px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        <CheckBadgeIcon className="w-3 h-3 text-emerald-600" />
                         <span>Verified</span>
                     </div>
                 )}
             </div>
             {property.smartContractReady && (
-                <div className="flex items-center gap-0.5 bg-brand-dark/90 backdrop-blur-sm text-white px-2 py-0.5 text-[10px] font-bold rounded-full shadow-sm uppercase tracking-wider">
-                    <CubeTransparentIcon className="w-3 h-3 text-brand-accent" />
+                <div className="glass-badge px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                    <CubeTransparentIcon className="w-3 h-3 text-brand-primary" />
                     <span>Smart Ready</span>
                 </div>
             )}
@@ -282,13 +282,13 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
             <div className="mt-4 flex items-center gap-2">
                 <button 
                     onClick={(e) => handleActionClick(e, onOpenTourModal)}
-                    className="flex-1 bg-brand-primary text-white text-xs font-bold py-2.5 rounded-lg hover:bg-brand-secondary transition-all shadow-sm"
+                    className="flex-1 glass-button text-xs font-bold py-2.5 rounded-lg transition-all"
                 >
                     Book Tour
                 </button>
                 <button 
                     onClick={(e) => handleActionClick(e, onFindSimilar)}
-                    className="p-2.5 glass-card text-brand-primary rounded-lg hover:bg-brand-primary hover:text-white transition-all"
+                    className="p-2.5 glass-button rounded-lg transition-all"
                     title="Find Similar"
                 >
                     <SparklesIcon className="w-4 h-4" />

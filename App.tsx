@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { auth, onAuthStateChanged, signOut } from './lib/firebase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
@@ -218,6 +219,23 @@ const App: React.FC = () => {
   const countdownIntervalRef = useRef<number | null>(null);
   const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
   const WARNING_TIMEOUT = 14 * 60 * 1000;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setCurrentUser({
+          username: firebaseUser.email || firebaseUser.uid,
+          fullName: firebaseUser.displayName || 'Google User',
+          email: firebaseUser.email || '',
+          role: 'user', // Note: You might want to fetch real role from Firestore later
+        });
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Data Fetching and Initial Setup
   useEffect(() => {
@@ -518,7 +536,12 @@ The other fields should follow these rules:
       setIsAuthModalOpen(false);
   };
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+        await signOut(auth);
+    } catch (error) {
+        console.error("Error signing out", error);
+    }
     setCurrentUser(null);
     setIsDashboardOpen(false);
     setIsSessionWarningOpen(false);
@@ -859,7 +882,7 @@ The other fields should follow these rules:
 
                   <NewOfferings />
                   
-                  <section id="just-listed" className="py-12 lg:py-16 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
+                  <section id="just-listed" className="py-12 lg:py-16 bg-white">
                   <div className="container mx-auto px-4 sm:px-6">
                       <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Just Listed</h2>
                       <PropertyList 
@@ -881,7 +904,7 @@ The other fields should follow these rules:
                   </div>
                   </section>
 
-                  <section id="featured-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark/40">
+                  <section id="featured-listings" className="py-12 lg:py-16 relative">
                   <div className="container mx-auto px-4 sm:px-6">
                       <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">{t.app.featuredListings}</h2>
                       <PropertyList 
@@ -903,7 +926,7 @@ The other fields should follow these rules:
                   </div>
                   </section>
 
-                  <section className="py-12 lg:py-16 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
+                  <section className="py-12 lg:py-16 bg-white">
                       <div className="container mx-auto px-4 sm:px-6">
                           <div className="text-center mb-12">
                               <h2 className="text-3xl md:text-4xl font-bold text-brand-dark dark:text-white">{t.app.exploreByLifestyle}</h2>
@@ -917,7 +940,7 @@ The other fields should follow these rules:
                       </div>
                   </section>
 
-                  <section id="all-listings" className="py-12 lg:py-16 bg-brand-light dark:bg-brand-dark/40">
+                  <section id="all-listings" className="py-12 lg:py-16 relative">
                   <div className="container mx-auto px-4 sm:px-6">
                       <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-4">{t.app.findYourProperty}</h2>
                       <div className="flex justify-center items-center gap-4 mb-10">

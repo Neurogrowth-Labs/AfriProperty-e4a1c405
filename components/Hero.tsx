@@ -15,27 +15,15 @@ const Hero: React.FC<HeroProps> = (props) => {
   const { t } = useTranslations();
 
   return (
-    <div className="relative h-[60vh] min-h-[500px] flex items-center justify-center text-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 hover:scale-110"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1600585154340-be6199f3e009?q=80&w=2070&auto=format&fit=crop)' }}
-      ></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-dark/90 via-brand-primary/40 to-brand-secondary/60"></div>
-      
-      {/* Decorative blobs for color pops */}
-      <div className="absolute top-1/4 -left-20 w-64 h-64 bg-brand-accent/30 blur-3xl rounded-full animate-pulse"></div>
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-brand-gold/20 blur-3xl rounded-full animate-pulse delay-700"></div>
-
-      <div className="relative z-10 text-white px-4 w-full max-w-5xl mx-auto">
+    <div className="relative pt-16 pb-20 flex items-center justify-center text-center overflow-hidden bg-white">
+      <div className="relative z-10 px-4 w-full max-w-5xl mx-auto">
         <h1 
-          className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 tracking-tight animate-fade-in-up" 
-          style={{ textShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+          className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 tracking-tight animate-fade-in-up text-black" 
         >
           {t.hero.title}
         </h1>
         <p 
-          className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium opacity-90 animate-fade-in-up delay-100"
-          style={{ textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
+          className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium opacity-90 animate-fade-in-up delay-100 text-black"
         >
           {t.hero.subtitle}
         </p>
@@ -51,7 +39,6 @@ const Hero: React.FC<HeroProps> = (props) => {
         .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
-        .delay-700 { animation-delay: 0.7s; }
       `}</style>
     </div>
   );
