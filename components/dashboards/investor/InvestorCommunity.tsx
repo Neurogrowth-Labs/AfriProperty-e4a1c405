@@ -87,7 +87,7 @@ export const InvestorCommunity: React.FC<InvestorCommunityProps> = ({ user }) =>
                 </nav>
             </div>
             
-            <div className="flex-grow mt-6 bg-white dark:bg-slate-800/50 rounded-lg shadow-sm overflow-y-auto">
+            <div className="flex-grow mt-6 glass-panel rounded-lg shadow-sm overflow-y-auto">
                 {renderContent()}
             </div>
              <NewPostModal 
@@ -147,7 +147,7 @@ const InvestorForums: React.FC<{ posts: ForumPost[], onNewPost: () => void, onPo
                     <h3 className="text-xl font-bold text-slate-800 dark:text-white">Recent Discussions</h3>
                     <button onClick={onNewPost} className="bg-brand-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-opacity-90 text-sm flex-shrink-0">Create Post</button>
                 </div>
-                 <div className="bg-white dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                 <div className="glass-panel rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm min-w-[600px]">
                             <thead className="bg-slate-50 dark:bg-slate-700">
@@ -180,7 +180,7 @@ const InvestorForums: React.FC<{ posts: ForumPost[], onNewPost: () => void, onPo
                 </div>
                 <div className="space-y-3">
                     {FORUM_CATEGORIES.map(cat => (
-                        <button key={cat.id} onClick={() => setSelectedCategory(cat.name)} className={`w-full text-left p-3 rounded-lg transition-colors ${selectedCategory === cat.name ? 'bg-brand-light dark:bg-slate-700 ring-2 ring-brand-primary' : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
+                        <button key={cat.id} onClick={() => setSelectedCategory(cat.name)} className={`w-full text-left p-3 rounded-lg transition-colors ${selectedCategory === cat.name ? 'glass-card ring-2 ring-brand-primary' : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
                             <p className="font-semibold text-slate-700 dark:text-slate-200">{cat.name}</p>
                             <p className="text-xs text-slate-500 dark:text-slate-400">{cat.description}</p>
                         </button>

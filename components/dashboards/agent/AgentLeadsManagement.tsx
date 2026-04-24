@@ -26,9 +26,9 @@ const AgentLeadsManagement: React.FC<AgentLeadsManagementProps> = ({ leads }) =>
     }
 
     return (
-        <div className="flex h-full bg-white dark:bg-slate-900">
+        <div className="flex h-full glass-panel">
             {/* Left panel: leads list */}
-            <div className="w-96 border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto flex-shrink-0">
+            <div className="w-96 border-r border-slate-200 dark:border-slate-700 glass-panel overflow-y-auto flex-shrink-0">
                 <div className="p-4 border-b border-slate-200 dark:border-slate-700 sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-10">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-white">All Leads ({leads.length})</h3>
                 </div>

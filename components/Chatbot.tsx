@@ -122,7 +122,7 @@ const Chatbot: React.FC = () => {
                 </button>
             </div>
 
-            <div className={`fixed bottom-0 right-0 w-full h-full sm:m-6 z-[60] sm:h-auto sm:max-h-[80vh] sm:w-96 bg-white dark:bg-slate-900 sm:rounded-xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+            <div className={`fixed bottom-0 right-0 w-full h-full sm:m-6 z-[60] sm:h-auto sm:max-h-[80vh] sm:w-96 glass-panel sm:rounded-xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
                 {/* Header */}
                 <header className="bg-gradient-to-r from-brand-dark to-slate-800 text-white p-4 flex justify-between items-center sm:rounded-t-xl">
                     <h3 className="font-bold text-lg">AfriProperty AI Assistant</h3>
@@ -159,7 +159,7 @@ const Chatbot: React.FC = () => {
                 </div>
 
                 {/* Input */}
-                <div className="p-3 border-t bg-white dark:bg-slate-900 dark:border-slate-700 sm:rounded-b-xl">
+                <div className="p-3 border-t glass-panel dark:border-slate-700 sm:rounded-b-xl">
                     <div className="flex items-center space-x-2">
                         <input
                             type="text"

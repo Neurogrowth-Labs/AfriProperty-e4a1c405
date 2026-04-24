@@ -23,7 +23,7 @@ interface InvestorDashboardHomeProps {
 }
 
 const StatCard: React.FC<{ title: string; value: string; subValue?: string; }> = ({ title, value, subValue }) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm transition-all hover:shadow-md hover:-translate-y-1">
+    <div className="glass-panel p-6 rounded-xl shadow-sm transition-all hover:shadow-md hover:-translate-y-1">
         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
         <p className="text-4xl font-bold text-slate-800 dark:text-white mt-2">{value}</p>
         {subValue && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{subValue}</p>}
@@ -122,7 +122,7 @@ const InvestorDashboardHome: React.FC<InvestorDashboardHomeProps> = (props) => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-2 space-y-8">
                     {isWidgetVisible('global_map') && (
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+                        <div className="glass-panel p-6 rounded-xl shadow-sm">
                             <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">Global Asset Overview</h3>
                             <PortfolioMap ownedProperties={userProperties} watchlistProperties={savedProperties} />
                         </div>
@@ -141,7 +141,7 @@ const InvestorDashboardHome: React.FC<InvestorDashboardHomeProps> = (props) => {
 
              <style>{`
                 .quick-action-btn {
-                    @apply px-4 py-2 text-sm font-semibold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700;
+                    @apply px-4 py-2 text-sm font-semibold glass-panel border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700;
                 }
             `}</style>
         </div>

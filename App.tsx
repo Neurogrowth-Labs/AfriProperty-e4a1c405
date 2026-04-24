@@ -859,7 +859,7 @@ The other fields should follow these rules:
 
                   <NewOfferings />
                   
-                  <section id="just-listed" className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+                  <section id="just-listed" className="py-12 lg:py-16 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
                   <div className="container mx-auto px-4 sm:px-6">
                       <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Just Listed</h2>
                       <PropertyList 
@@ -903,7 +903,7 @@ The other fields should follow these rules:
                   </div>
                   </section>
 
-                  <section className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+                  <section className="py-12 lg:py-16 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
                       <div className="container mx-auto px-4 sm:px-6">
                           <div className="text-center mb-12">
                               <h2 className="text-3xl md:text-4xl font-bold text-brand-dark dark:text-white">{t.app.exploreByLifestyle}</h2>

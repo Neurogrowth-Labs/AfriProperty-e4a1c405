@@ -57,7 +57,7 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in bg-slate-50 dark:bg-slate-900">
-        <header className="bg-white dark:bg-brand-dark py-16">
+        <header className="glass-panel py-16">
             <div className="container mx-auto px-6 text-center">
                 <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark dark:text-white">Contact Us</h1>
                 <p className="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -70,7 +70,7 @@ const ContactPage: React.FC = () => {
             <div className="container mx-auto px-6">
                 <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-12">
                     {/* Left side: Form */}
-                    <div className="lg:col-span-3 bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+                    <div className="lg:col-span-3 glass-panel p-8 rounded-lg shadow-lg">
                         <h2 className="text-2xl font-bold text-brand-dark dark:text-white mb-6">Send Us a Message</h2>
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="grid sm:grid-cols-2 gap-5">
@@ -155,7 +155,7 @@ const ContactPage: React.FC = () => {
             </div>
         </section>
 
-        <section className="bg-white dark:bg-slate-800">
+        <section className="glass-panel">
             <div className="container mx-auto px-6 py-16">
                  <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-8">Map & Location</h2>
                  <div className="aspect-video rounded-lg overflow-hidden shadow-lg border border-slate-200 dark:border-slate-700">

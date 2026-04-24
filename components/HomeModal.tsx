@@ -15,7 +15,7 @@ interface HomeModalProps {
 
 const FeatureCard: React.FC<{ icon: React.ElementType, title: string, children: React.ReactNode }> = ({ icon: Icon, title, children }) => (
     <div className="text-center">
-        <div className="mx-auto bg-brand-light dark:bg-slate-700 p-4 rounded-full w-fit">
+        <div className="mx-auto glass-card p-4 rounded-full w-fit">
             <Icon className="w-8 h-8 text-brand-primary" />
         </div>
         <h3 className="text-lg font-bold text-slate-800 dark:text-white mt-4">{title}</h3>

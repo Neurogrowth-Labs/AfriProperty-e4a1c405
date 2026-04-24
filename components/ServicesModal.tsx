@@ -12,8 +12,8 @@ interface ServicesModalProps {
 }
 
 const ServiceCard: React.FC<{ icon: React.ElementType, title: string, description: string, cta: string, onClick: () => void }> = ({ icon: Icon, title, description, cta, onClick }) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
-        <div className="bg-brand-light dark:bg-slate-700 p-3 rounded-full w-fit">
+    <div className="glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+        <div className="glass-card p-3 rounded-full w-fit">
             <Icon className="w-7 h-7 text-brand-primary" />
         </div>
         <h3 className="text-lg font-bold text-slate-800 dark:text-white mt-4">{title}</h3>

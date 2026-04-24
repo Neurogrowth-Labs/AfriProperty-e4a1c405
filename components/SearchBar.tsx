@@ -27,7 +27,7 @@ const TabButton: React.FC<{
         onClick={onClick}
         className={`flex items-center gap-2 px-6 py-4 text-sm font-black rounded-t-2xl transition-all flex-shrink-0 ${
             isActive
-                ? `bg-white dark:bg-slate-800 ${color} shadow-[0_-4px_10px_rgba(0,0,0,0.1)]`
+                ? `glass-panel ${color} shadow-[0_-4px_10px_rgba(0,0,0,0.1)]`
                 : 'text-white/70 hover:text-white hover:bg-white/10'
         }`}
     >
@@ -119,7 +119,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isSearchingAI, filters,
                         <TabButton label="Wellness" icon={WellnessIcon} isActive={activeTab === 'wellness'} onClick={() => setTabAndPropertyType('wellness', PropertyType.WELLNESS)} color="text-brand-gold" />
                     </div>
                 </div>
-                <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-xl">
+                <div className="p-6 glass-panel rounded-2xl shadow-xl">
                     {renderFilters()}
                     <form onSubmit={handleSearch} className="mt-4">
                         <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

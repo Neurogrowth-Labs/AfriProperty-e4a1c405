@@ -25,7 +25,7 @@ const AICreativeSuite: React.FC = () => {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+        <div className="max-w-4xl mx-auto glass-panel rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
           <div className="p-2 bg-slate-100 dark:bg-slate-900/50 rounded-t-xl">
             <div className="flex items-center gap-2">
               {tabs.map(tab => (

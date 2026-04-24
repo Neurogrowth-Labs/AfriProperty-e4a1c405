@@ -44,7 +44,7 @@ const AgentMessages: React.FC<AgentMessagesProps> = ({ user, messages }) => {
             
             <div className="mt-6 space-y-6">
                  {conversations.length > 0 ? conversations.map((conv, index) => (
-                    <div key={index} className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
+                    <div key={index} className="glass-panel p-4 rounded-lg shadow-sm">
                         <h3 className="font-bold text-brand-dark dark:text-white mb-3 border-b border-slate-200 dark:border-slate-700 pb-2">
                            Conversation with <span className="text-brand-primary">{conv.otherUser}</span> about "{conv.propertyTitle}"
                         </h3>
@@ -61,7 +61,7 @@ const AgentMessages: React.FC<AgentMessagesProps> = ({ user, messages }) => {
                         </div>
                     </div>
                 )) : (
-                    <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                    <div className="text-center py-20 glass-panel rounded-lg shadow-sm">
                         <ChatBubbleLeftRightIcon className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600" />
                         <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mt-4">No Messages Yet</h3>
                         <p className="text-slate-500 dark:text-slate-400 mt-2">When clients send you messages, conversations will appear here.</p>

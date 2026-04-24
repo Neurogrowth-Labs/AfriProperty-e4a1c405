@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { BlogPost } from '../types';
 import { CloseIcon } from './icons/NavIcons';
 import { EnvelopeIcon, SpeakerWaveIcon, PauseIcon } from './icons/ActionIcons';
-import ReactMarkdown from 'https://esm.sh/react-markdown@9';
-import rehypeRaw from 'https://esm.sh/rehype-raw@7';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { decode, decodeAudioData } from '../lib/audioUtils';
 
@@ -97,7 +97,7 @@ const BlogDetailModal: React.FC<BlogDetailModalProps> = ({ isOpen, onClose, post
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[110] p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
+        className="glass-panel rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
         onClick={e => e.stopPropagation()}
       >
         <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">

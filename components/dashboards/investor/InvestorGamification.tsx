@@ -37,7 +37,7 @@ const InvestorGamification: React.FC<InvestorGamificationProps> = ({ investorAch
     };
 
     return (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm h-full">
+        <div className="glass-panel p-6 rounded-xl shadow-sm h-full">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">Achievements</h3>
             <div className="space-y-4">
                 {investorAchievements.map(ach => {

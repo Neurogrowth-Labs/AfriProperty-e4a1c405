@@ -60,7 +60,7 @@ const MarketInsights: React.FC = () => {
   };
 
   return (
-    <section id="market-insights" className="py-24 bg-white dark:bg-brand-dark">
+    <section id="market-insights" className="py-24 glass-panel">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary font-bold text-xs uppercase tracking-widest mb-4">
@@ -78,7 +78,7 @@ const MarketInsights: React.FC = () => {
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         placeholder={t.marketInsights.placeholder}
-                        className="w-full px-6 py-4 border-2 border-transparent bg-white dark:bg-slate-800 rounded-2xl focus:border-brand-primary focus:ring-0 dark:text-white text-lg font-medium shadow-inner"
+                        className="w-full px-6 py-4 border-2 border-transparent glass-panel rounded-2xl focus:border-brand-primary focus:ring-0 dark:text-white text-lg font-medium shadow-inner"
                     />
                     <button onClick={handleGenerateReport} disabled={loading} className="w-full sm:w-auto bg-brand-primary text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-brand-dark transition-all disabled:bg-slate-400 flex items-center justify-center space-x-2 h-[60px] sm:w-56 shadow-lg shadow-brand-primary/30">
                         {loading ? (
@@ -119,7 +119,7 @@ const MarketInsights: React.FC = () => {
         {error && <p className="text-center text-brand-accent font-bold text-lg">{error}</p>}
 
         {report && (
-            <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800 border-2 border-brand-primary/20 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-brand-primary/5 transform transition-all duration-700 opacity-0 animate-fade-in-up">
+            <div className="max-w-3xl mx-auto glass-panel border-2 border-brand-primary/20 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-brand-primary/5 transform transition-all duration-700 opacity-0 animate-fade-in-up">
                 <div className="flex justify-between items-start mb-8">
                     <div>
                         <h3 className="text-3xl font-black text-brand-dark dark:text-white mb-2">{t.marketInsights.reportTitle.replace('{{city}}', city)}</h3>

@@ -41,7 +41,7 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ propertyTitle, propertyUrl }) => 
   };
 
   return (
-    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
+    <div className="absolute top-full right-0 mt-2 w-48 glass-panel rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
         <button onClick={(e) => handleSocialClick(e, socialLinks.facebook)} className="share-button">
             <FacebookIcon className="w-5 h-5" /><span>Facebook</span>
         </button>
@@ -255,7 +255,7 @@ Text to translate:
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100] p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
+        className="glass-panel rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
         onClick={e => e.stopPropagation()}
       >
         <header className="relative flex justify-center sm:justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">

@@ -13,7 +13,7 @@ const SessionTimeoutModal: React.FC<SessionTimeoutModalProps> = ({ isOpen, onClo
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[200] p-4">
       <div 
-        className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale text-center p-8"
+        className="glass-panel rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale text-center p-8"
       >
         <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Are you still there?</h2>
         <p className="text-slate-500 dark:text-slate-400 mt-2">

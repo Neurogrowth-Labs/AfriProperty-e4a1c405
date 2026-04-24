@@ -3,19 +3,19 @@
 import React, { useState } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { CpuChipIcon } from './icons/ActionIcons';
-import ReactMarkdown from 'https://esm.sh/react-markdown@9';
-import rehypeRaw from 'https://esm.sh/rehype-raw@7';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 
-interface GroundingChunk {
+interface CustomGroundingChunk {
   web?: {
-    uri: string;
-    title: string;
+    uri?: string;
+    title?: string;
   };
 }
 
 const RealTimeNews: React.FC = () => {
   const [query, setQuery] = useState('');
-  const [result, setResult] = useState<{ text: string; sources: GroundingChunk[] } | null>(null);
+  const [result, setResult] = useState<{ text: string; sources: CustomGroundingChunk[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +37,7 @@ const RealTimeNews: React.FC = () => {
           });
           
           const text = response.text;
-          const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+          const sources = (response.candidates?.[0]?.groundingMetadata?.groundingChunks || []) as CustomGroundingChunk[];
 
           setResult({ text, sources });
 
@@ -50,7 +50,7 @@ const RealTimeNews: React.FC = () => {
   };
 
   return (
-    <section id="real-time-news" className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+    <section id="real-time-news" className="py-12 lg:py-16 glass-panel">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-brand-dark dark:text-white">Real-Time News & Trends</h2>

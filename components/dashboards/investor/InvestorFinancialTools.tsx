@@ -41,7 +41,7 @@ const InvestorFinancialTools: React.FC<InvestorFinancialToolsProps> = ({ currenc
                 </nav>
             </div>
 
-            <div className="flex-grow bg-white dark:bg-slate-800/50 rounded-lg shadow-sm overflow-y-auto p-6">
+            <div className="flex-grow glass-panel rounded-lg shadow-sm overflow-y-auto p-6">
                  {activeTab === 'calculator' && <SmartROICalculator />}
                  {activeTab === 'tax' && <TaxLegalHub />}
             </div>
@@ -84,7 +84,7 @@ const InputField: React.FC<{ label: string; name: string; type?: string; value: 
 };
 
 const ResultCard: React.FC<{ title: string; value: string; color: string; icon: React.ElementType }> = ({ title, value, color, icon: Icon }) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+    <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-700">
         <div className="flex items-center gap-3">
              <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-full">
                 <Icon className={`w-6 h-6 ${color}`} />
@@ -195,7 +195,7 @@ const SmartROICalculator: React.FC = () => {
                     <ResultCard title="Cash on Cash ROI" value={`${results.cashOnCashROI.toFixed(2)}%`} color={results.cashOnCashROI >= 0 ? 'text-green-600' : 'text-red-600'} icon={ChartBarIcon} />
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-700">
                     <h4 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">Monthly Payment Breakdown</h4>
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between items-center"><span className="text-slate-500 dark:text-slate-400">Principal & Interest</span><span className="font-mono font-medium">{formatCurrency(results.monthlyMortgage)}</span></div>
@@ -204,7 +204,7 @@ const SmartROICalculator: React.FC = () => {
                     </div>
                 </div>
                 
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div className="glass-panel p-6 rounded-xl border border-slate-200 dark:border-slate-700">
                     <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">"What If" Analysis</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div><label className="text-sm font-medium">Rent Increase: <span className="font-bold">{simulation.rentIncrease}%</span>/yr</label><input type="range" name="rentIncrease" min="0" max="10" step="0.5" value={simulation.rentIncrease} onChange={handleSimChange} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-600" /></div>
@@ -265,7 +265,7 @@ const TaxLegalHub: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="p-4 bg-brand-light dark:bg-slate-900/50 rounded-lg flex items-center gap-4">
-                <select value={country} onChange={e => setCountry(e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800">
+                <select value={country} onChange={e => setCountry(e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md glass-panel">
                     {["South Africa", "United States", "Portugal", "Thailand"].map(c => <option key={c}>{c}</option>)}
                 </select>
                  <button onClick={handleGenerate} disabled={isLoading} className="bg-brand-primary text-white font-semibold px-4 py-2 rounded-lg flex items-center gap-2 disabled:bg-slate-400 flex-shrink-0">

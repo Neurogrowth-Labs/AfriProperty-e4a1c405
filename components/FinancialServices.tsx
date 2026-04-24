@@ -46,7 +46,7 @@ const FinancialServices: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {services.map((service, index) => (
-                        <div key={index} className={`bg-white dark:bg-slate-800 p-10 rounded-[2.5rem] shadow-xl hover:shadow-2xl ${service.shadow} hover:-translate-y-3 transition-all duration-500 text-center border border-slate-100 dark:border-slate-700 group`}>
+                        <div key={index} className={`glass-panel p-10 rounded-[2.5rem] shadow-xl hover:shadow-2xl ${service.shadow} hover:-translate-y-3 transition-all duration-500 text-center border border-slate-100 dark:border-slate-700 group`}>
                             <div className="flex justify-center mb-8">
                                 <div className={`${service.color} text-white p-6 rounded-3xl transform transition-transform group-hover:rotate-12 duration-500`}>
                                     <service.Icon className="w-10 h-10" />

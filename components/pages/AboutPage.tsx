@@ -15,8 +15,8 @@ const Section: React.FC<{ title: string; children: React.ReactNode; className?: 
 );
 
 const ValueCard: React.FC<{ icon: React.ElementType, title: string, children: React.ReactNode }> = ({ icon: Icon, title, children }) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md text-center border border-slate-200 dark:border-slate-700">
-        <div className="inline-block bg-brand-light dark:bg-slate-700 p-4 rounded-full">
+    <div className="glass-panel p-6 rounded-lg shadow-md text-center border border-slate-200 dark:border-slate-700">
+        <div className="inline-block glass-card p-4 rounded-full">
             <Icon className="w-8 h-8 text-brand-gold" />
         </div>
         <h3 className="text-xl font-bold text-slate-800 dark:text-white mt-4">{title}</h3>
@@ -37,7 +37,7 @@ const AboutPage: React.FC = () => {
   return (
     <div className="animate-fade-in bg-slate-50 dark:bg-slate-900">
       {/* Hero Section */}
-      <header className="bg-white dark:bg-brand-dark py-20 text-center">
+      <header className="glass-panel py-20 text-center">
         <div className="container mx-auto px-6">
           <h1 className="text-5xl md:text-6xl font-extrabold text-brand-dark dark:text-white tracking-tight">About AfriProperty</h1>
           <p className="mt-4 text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -55,7 +55,7 @@ const AboutPage: React.FC = () => {
       </Section>
 
       {/* Mission & Vision */}
-      <div className="bg-white dark:bg-slate-800 py-16">
+      <div className="glass-panel py-16">
           <div className="container mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-12 text-center">
                 <div>
@@ -83,7 +83,7 @@ const AboutPage: React.FC = () => {
        </Section>
       
       {/* Leadership */}
-      <Section title="Leadership & Team" className="bg-white dark:bg-slate-800">
+      <Section title="Leadership & Team" className="glass-panel">
           <div className="max-w-4xl mx-auto">
               <div className="text-center">
                   <img src="https://i.pravatar.cc/150?u=naledi-radebe" alt="Naledi Radebe" className="w-32 h-32 rounded-full mx-auto shadow-lg" />
@@ -101,7 +101,7 @@ const AboutPage: React.FC = () => {
                <StatCard value="10,000+" label="Verified Listings" />
                <StatCard value="25,000+" label="Successful Connections Made" />
            </div>
-           <div className="max-w-2xl mx-auto mt-12 text-center italic bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+           <div className="max-w-2xl mx-auto mt-12 text-center italic glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                <p className="text-slate-600 dark:text-slate-300">"AfriProperty made finding our first family home in Soweto a reality. The process was so much easier and more transparent than we ever imagined."</p>
                <p className="font-semibold text-brand-dark dark:text-white mt-2">- The Mokoena Family</p>
            </div>

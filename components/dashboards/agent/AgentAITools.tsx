@@ -4,6 +4,15 @@ import { blobToBase64 } from '../../../lib/utils';
 import { VideoCameraIcon, CameraIcon, SparklesIcon, CpuChipIcon } from '../../icons/ActionIcons';
 import { PropertyType } from '../../../types';
 
+declare global {
+  interface Window {
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}
+
 type AITab = 'descGen' | 'priceRec' | 'contentAnalyzer' | 'imageGen' | 'videoGen';
 
 const AgentAITools: React.FC = () => {
@@ -24,7 +33,7 @@ const AgentAITools: React.FC = () => {
         <p className="text-slate-500 dark:text-slate-400 mt-1">Optimize your listings and marketing content with intelligent assistance.</p>
       </div>
       
-      <div className="mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="mx-auto glass-panel rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="p-2 bg-brand-primary rounded-t-xl">
           <div className="flex items-center gap-2 flex-wrap">
             {tools.map(tool => (
@@ -133,7 +142,7 @@ const DescriptionGenerator: React.FC = () => {
                     readOnly 
                     placeholder="Premium generated description will appear here..." 
                     rows={8} 
-                    className="relative w-full input bg-white dark:bg-slate-900 border-2 border-brand-gold/30 font-medium leading-relaxed" 
+                    className="relative w-full input glass-panel border-2 border-brand-gold/30 font-medium leading-relaxed" 
                 />
             </div>
             

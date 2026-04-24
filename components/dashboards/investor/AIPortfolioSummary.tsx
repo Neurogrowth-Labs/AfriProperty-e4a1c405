@@ -45,7 +45,7 @@ const AIPortfolioSummary: React.FC<AIPortfolioSummaryProps> = ({ userProperties 
     };
 
     return (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+        <div className="glass-panel p-6 rounded-xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-white">AI Portfolio Summary</h3>
                 <button onClick={handleGenerateSummary} disabled={isLoading} className="px-4 py-1.5 text-xs font-semibold bg-brand-primary text-white rounded-lg hover:bg-opacity-90 disabled:bg-slate-400 flex items-center gap-1.5">
@@ -56,7 +56,7 @@ const AIPortfolioSummary: React.FC<AIPortfolioSummaryProps> = ({ userProperties 
             
             {error && <p className="text-sm text-red-500">{error}</p>}
 
-            <div className="text-sm text-slate-600 dark:text-slate-300 bg-brand-light dark:bg-slate-700/50 p-4 rounded-lg min-h-[80px]">
+            <div className="text-sm text-slate-600 dark:text-slate-300 glass-card/50 p-4 rounded-lg min-h-[80px]">
                 {summary ? (
                     <p>{summary}</p>
                 ) : (

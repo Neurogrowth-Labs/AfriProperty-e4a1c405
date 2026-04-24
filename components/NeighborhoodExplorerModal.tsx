@@ -29,7 +29,7 @@ const ShareMenu: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborhood
   };
   
   return (
-    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
+    <div className="absolute top-full right-0 mt-2 w-48 glass-panel rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
       <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="share-button">
         <TwitterIcon className="w-5 h-5" /><span>Twitter</span>
       </a>
@@ -111,13 +111,13 @@ const NeighborhoodExplorerModal: React.FC<NeighborhoodExplorerModalProps> = ({ i
                 
                 <div className="flex flex-col md:flex-row flex-grow overflow-hidden">
                     {/* Sidebar */}
-                    <aside className="w-full md:w-1/3 lg:w-1/4 bg-white dark:bg-slate-900/50 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 p-4 overflow-y-auto flex-shrink-0">
+                    <aside className="w-full md:w-1/3 lg:w-1/4 glass-panel/50 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 p-4 overflow-y-auto flex-shrink-0">
                         <button onClick={() => setIsLifestyleMatcherOpen(true)} className="w-full bg-brand-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-opacity-90 transition-all flex items-center justify-center gap-2 mb-4">
                             <SparklesIcon className="w-5 h-5"/> Find My Best Fit
                         </button>
                         <div className="space-y-2">
                             {NEIGHBORHOOD_GUIDES.map(n => (
-                                <button key={n.id} onClick={() => setSelectedId(n.id)} className={`w-full text-left p-3 rounded-lg flex items-center gap-3 transition-colors ${selectedId === n.id ? 'bg-brand-light dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                                <button key={n.id} onClick={() => setSelectedId(n.id)} className={`w-full text-left p-3 rounded-lg flex items-center gap-3 transition-colors ${selectedId === n.id ? 'glass-card' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                                     <img src={n.image} alt={n.name} className="w-12 h-12 object-cover rounded-md flex-shrink-0" />
                                     <div>
                                         <p className="font-semibold text-sm text-slate-800 dark:text-white">{n.name}</p>
@@ -195,7 +195,7 @@ const OverviewTab: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborho
                 <iframe className="w-full h-full" loading="lazy" allowFullScreen src={`https://maps.google.com/maps?q=${neighborhood.coordinates.lat},${neighborhood.coordinates.lng}&hl=es;z=14&output=embed`}></iframe>
             </div>
         </div>
-        <div className="bg-white dark:bg-slate-800/50 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+        <div className="glass-panel p-6 rounded-lg border border-slate-200 dark:border-slate-700">
             <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Livability Scores</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <ScoreBar icon={ShieldCheckIcon} label="Safety" score={neighborhood.scores.safety} />
@@ -215,7 +215,7 @@ const CommunityTab: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborh
             <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">What Locals Say</h3>
             <div className="flex gap-6 overflow-x-auto pb-4">
                 {neighborhood.reviews?.map((review, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 flex-shrink-0 w-80">
+                    <div key={i} className="glass-panel p-4 rounded-lg border border-slate-200 dark:border-slate-700 flex-shrink-0 w-80">
                         <p className="text-sm text-slate-600 dark:text-slate-300 italic">"{review.quote}"</p>
                         <div className="flex items-center gap-3 mt-3">
                             <img src={review.image} alt={review.author} className="w-10 h-10 rounded-full" />
@@ -230,7 +230,7 @@ const CommunityTab: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborh
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Upcoming Events</h3>
                 <div className="space-y-3">
                     {neighborhood.events?.map((event, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <div key={i} className="glass-panel p-4 rounded-lg border border-slate-200 dark:border-slate-700">
                             <p className="font-semibold text-brand-primary">{event.date}</p>
                             <p className="font-bold text-slate-800 dark:text-white">{event.name}</p>
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{event.description}</p>
@@ -242,7 +242,7 @@ const CommunityTab: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborh
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Hidden Gems</h3>
                 <div className="space-y-3">
                     {neighborhood.hiddenGems?.map((gem, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-4">
+                        <div key={i} className="glass-panel p-3 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-4">
                             <img src={gem.image} alt={gem.name} className="w-20 h-20 object-cover rounded-md" />
                             <div>
                                 <span className="text-xs font-bold bg-brand-secondary text-brand-dark px-2 py-0.5 rounded-full">{gem.category}</span>
@@ -273,10 +273,10 @@ const UtilitiesTab: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborh
 
     return (
         <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-800/50 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+            <div className="glass-panel p-6 rounded-lg border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Commute Calculator</h3>
                 <div className="flex items-center gap-2">
-                    <input type="text" value={destination} onChange={e => setDestination(e.target.value)} placeholder="Enter workplace, school, etc." className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800" />
+                    <input type="text" value={destination} onChange={e => setDestination(e.target.value)} placeholder="Enter workplace, school, etc." className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md glass-panel" />
                     <button onClick={handleCalculate} className="bg-brand-primary text-white font-semibold px-4 py-2 rounded-lg flex items-center gap-2 flex-shrink-0">
                         <ClockIcon className="w-5 h-5"/> Calculate
                     </button>
@@ -289,7 +289,7 @@ const UtilitiesTab: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborh
                     </div>
                 )}
             </div>
-            <div className="bg-white dark:bg-slate-800/50 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+            <div className="glass-panel p-6 rounded-lg border border-slate-200 dark:border-slate-700">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Getting Around</h3>
                  <div className="space-y-3">
                     <div className="flex items-start gap-3"><LocationPinIcon className="w-5 h-5 text-slate-500 flex-shrink-0 mt-0.5"/><p className="text-sm text-slate-600 dark:text-slate-300">{neighborhood.profile.publicTransport}</p></div>

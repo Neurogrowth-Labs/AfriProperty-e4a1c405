@@ -78,7 +78,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   };
 
   return (
-    <header className="bg-white/90 dark:bg-brand-dark/90 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800">
+    <header className="glass-header sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
       <div className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <button onClick={onHomeClick} className="flex items-center space-x-2 flex-shrink-0 group">
           <HomeIcon className="w-7 h-7 text-brand-primary group-hover:text-brand-secondary transition-colors" />
@@ -97,7 +97,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <span className="text-xs font-semibold hidden sm:inline">{currencyOptions[currency].symbol}</span>
             </button>
             {isCurrencyOpen && (
-                <div className="absolute top-full right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-100 dark:border-slate-700 py-1 z-50">
+                <div className="absolute top-full right-0 mt-2 w-40 glass-panel rounded-lg shadow-xl border border-slate-100 dark:border-slate-700 py-1 z-50">
                     {Object.entries(currencyOptions).map(([code, details]) => (
                          <button 
                             key={code}
@@ -124,7 +124,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                 )}
             </button>
             {isLangOpen && (
-                <div className="absolute top-full right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-100 dark:border-slate-700 py-1 z-50">
+                <div className="absolute top-full right-0 mt-2 w-40 glass-panel rounded-lg shadow-xl border border-slate-100 dark:border-slate-700 py-1 z-50">
                     {Object.entries(languageOptions).map(([langCode, langDetails]) => (
                          <button 
                             key={langCode}
@@ -187,7 +187,7 @@ const Header: React.FC<HeaderProps> = (props) => {
         </div>
       </div>
        {/* Mobile Menu */}
-      <div className={`absolute top-full left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen ? 'max-h-96 shadow-lg border-b border-slate-100 dark:border-slate-800' : 'max-h-0'}`}>
+      <div className={`absolute top-full left-0 w-full glass-panel lg:hidden transition-all duration-300 ease-in-out overflow-hidden shadow-2xl ${isMobileMenuOpen ? 'max-h-96 border-b border-slate-100 dark:border-slate-800' : 'max-h-0'}`}>
         <nav className="flex flex-col p-4 space-y-2">
             <a href="#" onClick={() => mobileLinkClick(onHomeClick)} className="mobile-nav-link">{t.header.home}</a>
             <a href="#" onClick={() => mobileLinkClick(onAboutClick)} className="mobile-nav-link">{t.header.about}</a>

@@ -62,7 +62,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onPlanSele
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-4xl transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
+        className="glass-panel rounded-xl shadow-2xl w-full max-w-4xl transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
         onClick={e => e.stopPropagation()}
       >
         <header className="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-700">
@@ -77,7 +77,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onPlanSele
 
         <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {plans.map((plan, index) => (
-                <div key={index} className={`border rounded-lg p-6 flex flex-col relative ${plan.isRecommended ? 'border-brand-primary border-2 bg-brand-light dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}`}>
+                <div key={index} className={`border rounded-lg p-6 flex flex-col relative ${plan.isRecommended ? 'border-brand-primary border-2 bg-brand-light dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 glass-panel'}`}>
                     {plan.isRecommended && (
                         <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</div>
                     )}

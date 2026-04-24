@@ -10,7 +10,7 @@ interface InvestorSettingsProps {
 }
 
 const Section: React.FC<{ title: string; description: string; children: React.ReactNode }> = ({ title, description, children }) => (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+    <div className="glass-panel rounded-lg shadow-sm">
         <div className="p-6 border-b border-slate-200 dark:border-slate-700">
             <h3 className="text-lg font-bold text-slate-800 dark:text-white">{title}</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>
@@ -123,7 +123,7 @@ const InvestorSettingsPage: React.FC<InvestorSettingsProps> = ({ settings, onUpd
                     <Toggle label="ROI threshold crossed" checked={localSettings.alerts.roiThreshold.isEnabled} onChange={handleRoiAlertToggle} />
                     {localSettings.alerts.roiThreshold.isEnabled && (
                         <div className="relative w-32">
-                             <input type="number" value={localSettings.alerts.roiThreshold.value} onChange={handleRoiValueChange} className="w-full pl-3 pr-8 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800" />
+                             <input type="number" value={localSettings.alerts.roiThreshold.value} onChange={handleRoiValueChange} className="w-full pl-3 pr-8 py-2 border border-slate-300 dark:border-slate-600 rounded-md glass-panel" />
                             <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500">%</span>
                         </div>
                     )}
@@ -153,7 +153,7 @@ const InvestorSettingsPage: React.FC<InvestorSettingsProps> = ({ settings, onUpd
                 </button>
             </div>
              <style>{`
-                .input { @apply px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }
+                .input { @apply px-3 py-2 glass-panel border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }
             `}</style>
         </div>
     );

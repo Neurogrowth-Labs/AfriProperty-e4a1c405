@@ -11,7 +11,7 @@ const NeighborhoodSection: React.FC<NeighborhoodSectionProps> = ({ onOpenExplore
     const { t } = useTranslations();
 
     return (
-        <section id="neighborhoods" className="py-20 bg-white dark:bg-brand-dark">
+        <section id="neighborhoods" className="py-20 glass-panel">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-12">
                     <h2 className="text-4xl font-bold text-brand-dark dark:text-white">{t.neighborhoodGuides.title}</h2>

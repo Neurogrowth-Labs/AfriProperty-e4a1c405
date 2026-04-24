@@ -9,7 +9,7 @@ interface CareersModalProps {
 }
 
 const JobOpening: React.FC<{ title: string, location: string, type: string, onApplyClick: (title: string) => void }> = ({ title, location, type, onApplyClick }) => (
-    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+    <div className="glass-panel p-4 rounded-lg border border-slate-200 dark:border-slate-700 flex justify-between items-center">
         <div>
             <h4 className="font-bold text-slate-800 dark:text-white">{title}</h4>
             <p className="text-sm text-slate-500 dark:text-slate-400">{location} &middot; {type}</p>

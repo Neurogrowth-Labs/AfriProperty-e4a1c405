@@ -67,7 +67,7 @@ const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ isOpen, o
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[120] p-4" onClick={resetAndClose}>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" onClick={e => e.stopPropagation()}>
+            <div className="glass-panel rounded-2xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" onClick={e => e.stopPropagation()}>
                 <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
                     <div>
                         <h2 className="text-xl font-bold text-brand-dark dark:text-white">Book Consultation</h2>
@@ -132,13 +132,13 @@ const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ isOpen, o
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-600 dark:text-slate-300">Meeting Type</label>
-                                <select value={meetingType} onChange={e => setMeetingType(e.target.value)} className="mt-1 w-full p-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800">
+                                <select value={meetingType} onChange={e => setMeetingType(e.target.value)} className="mt-1 w-full p-2 border border-slate-300 dark:border-slate-600 rounded-md glass-panel">
                                     <option>Video Call</option><option>Phone Call</option>
                                 </select>
                             </div>
                             <div>
                                 <label htmlFor="topic" className="block text-sm font-medium text-slate-600 dark:text-slate-300">What would you like to discuss?</label>
-                                <textarea id="topic" value={topic} onChange={e => setTopic(e.target.value)} required rows={3} className="mt-1 w-full p-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800"/>
+                                <textarea id="topic" value={topic} onChange={e => setTopic(e.target.value)} required rows={3} className="mt-1 w-full p-2 border border-slate-300 dark:border-slate-600 rounded-md glass-panel"/>
                             </div>
                              <div className="flex justify-between items-center pt-4">
                                 <button type="button" onClick={() => setStep(1)} className="text-sm font-semibold hover:underline text-slate-600 dark:text-slate-300">Back</button>

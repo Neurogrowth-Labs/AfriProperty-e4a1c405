@@ -44,7 +44,7 @@ const TimeAgo: React.FC<{ timestamp: number }> = ({ timestamp }) => {
 
 const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ notifications, onNotificationClick, onMarkAllAsRead }) => {
   return (
-    <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 z-50 flex flex-col max-h-[80vh]">
+    <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 glass-panel rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 z-50 flex flex-col max-h-[80vh]">
       <header className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
         <h3 className="font-bold text-lg text-brand-dark dark:text-white">Notifications</h3>
         <button onClick={onMarkAllAsRead} className="text-sm font-semibold text-brand-primary hover:underline">
@@ -59,7 +59,7 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ notifications, 
               <li key={noti.id}>
                 <button
                   onClick={() => onNotificationClick(noti)}
-                  className={`w-full text-left p-4 transition-colors ${noti.isRead ? 'bg-white dark:bg-slate-800' : 'bg-blue-50 dark:bg-blue-900/20'} hover:bg-slate-100 dark:hover:bg-slate-700`}
+                  className={`w-full text-left p-4 transition-colors ${noti.isRead ? 'glass-panel' : 'bg-blue-50 dark:bg-blue-900/20'} hover:bg-slate-100 dark:hover:bg-slate-700`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 mt-1">

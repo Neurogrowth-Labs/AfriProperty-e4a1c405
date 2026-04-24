@@ -9,7 +9,7 @@ interface BlogSectionProps {
 }
 
 const BlogCardSkeleton: React.FC = () => (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden animate-pulse border border-slate-200 dark:border-white">
+    <div className="glass-panel rounded-xl shadow-lg overflow-hidden animate-pulse border border-slate-200 dark:border-white">
         <div className="w-full h-56 bg-slate-200 dark:bg-slate-700"></div>
         <div className="p-6">
             <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-3"></div>
@@ -24,7 +24,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({ posts, onPostClick, isLoading
     const { t } = useTranslations();
 
     return (
-        <section id="blog" className="py-12 lg:py-16 bg-white dark:bg-slate-900">
+        <section id="blog" className="py-12 lg:py-16 glass-panel">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-12">
                     <h2 className="text-4xl font-bold text-brand-dark dark:text-white">{t.blog.title}</h2>
@@ -37,7 +37,7 @@ const BlogSection: React.FC<BlogSectionProps> = ({ posts, onPostClick, isLoading
                         [...Array(3)].map((_, i) => <BlogCardSkeleton key={i} />)
                     ) : (
                         posts.map((post) => (
-                            <div key={post.title} className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col border border-slate-200 dark:border-white">
+                            <div key={post.title} className="glass-panel rounded-xl shadow-lg overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col border border-slate-200 dark:border-white">
                                 <div className="relative overflow-hidden">
                                     <img src={post.image} alt={post.title} className="w-full h-56 object-cover transform group-hover:scale-105 transition-transform duration-500" />
                                 </div>

@@ -12,13 +12,13 @@ interface AgentEarningsProps {
 }
 
 const StatCard: React.FC<{ title: string; value: string; icon: React.ElementType; }> = ({ title, value, icon: Icon }) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm">
+    <div className="glass-panel p-6 rounded-lg shadow-sm">
         <div className="flex justify-between items-start">
             <div>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
                 <p className="text-3xl font-bold text-slate-800 dark:text-white mt-2">{value}</p>
             </div>
-            <div className="bg-brand-light dark:bg-slate-700 p-3 rounded-full">
+            <div className="glass-card p-3 rounded-full">
                 <Icon className="w-6 h-6 text-brand-primary" />
             </div>
         </div>
@@ -59,7 +59,7 @@ const AgentEarnings: React.FC<AgentEarningsProps> = ({ user, allProperties }) =>
                 <StatCard title="Pending Payouts" value={formatCurrency(earnings.pending)} icon={ClockIcon} />
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div className="glass-panel rounded-lg shadow-sm overflow-hidden">
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-white p-4 border-b border-slate-200 dark:border-slate-700">Transaction History</h3>
                  <div className="overflow-x-auto">
                     <table className="w-full text-sm">

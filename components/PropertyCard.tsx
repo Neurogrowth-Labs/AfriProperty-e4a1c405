@@ -38,7 +38,7 @@ const ShareMenu: React.FC<ShareMenuProps> = ({ propertyTitle, propertyUrl }) => 
   };
 
   return (
-    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
+    <div className="absolute top-full right-0 mt-2 w-48 glass-panel rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
         <button onClick={(e) => handleSocialClick(e, socialLinks.facebook)} className="share-button">
             <FacebookIcon className="w-5 h-5 text-blue-600" /><span>Facebook</span>
         </button>
@@ -143,7 +143,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
     const showStandardActions = property.propertyType !== PropertyType.TRANSPORT && property.propertyType !== PropertyType.WELLNESS;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 group flex flex-col border border-slate-200 dark:border-slate-700">
+    <div className="glass-card rounded-xl overflow-hidden group flex flex-col">
       <div className="relative overflow-hidden group/image">
         <button onClick={() => onOpenDetailModal(property)} className="absolute inset-0 z-0"></button>
         <img src={property.images[currentImageIndex] || 'https://picsum.photos/seed/placeholder/800/600'} alt={property.title} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -167,7 +167,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
         <div className="absolute top-3 right-3 flex flex-col space-y-2" ref={shareRef}>
             <button
                 onClick={(e) => handleIdActionClick(e, onSaveToggle)}
-                className="bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:text-brand-accent hover:bg-white shadow-sm transition-all duration-300 z-10"
+                className="bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:text-brand-accent hover:glass-card-sm transition-all duration-300 z-10"
                 aria-label={isSaved ? "Unsave property" : "Save property"}
             >
                 {isSaved ? (
@@ -178,7 +178,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
             </button>
             <button
                 onClick={(e) => handleActionClick(e, onToggleCompare)}
-                className={`bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:bg-white shadow-sm transition-all duration-300 z-10 ${isCompared ? 'text-brand-primary' : ''}`}
+                className={`bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:glass-card-sm transition-all duration-300 z-10 ${isCompared ? 'text-brand-primary' : ''}`}
                 aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
             >
                 <Square2StackIcon className="w-5 h-5" />
@@ -195,7 +195,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
              <div className="relative">
                 <button
                     onClick={(e) => {e.stopPropagation(); setIsShareMenuOpen(prev => !prev);}}
-                    className="bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:text-brand-primary hover:bg-white shadow-sm transition-all duration-300 z-10"
+                    className="bg-white/90 backdrop-blur-sm p-2 rounded-full text-slate-700 hover:text-brand-primary hover:glass-card-sm transition-all duration-300 z-10"
                     aria-label="Share property"
                 >
                     <ShareIcon className="w-5 h-5" />
@@ -237,7 +237,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
             )}
         </div>
       </div>
-      <button onClick={() => onOpenDetailModal(property)} className="p-4 flex-grow flex flex-col text-left">
+      <div onClick={() => onOpenDetailModal(property)} className="p-4 flex-grow flex flex-col text-left cursor-pointer">
         <div className="flex justify-between items-start mb-2">
             <span className="text-[10px] font-bold text-brand-primary uppercase tracking-widest">{property.propertyType}</span>
             <p className="text-xl font-bold text-brand-dark dark:text-white">{formattedPrice}</p>
@@ -248,7 +248,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
           <span className="truncate">{property.address.street}, {property.address.city}</span>
         </div>
         
-        <div className="grid grid-cols-3 gap-2 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/30 p-3 rounded-lg mb-4 text-xs">
+        <div className="grid grid-cols-3 gap-2 text-slate-600 dark:text-slate-300 glass-card p-3 rounded-lg mb-4 text-xs">
             <div className="flex flex-col items-center border-r border-slate-200 dark:border-slate-600">
                 <BedIcon className="w-4 h-4 text-brand-primary mb-1"/>
                 <span className="font-semibold">{property.details.beds} Beds</span>
@@ -265,7 +265,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
 
         <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-brand-light dark:bg-slate-700 flex items-center justify-center text-brand-primary font-bold text-[10px] uppercase">
+                <div className="w-6 h-6 rounded-full glass-card flex items-center justify-center text-brand-primary font-bold text-[10px] uppercase">
                     {property.agent.name.charAt(0)}
                 </div>
                 <div className="flex flex-col">
@@ -288,14 +288,14 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
                 </button>
                 <button 
                     onClick={(e) => handleActionClick(e, onFindSimilar)}
-                    className="p-2.5 bg-brand-light dark:bg-slate-700 text-brand-primary rounded-lg hover:bg-brand-primary hover:text-white transition-all"
+                    className="p-2.5 glass-card text-brand-primary rounded-lg hover:bg-brand-primary hover:text-white transition-all"
                     title="Find Similar"
                 >
                     <SparklesIcon className="w-4 h-4" />
                 </button>
             </div>
         )}
-      </button>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob } from '@google/genai';
+import { GoogleGenAI, Modality, Blob } from '@google/genai';
 import { encode, decode, decodeAudioData } from '../lib/audioUtils';
 import { MicrophoneIcon, StopIcon } from './icons/ActionIcons';
 import { CloseIcon } from './icons/NavIcons';
@@ -16,7 +16,7 @@ const AIVoiceChat: React.FC<AIVoiceChatProps> = ({ isOpen, onClose }) => {
   const [currentUserTranscript, setCurrentUserTranscript] = useState('');
   const [currentModelTranscript, setCurrentModelTranscript] = useState('');
   
-  const sessionPromiseRef = useRef<Promise<LiveSession> | null>(null);
+  const sessionPromiseRef = useRef<Promise<any> | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const outputAudioContextRef = useRef<AudioContext | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -105,7 +105,7 @@ const AIVoiceChat: React.FC<AIVoiceChatProps> = ({ isOpen, onClose }) => {
             source.connect(scriptProcessor);
             scriptProcessor.connect(audioContextRef.current!.destination);
           },
-          onmessage: async (message: LiveServerMessage) => {
+          onmessage: async (message: any) => {
             // Handle transcriptions
             if (message.serverContent?.inputTranscription) {
               setCurrentUserTranscript(prev => prev + message.serverContent!.inputTranscription!.text);

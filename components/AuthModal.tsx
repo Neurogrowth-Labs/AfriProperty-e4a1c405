@@ -35,7 +35,7 @@ const FileInput: React.FC<{ label: string; file: File | null; onFileChange: (fil
     <div>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">{label}</label>
         <div className="mt-1">
-            <label htmlFor={label} className="relative cursor-pointer bg-white dark:bg-slate-800 rounded-lg font-medium text-brand-primary hover:text-brand-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-slate-800 focus-within:ring-brand-primary border border-slate-300 dark:border-slate-600 p-3 flex justify-center items-center gap-2">
+            <label htmlFor={label} className="relative cursor-pointer glass-panel rounded-lg font-medium text-brand-primary hover:text-brand-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-slate-800 focus-within:ring-brand-primary border border-slate-300 dark:border-slate-600 p-3 flex justify-center items-center gap-2">
                 <ArrowUpTrayIcon className="w-5 h-5" />
                 <span className="text-sm">{file ? 'Change file' : 'Upload file'}</span>
                 <input id={label} name={label} type="file" className="sr-only" onChange={(e) => onFileChange(e.target.files ? e.target.files[0] : null)} accept={acceptedTypes} required={required} />
@@ -67,7 +67,7 @@ const SocialLogins: React.FC<{onLoginSuccess: (user: User) => void}> = ({ onLogi
 
 const SignupOptionCard: React.FC<{icon: React.ElementType, title: string, description: string, onClick: () => void}> = ({ icon: Icon, title, description, onClick }) => (
     <button onClick={onClick} className="w-full text-left p-4 border border-slate-300 dark:border-slate-700 rounded-lg flex items-center gap-4 hover:bg-brand-light dark:hover:bg-slate-800 hover:border-brand-primary transition-all">
-        <div className="bg-brand-light dark:bg-slate-700 p-3 rounded-lg"><Icon className="w-6 h-6 text-brand-primary"/></div>
+        <div className="glass-card p-3 rounded-lg"><Icon className="w-6 h-6 text-brand-primary"/></div>
         <div>
             <h3 className="font-bold text-slate-800 dark:text-white">{title}</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
@@ -399,7 +399,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4 animate-fade-in" onClick={onClose}>
         <div 
-            className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 opacity-0 animate-fade-in-scale" 
+            className="glass-panel rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 opacity-0 animate-fade-in-scale" 
             onClick={e => e.stopPropagation()}
         >
             <header className="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-700">
@@ -432,7 +432,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
             .animate-fade-in-scale { animation: fadeInScale 0.3s ease-out forwards; }
             
             .input-base {
-                @apply w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-slate-800 dark:text-slate-200 transition-colors placeholder:text-slate-400 disabled:bg-slate-100 dark:disabled:bg-slate-800;
+                @apply w-full px-4 py-2.5 glass-panel border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-brand-primary text-slate-800 dark:text-slate-200 transition-colors placeholder:text-slate-400 disabled:bg-slate-100 dark:disabled:bg-slate-800;
             }
             .btn-primary {
                 @apply w-full bg-brand-primary text-white px-5 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all duration-300 disabled:bg-slate-400 disabled:cursor-not-allowed transform hover:scale-[1.02];

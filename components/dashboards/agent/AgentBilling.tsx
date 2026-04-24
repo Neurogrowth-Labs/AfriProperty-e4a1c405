@@ -46,12 +46,12 @@ const AgentBilling: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm">
+        <div className="glass-panel p-6 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg text-slate-800 dark:text-white">Current Plan</h3>
             <p className="text-4xl font-bold text-brand-primary mt-2">Essential</p>
             <p className="text-sm text-slate-500 dark:text-slate-400">Your plan renews on November 27, 2023.</p>
         </div>
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm">
+        <div className="glass-panel p-6 rounded-lg shadow-sm">
             <h3 className="font-semibold text-lg text-slate-800 dark:text-white">Listing Credits</h3>
             <p className="text-4xl font-bold text-brand-primary mt-2">1 / 1</p>
             <p className="text-sm text-slate-500 dark:text-slate-400">Used this billing cycle.</p>
@@ -65,7 +65,7 @@ const AgentBilling: React.FC = () => {
         <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">Available Plans</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {plans.map((plan, index) => (
-                <div key={index} className={`border rounded-lg p-6 flex flex-col ${plan.isCurrent ? 'border-brand-primary border-2 bg-brand-light dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}`}>
+                <div key={index} className={`border rounded-lg p-6 flex flex-col ${plan.isCurrent ? 'border-brand-primary border-2 bg-brand-light dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 glass-panel'}`}>
                     <h3 className="text-xl font-bold text-brand-dark dark:text-white text-center">{plan.name}</h3>
                     <div className="text-center my-6">
                         <span className="text-4xl font-extrabold text-brand-dark dark:text-white">{plan.price}</span>

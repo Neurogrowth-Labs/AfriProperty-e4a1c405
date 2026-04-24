@@ -19,7 +19,7 @@ const InvestorDocuments: React.FC<InvestorDocumentsProps> = ({ user }) => {
                 <p className="text-slate-500 dark:text-slate-400 mt-1">Access and download all your important investment documents.</p>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div className="glass-panel rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm min-w-[600px]">
                         <thead className="bg-slate-50 dark:bg-slate-700/50">

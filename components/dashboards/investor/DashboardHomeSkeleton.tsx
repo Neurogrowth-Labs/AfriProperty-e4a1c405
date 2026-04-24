@@ -19,7 +19,7 @@ const DashboardHomeSkeleton: React.FC = () => {
             {/* Stat Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+                    <div key={i} className="glass-panel p-6 rounded-xl shadow-sm">
                         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
                         <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mt-3"></div>
                     </div>
@@ -28,7 +28,7 @@ const DashboardHomeSkeleton: React.FC = () => {
 
             {/* Map & Other Widgets */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-3 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+                <div className="lg:col-span-3 glass-panel p-6 rounded-xl shadow-sm">
                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4 mb-4"></div>
                      <div className="aspect-[2/1] bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
                 </div>

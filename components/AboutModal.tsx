@@ -11,9 +11,9 @@ interface AboutModalProps {
 }
 
 const InfoCard: React.FC<{ icon: React.ElementType, title: string, children: React.ReactNode }> = ({ icon: Icon, title, children }) => (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+    <div className="glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
         <div className="flex items-center gap-4">
-            <div className="bg-brand-light dark:bg-slate-700 p-3 rounded-full">
+            <div className="glass-card p-3 rounded-full">
                 <Icon className="w-6 h-6 text-brand-primary" />
             </div>
             <h3 className="text-lg font-bold text-slate-800 dark:text-white">{title}</h3>

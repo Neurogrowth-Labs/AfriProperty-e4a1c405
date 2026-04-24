@@ -89,7 +89,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onPlanSelect }) => {
   return (
     <div className="animate-fade-in bg-slate-50 dark:bg-slate-900">
       {/* Hero */}
-      <header className="bg-white dark:bg-brand-dark py-16 text-center">
+      <header className="glass-panel py-16 text-center">
         <div className="container mx-auto px-6">
           <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark dark:text-white">Find the Perfect Plan</h1>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -103,7 +103,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onPlanSelect }) => {
         <div className="container mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto">
                 {plans.map((plan) => (
-                    <div key={plan.role} className={`border rounded-xl p-8 flex flex-col relative transform transition-transform hover:scale-105 ${plan.isRecommended ? 'border-brand-primary border-2 bg-brand-light dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}`}>
+                    <div key={plan.role} className={`border rounded-xl p-8 flex flex-col relative transform transition-transform hover:scale-105 ${plan.isRecommended ? 'border-brand-primary border-2 bg-brand-light dark:bg-slate-800/50' : 'border-slate-200 dark:border-slate-700 glass-panel'}`}>
                         {plan.isRecommended && (
                             <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
                         )}
@@ -130,7 +130,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onPlanSelect }) => {
       </section>
       
       {/* App Mockups */}
-      <section className="py-16 bg-white dark:bg-slate-800">
+      <section className="py-16 glass-panel">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl font-bold text-brand-dark dark:text-white">Experience Your Dashboard</h2>
             <p className="mt-3 text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Each plan comes with a powerful, tailored dashboard to help you achieve your goals.</p>
@@ -155,7 +155,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onPlanSelect }) => {
       <section className="py-16">
         <div className="container mx-auto px-6">
             <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-10">Feature Comparison</h2>
-            <div className="max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div className="max-w-4xl mx-auto glass-panel rounded-lg shadow-md overflow-hidden border border-slate-200 dark:border-slate-700">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left min-w-[600px]">
                         <thead className="bg-slate-50 dark:bg-slate-700/50">
@@ -183,7 +183,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ onPlanSelect }) => {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 bg-white dark:bg-slate-800">
+      <section className="py-16 glass-panel">
         <div className="container mx-auto px-6 max-w-3xl">
             <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-10">Frequently Asked Questions</h2>
             <div>

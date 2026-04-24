@@ -82,7 +82,7 @@ const UserDashboardModal: React.FC<UserDashboardModalProps> = (props) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4" onClick={onClose}>
             <div 
-                className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
+                className="glass-panel rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
                 onClick={e => e.stopPropagation()}
             >
                 <header className="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
@@ -124,7 +124,7 @@ const UserDashboardModal: React.FC<UserDashboardModalProps> = (props) => {
                    {renderDashboard()}
                 </div>
                 
-                <footer className="bg-white dark:bg-slate-900 p-4 rounded-b-xl border-t dark:border-slate-700 flex justify-end">
+                <footer className="glass-panel p-4 rounded-b-xl border-t dark:border-slate-700 flex justify-end">
                      <button 
                         onClick={props.onLogout}
                         className="bg-slate-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-slate-700 transition-all duration-300"

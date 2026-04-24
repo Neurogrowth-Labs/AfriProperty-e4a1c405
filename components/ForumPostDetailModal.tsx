@@ -44,7 +44,7 @@ const ShareMenu: React.FC<{ postTitle: string }> = ({ postTitle }) => {
   };
 
   return (
-    <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
+    <div className="absolute top-full left-0 mt-2 w-48 glass-panel rounded-lg shadow-xl border border-slate-200/80 dark:border-slate-700 py-2 z-20 animate-fade-in-up-sm">
         <button onClick={(e) => handleSocialClick(e, socialLinks.facebook)} className="share-button">
             <FacebookIcon className="w-5 h-5" /><span>Facebook</span>
         </button>
@@ -106,7 +106,7 @@ const ForumPostDetailModal: React.FC<ForumPostDetailModalProps> = ({ isOpen, onC
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[120] p-4" onClick={onClose}>
             <div 
-                className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
+                className="glass-panel rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
                 onClick={e => e.stopPropagation()}
             >
                 <header className="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
@@ -162,7 +162,7 @@ const ForumPostDetailModal: React.FC<ForumPostDetailModalProps> = ({ isOpen, onC
                             value={newComment}
                             onChange={e => setNewComment(e.target.value)}
                             placeholder="Write a comment..." 
-                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-brand-primary focus:border-brand-primary bg-white dark:bg-slate-900" 
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-brand-primary focus:border-brand-primary glass-panel" 
                         />
                         <button type="submit" className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-opacity-90 disabled:bg-slate-400" disabled={!newComment.trim()}>
                             <SendIcon className="w-5 h-5"/>

@@ -22,7 +22,7 @@ const CompareModal: React.FC<CompareModalProps> = ({ isOpen, onClose, properties
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100] p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
+        className="glass-panel rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale" 
         onClick={e => e.stopPropagation()}
       >
         <header className="relative flex justify-center sm:justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
@@ -36,7 +36,7 @@ const CompareModal: React.FC<CompareModalProps> = ({ isOpen, onClose, properties
         <div className="flex-grow overflow-auto">
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left min-w-[800px]">
-                    <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
+                    <thead className="sticky top-0 glass-panel shadow-sm z-10">
                         <tr>
                             <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 w-[15%]">Feature</th>
                             {properties.map(p => (

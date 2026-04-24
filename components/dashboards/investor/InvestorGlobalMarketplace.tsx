@@ -58,7 +58,7 @@ const InvestorGlobalMarketplace: React.FC<InvestorGlobalMarketplaceProps> = ({ o
                 </nav>
             </div>
 
-            <div className="flex-grow bg-white dark:bg-slate-800/50 rounded-lg shadow-sm overflow-y-auto p-6">
+            <div className="flex-grow glass-panel rounded-lg shadow-sm overflow-y-auto p-6">
                 {activeTab === 'hotspots' && <AIHotspots />}
                 {activeTab === 'deals' && <ExclusiveDeals onOpenDetailModal={onOpenDetailModal} />}
                 {activeTab === 'analysis' && <CrossBorderAnalysis />}
@@ -254,7 +254,7 @@ const CrossBorderAnalysis: React.FC = () => {
 
 const countryList = ["South Africa", "Portugal", "United Arab Emirates", "Thailand", "Mexico", "United States"];
 const CountrySelector: React.FC<{ value: string, onChange: (val: string) => void }> = ({ value, onChange }) => (
-    <select value={value} onChange={e => onChange(e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-900">
+    <select value={value} onChange={e => onChange(e.target.value)} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md glass-panel">
         {countryList.map(c => <option key={c}>{c}</option>)}
     </select>
 );

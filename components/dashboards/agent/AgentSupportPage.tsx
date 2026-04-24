@@ -67,7 +67,7 @@ const AgentSupportPage: React.FC<AgentSupportPageProps> = ({ user }) => {
                 </nav>
             </div>
             
-            <div className="flex-grow mt-6 bg-white dark:bg-slate-800/50 rounded-lg shadow-sm overflow-y-auto">
+            <div className="flex-grow mt-6 glass-panel rounded-lg shadow-sm overflow-y-auto">
                 {renderContent()}
             </div>
             
@@ -141,7 +141,7 @@ const ChatSupport: React.FC = () => {
                     <button onClick={handleSend} className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-opacity-90"><SendIcon className="w-5 h-5"/></button>
                 </div>
             </div>
-             <style>{`.input { @apply px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }`}</style>
+             <style>{`.input { @apply px-3 py-2 glass-panel border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }`}</style>
         </div>
     );
 };
@@ -210,7 +210,7 @@ const KnowledgeBase: React.FC = () => {
                     </details>
                 ))}
             </div>
-             <style>{`.input { @apply px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }`}</style>
+             <style>{`.input { @apply px-3 py-2 glass-panel border border-slate-300 dark:border-slate-600 rounded-md focus:ring-brand-primary focus:border-brand-primary; }`}</style>
         </div>
     );
 };
@@ -223,7 +223,7 @@ const CommunityForum: React.FC<{ posts: ForumPost[], onNewPost: () => void, onPo
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white">Community Discussions</h3>
                 <button onClick={onNewPost} className="bg-brand-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-opacity-90 flex-shrink-0">Create New Post</button>
             </div>
-            <div className="bg-white dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div className="glass-panel rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm min-w-[600px]">
                         <thead className="bg-slate-50 dark:bg-slate-700">

@@ -29,7 +29,7 @@ const ServiceDetailCard: React.FC<{
     serviceKey: string;
     onCtaClick: (service: string) => void;
 }> = ({ icon: Icon, title, subheading, description, features, ctaText, serviceKey, onCtaClick }) => (
-    <div className="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
+    <div className="glass-panel p-8 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
         <Icon className="w-10 h-10 text-brand-gold mb-4" />
         <h3 className="text-2xl font-bold text-brand-dark dark:text-white">{title}</h3>
         <p className="text-sm font-semibold text-brand-primary mt-1">{subheading}</p>
@@ -50,7 +50,7 @@ const ServiceDetailCard: React.FC<{
 
 const ProcessStep: React.FC<{ number: string, title: string, description: string }> = ({ number, title, description }) => (
     <div className="relative pl-8">
-        <div className="absolute top-0 left-0 w-8 h-8 bg-brand-light dark:bg-slate-700 text-brand-primary dark:text-brand-gold font-bold text-lg rounded-full flex items-center justify-center">
+        <div className="absolute top-0 left-0 w-8 h-8 glass-card text-brand-primary dark:text-brand-gold font-bold text-lg rounded-full flex items-center justify-center">
             {number}
         </div>
         <h3 className="font-bold text-slate-800 dark:text-white">{title}</h3>
@@ -79,7 +79,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ onServiceClick }) => {
   return (
     <div className="animate-fade-in bg-slate-50 dark:bg-slate-900">
       {/* H1 and Intro */}
-      <section className="bg-white dark:bg-brand-dark py-16">
+      <section className="glass-panel py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark dark:text-white">Our Services</h1>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -174,17 +174,17 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ onServiceClick }) => {
           <section>
             <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Why Choose AfriProperty</h2>
             <div className="grid md:grid-cols-3 gap-8">
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                     <TrophyIcon className="w-8 h-8 text-brand-gold mb-3"/>
                     <h3 className="font-bold text-lg">Experience & Credibility</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">Our platform is built on years of real estate expertise, featuring a curated network of vetted professionals and verified listings to ensure you're in safe hands.</p>
                 </div>
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                     <CpuChipIcon className="w-8 h-8 text-brand-gold mb-3"/>
                     <h3 className="font-bold text-lg">Innovation-Driven</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">We use cutting-edge AI to provide personalized property matches, market insights, and tools that give you a competitive edge in the market.</p>
                 </div>
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+                <div className="glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                     <UserGroupIcon className="w-8 h-8 text-brand-gold mb-3"/>
                     <h3 className="font-bold text-lg">Client-Centric Approach</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">Your success is our success. Our platform and services are designed from the ground up to be user-friendly, transparent, and supportive.</p>
@@ -214,7 +214,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ onServiceClick }) => {
           {/* FAQ */}
           <section>
             <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-8">Frequently Asked Questions</h2>
-            <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="max-w-3xl mx-auto glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <FaqItem question="Are your service providers vetted?">
                     Yes, absolutely. Every professional in our network undergoes a thorough verification process, including credential checks and reviews, to ensure they meet our high standards of quality and reliability.
                 </FaqItem>

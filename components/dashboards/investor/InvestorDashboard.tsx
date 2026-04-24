@@ -68,7 +68,7 @@ const Sidebar: React.FC<{ activeView: InvestorView; setActiveView: (view: Invest
     };
 
     return (
-        <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col p-4 flex-shrink-0 h-full">
+        <aside className="w-64 glass-panel border-r border-slate-200 dark:border-slate-700 flex flex-col p-4 flex-shrink-0 h-full">
             <div className="flex-grow">
                  <h3 className="text-xs font-semibold uppercase text-slate-400 dark:text-slate-500 mb-4 px-3">INVESTOR TOOLS</h3>
                 <nav className="flex flex-col space-y-1">

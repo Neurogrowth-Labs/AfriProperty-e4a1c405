@@ -15,10 +15,10 @@ const UpgradeToInvestorModal: React.FC<UpgradeToInvestorModalProps> = ({ isOpen,
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[110] p-4" onClick={onClose}>
         <div 
-            className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale text-center p-8" 
+            className="glass-panel rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale text-center p-8" 
             onClick={e => e.stopPropagation()}
         >
-            <div className="mx-auto bg-brand-light dark:bg-slate-700 p-4 rounded-full w-fit">
+            <div className="mx-auto glass-card p-4 rounded-full w-fit">
                 <RocketLaunchIcon className="w-10 h-10 text-brand-primary" />
             </div>
 

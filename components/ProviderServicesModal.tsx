@@ -18,7 +18,7 @@ const ProviderCard: React.FC<{ provider: ServiceProvider; onContact: (name: stri
     const whatsappNumber = provider.phone.replace(/\D/g, '');
 
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center text-center">
+        <div className="glass-panel rounded-lg shadow-md border border-slate-200 dark:border-slate-700 p-4 flex flex-col items-center text-center">
             <img src={provider.image} alt={provider.name} className="w-20 h-20 rounded-full mb-3" />
             <h4 className="font-bold text-slate-800 dark:text-white">{provider.name}</h4>
             <p className="text-sm font-semibold text-brand-primary mb-2">{provider.service}</p>
@@ -86,7 +86,7 @@ const ProviderServicesModal: React.FC<ProviderServicesModalProps> = ({ isOpen, o
                             placeholder="Search by name or service..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-brand-primary focus:border-brand-primary bg-white dark:bg-slate-900"
+                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-brand-primary focus:border-brand-primary glass-panel"
                         />
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -94,7 +94,7 @@ const ProviderServicesModal: React.FC<ProviderServicesModalProps> = ({ isOpen, o
                             <button 
                                 key={service}
                                 onClick={() => setSelectedService(service)}
-                                className={`px-3 py-1.5 text-sm font-semibold rounded-full transition-colors ${selectedService === service ? 'bg-brand-primary text-white' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                className={`px-3 py-1.5 text-sm font-semibold rounded-full transition-colors ${selectedService === service ? 'bg-brand-primary text-white' : 'glass-panel text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
                             >
                                 {service}
                             </button>

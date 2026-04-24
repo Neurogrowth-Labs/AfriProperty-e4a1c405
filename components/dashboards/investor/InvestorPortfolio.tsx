@@ -62,7 +62,7 @@ const PerformanceGraph: React.FC<{ data: {date: number; price: number}[] }> = ({
 const InvestmentCard: React.FC<{ property: Property, metrics: InvestmentMetrics, formatCurrency: (amount: number) => string }> = ({ property, metrics, formatCurrency }) => {
     const isOutperforming = property.marketROI && metrics.roi > property.marketROI;
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 flex flex-col lg:flex-row gap-5">
+        <div className="glass-panel rounded-xl shadow-sm p-4 flex flex-col lg:flex-row gap-5">
             <img src={property.images[0]} alt={property.title} className="w-full lg:w-48 h-48 lg:h-auto object-cover rounded-lg flex-shrink-0" />
             <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-5">
                 {/* Column 1: Core Info */}
@@ -143,7 +143,7 @@ const InvestmentCard: React.FC<{ property: Property, metrics: InvestmentMetrics,
 };
 
 const GridCard: React.FC<{ property: Property, metrics: InvestmentMetrics }> = ({ property, metrics }) => (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm overflow-hidden group">
+    <div className="glass-panel rounded-xl shadow-sm overflow-hidden group">
         <img src={property.images[0]} alt={property.title} className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"/>
         <div className="p-4">
             <h4 className="font-bold text-slate-800 dark:text-white truncate">{property.title}</h4>
@@ -189,7 +189,7 @@ const InvestorPortfolio: React.FC<InvestorPortfolioProps> = ({ user, allProperti
                 </div>
                 <div className="space-y-6">
                     {[...Array(2)].map((_, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 flex gap-5">
+                        <div key={i} className="glass-panel rounded-xl shadow-sm p-4 flex gap-5">
                             <div className="w-48 h-48 bg-slate-200 dark:bg-slate-700 rounded-lg flex-shrink-0"></div>
                             <div className="flex-grow grid grid-cols-3 gap-5">
                                 <div className="space-y-4"><div className="h-5 rounded bg-slate-200 dark:bg-slate-700 w-3/4"></div><div className="h-4 rounded bg-slate-200 dark:bg-slate-700 w-full"></div></div>
@@ -240,7 +240,7 @@ const InvestorPortfolio: React.FC<InvestorPortfolioProps> = ({ user, allProperti
                     )}
                 </div>
             ) : (
-                <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                <div className="text-center py-20 glass-panel rounded-lg shadow-sm">
                     <ChartBarIcon className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600" />
                     <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mt-4">No Investments Found</h3>
                     <p className="text-slate-500 dark:text-slate-400 mt-2">
