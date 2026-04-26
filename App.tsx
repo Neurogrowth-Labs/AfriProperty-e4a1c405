@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { auth, onAuthStateChanged, signOut } from './lib/firebase';
+import { supabase } from './lib/supabase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
@@ -221,20 +221,20 @@ const App: React.FC = () => {
   const WARNING_TIMEOUT = 14 * 60 * 1000;
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
         setCurrentUser({
-          username: firebaseUser.email || firebaseUser.uid,
-          fullName: firebaseUser.displayName || 'Google User',
-          email: firebaseUser.email || '',
-          role: 'user', // Note: You might want to fetch real role from Firestore later
+          username: session.user.email || session.user.id,
+          fullName: session.user.user_metadata?.full_name || 'Supabase User',
+          email: session.user.email || '',
+          role: session.user.user_metadata?.role || 'user',
         });
       } else {
         setCurrentUser(null);
       }
     });
 
-    return () => unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
   // Data Fetching and Initial Setup
@@ -531,14 +531,13 @@ The other fields should follow these rules:
     setIsVRTourOpen(true);
   };
   
-  const handleLogin = (user: User) => {
-      setCurrentUser(user);
+  const handleLogin = () => {
       setIsAuthModalOpen(false);
   };
   
   const handleLogout = async () => {
     try {
-        await signOut(auth);
+        await supabase.auth.signOut();
     } catch (error) {
         console.error("Error signing out", error);
     }

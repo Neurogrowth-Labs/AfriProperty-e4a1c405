@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CloseIcon } from './icons/NavIcons';
-import { addUser } from '../lib/data';
+import { supabase } from '../lib/supabase';
 import type { User } from '../types';
 import { GoogleIcon, AppleIcon } from './icons/SocialIcons';
 import { EyeIcon, EyeSlashIcon, CheckIcon, CameraIcon, ArrowUpTrayIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 import { BuildingStorefrontIcon, UserIcon } from '@heroicons/react/24/solid';
 import { BanknotesIcon } from './icons/ActionIcons';
-import { auth, googleProvider, signInWithPopup } from '../lib/firebase';
 
 type AuthView = 'login' | 'signup' | 'userSignup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: (user: User) => void;
+  onLogin: () => void;
   initialView?: AuthView;
   onSwitchToPricing?: () => void;
 }
@@ -58,10 +57,10 @@ const SocialButton: React.FC<{onClick: () => void, icon: React.ElementType, chil
     </button>
 );
 
-const SocialLogins: React.FC<{onLoginSuccess: (user: User) => void}> = ({ onLoginSuccess }) => (
+const SocialLogins: React.FC<{onLoginSuccess: () => void}> = ({ onLoginSuccess }) => (
     <div className="grid grid-cols-2 gap-3">
-        <SocialButton onClick={() => onLoginSuccess({username: 'google@example.com', fullName: 'Google User', email: 'google@example.com', role: 'user'})} icon={GoogleIcon}>Google</SocialButton>
-        <SocialButton onClick={() => onLoginSuccess({username: 'apple@example.com', fullName: 'Apple User', email: 'apple@example.com', role: 'user'})} icon={AppleIcon}>Apple</SocialButton>
+        <SocialButton onClick={() => onLoginSuccess()} icon={GoogleIcon}>Google</SocialButton>
+        <SocialButton onClick={() => onLoginSuccess()} icon={AppleIcon}>Apple</SocialButton>
     </div>
 );
 
@@ -118,47 +117,82 @@ const PasswordStrengthMeter: React.FC<{ criteria: PasswordCriteria }> = ({ crite
 
 // --- Sub-components for each view ---
 
-const LoginView: React.FC<{onLoginSuccess: (user: User) => void, onSwitchToSignup: () => void, onSwitchToForgotPassword: () => void, setError: (e: string) => void}> = ({ onLoginSuccess, onSwitchToSignup, onSwitchToForgotPassword, setError }) => {
+const LoginView: React.FC<{onLoginSuccess: () => void, onSwitchToSignup: () => void, onSwitchToForgotPassword: () => void, setError: (e: string) => void}> = ({ onLoginSuccess, onSwitchToSignup, onSwitchToForgotPassword, setError }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleEmailLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+            if (error) throw error;
+            onLoginSuccess();
+            // The onAuthStateChange event in App.tsx will handle updating the user context
+        } catch (error: any) {
+            console.error("Supabase Email Login Error", error);
+            setError(error.message || "Failed to log in.");
+        }
+    };
+
     const handleGoogleLogin = async () => {
         setError('');
         try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const firebaseUser = result.user;
-            
-            // Map Firebase user to app User structure
-            const user: User = {
-                username: firebaseUser.email || firebaseUser.uid,
-                fullName: firebaseUser.displayName || 'Google User',
-                email: firebaseUser.email || '',
-                role: 'user', // Default role
-            };
-            
-            // optionally save user to our app's mock database
-            await addUser(user);
-            
-            onLoginSuccess(user);
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent',
+                    },
+                },
+            });
+            if (error) throw error;
         } catch (error: any) {
-            console.error("Firebase Login Error", error);
-            if (error.code === 'auth/popup-closed-by-user') {
-                setError(''); // Ignore if user just closed the popup
-            } else {
-                setError(error.message || "Failed to log in with Google.");
-            }
+            console.error("Supabase Login Error", error);
+            setError(error.message || "Failed to log in with Google.");
         }
     };
 
     return (
-        <div className="space-y-4 animate-fade-in text-center py-6">
-            <p className="text-sm text-slate-500 pb-4">Log in to view saved properties and schedule tours.</p>
+        <div className="space-y-4 animate-fade-in text-center py-2">
+            <form onSubmit={handleEmailLogin} className="space-y-4 text-left">
+                <InputField label="Email Address" id="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+                <div>
+                   <InputField 
+                       label="Password" 
+                       id="login-password" 
+                       type={showPassword ? "text" : "password"} 
+                       value={password} 
+                       onChange={e => setPassword(e.target.value)} 
+                       icon={showPassword ? EyeSlashIcon : EyeIcon} 
+                       onIconClick={() => setShowPassword(!showPassword)}
+                   />
+                   <div className="flex justify-end mt-1">
+                       <button type="button" onClick={onSwitchToForgotPassword} className="text-xs font-semibold text-brand-primary hover:underline">Forgot password?</button>
+                   </div>
+                </div>
+                <button type="submit" className="w-full btn-primary">Log In</button>
+            </form>
+            
+            <div className="relative flex items-center justify-center pt-2">
+                <div className="border-t border-slate-200 dark:border-slate-700 w-full absolute"></div>
+                <span className="bg-white dark:bg-brand-dark px-2 text-xs text-slate-500 relative z-10 uppercase tracking-wider">or continue with</span>
+            </div>
+
             <button 
                 onClick={handleGoogleLogin} 
                 className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                 type="button"
             >
                 <GoogleIcon className="w-5 h-5"/>
-                Continue with Google
+                Google
             </button>
-            <div className="pt-4 flex items-center justify-center gap-2">
+            <div className="pt-2 flex items-center justify-center gap-2">
                 <span className="text-sm text-slate-500">Not an investor/user yet?</span>
                 <button type="button" onClick={onSwitchToSignup} className="text-sm font-semibold text-brand-primary hover:underline focus:outline-none">Sign up</button>
             </div>
@@ -168,17 +202,43 @@ const LoginView: React.FC<{onLoginSuccess: (user: User) => void, onSwitchToSignu
 
 const SignupView: React.FC<{ onSwitchToLogin: () => void; onSignupRole: (role: 'user'|'agent'|'investor') => void; }> = ({ onSwitchToLogin, onSignupRole }) => (
     <div className="animate-fade-in space-y-4 text-center py-4">
-        <p className="text-center text-slate-500 pb-2">Choose your account type to sign up with Google.</p>
+        <p className="text-center text-slate-500 pb-2">Choose your account type to sign up.</p>
         <div className="space-y-3">
             <SignupOptionCard icon={UserIcon} title="Property Seeker" description="Browse, save, and tour properties." onClick={() => onSignupRole('user')} />
             <SignupOptionCard icon={BuildingStorefrontIcon} title="Agent / Agency" description="List and manage your properties." onClick={() => onSignupRole('agent')} />
             <SignupOptionCard icon={BanknotesIcon} title="Investor" description="Access exclusive investment deals." onClick={() => onSignupRole('investor')} />
         </div>
-        <p className="text-center text-sm text-slate-500 pt-2">Already have an account? <button type="button" onClick={onSwitchToLogin} className="font-semibold text-brand-primary hover:underline focus:outline-none">Log In</button></p>
+        
+        <div className="relative flex items-center justify-center pt-4">
+            <div className="border-t border-slate-200 dark:border-slate-700 w-full absolute"></div>
+            <span className="bg-white px-2 text-xs text-slate-500 relative z-10 uppercase tracking-wider">or continue with</span>
+        </div>
+
+        <button 
+            onClick={async () => {
+                try {
+                    await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            queryParams: { access_type: 'offline', prompt: 'consent' },
+                        },
+                    });
+                } catch (error) {
+                    console.error('Google signup error', error);
+                }
+            }} 
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors mt-4"
+            type="button"
+        >
+            <GoogleIcon className="w-5 h-5"/>
+            Google
+        </button>
+
+        <p className="text-center text-sm text-slate-500 pt-4">Already have an account? <button type="button" onClick={onSwitchToLogin} className="font-semibold text-brand-primary hover:underline focus:outline-none">Log In</button></p>
     </div>
 );
 
-const UserSignupView: React.FC<{onSignupSuccess: (user: User) => void, onSwitchToLogin: () => void, setError: (e: string) => void}> = ({ onSignupSuccess, onSwitchToLogin, setError }) => {
+const UserSignupView: React.FC<{onSignupSuccess: () => void, onSwitchToLogin: () => void, setError: (e: string) => void}> = ({ onSignupSuccess, onSwitchToLogin, setError }) => {
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', agreeToTerms: false });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,16 +246,36 @@ const UserSignupView: React.FC<{onSignupSuccess: (user: User) => void, onSwitchT
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
-    // FIX: addUser is async, must await it and mark handler as async.
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (!isPasswordStrong(formData.password).all) { setError("Password doesn't meet requirements."); return; }
         if (!formData.agreeToTerms) { setError("You must agree to the Terms & Conditions."); return; }
 
-        const newUser: User = { username: formData.email, fullName: formData.fullName, email: formData.email, password: formData.password, role: 'user' };
-        const result = await addUser(newUser);
-        if (result.success) onSignupSuccess(newUser); else setError(result.message);
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        full_name: formData.fullName,
+                        role: 'user',
+                    }
+                }
+            });
+            if (error) throw error;
+            
+            // Check if we need email verification
+            if (data.user && data.user.identities && data.user.identities.length === 0) {
+                 setError('This email is already in use. Please log in.');
+                 return;
+            }
+
+            onSignupSuccess();
+        } catch (error: any) {
+            console.error("Supabase Signup Error", error);
+            setError(error.message || "Failed to sign up.");
+        }
     };
 
     return (
@@ -205,7 +285,7 @@ const UserSignupView: React.FC<{onSignupSuccess: (user: User) => void, onSwitchT
              <InputField label="Password" name="password" type="password" value={formData.password} onChange={handleInputChange} />
              <PasswordStrengthMeter criteria={isPasswordStrong(formData.password)} />
              <Checkbox id="agreeToTerms" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleInputChange}>I agree to the <a href="#" target="_blank" className="font-semibold text-brand-primary hover:underline">Terms & Conditions</a>.</Checkbox>
-            <button type="submit" className="btn-primary">Create Account</button>
+            <button type="submit" className="w-full btn-primary">Create Account</button>
             <p className="text-center text-sm text-slate-500 dark:text-slate-400">Already have an account? <button type="button" onClick={onSwitchToLogin} className="font-semibold text-brand-primary hover:underline">Log In</button></p>
         </form>
     );
@@ -215,14 +295,12 @@ const AgentSignupView: React.FC<{ onSignupSuccess: () => void, onSwitchToLogin: 
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', phone: '', officeAddress: '', businessRegNumber: '', agentLicense: '', agreeToTerms: false });
     const [idDoc, setIdDoc] = useState<File | null>(null);
 
-    // FIX: Broadened event type to handle all possible form elements used in signup forms.
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
-    // FIX: addUser is async, must await it and mark handler as async.
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -230,9 +308,33 @@ const AgentSignupView: React.FC<{ onSignupSuccess: () => void, onSwitchToLogin: 
         if (!idDoc) { setError("Please upload your ID or Business Certificate for verification."); return; }
         if (!formData.agreeToTerms) { setError("You must agree to the Agent Terms & Conditions."); return; }
         
-        const newAgent: User = { username: formData.email, fullName: formData.fullName, email: formData.email, password: formData.password, role: 'agent', phone: formData.phone, officeAddress: formData.officeAddress, businessRegNumber: formData.businessRegNumber, agentLicense: formData.agentLicense, idDocumentUrl: idDoc.name };
-        const result = await addUser(newAgent);
-        if (result.success) onSignupSuccess(); else setError(result.message);
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        full_name: formData.fullName,
+                        role: 'agent',
+                        phone: formData.phone,
+                        officeAddress: formData.officeAddress,
+                        businessRegNumber: formData.businessRegNumber,
+                        agentLicense: formData.agentLicense,
+                    }
+                }
+            });
+            if (error) throw error;
+            
+            if (data.user && data.user.identities && data.user.identities.length === 0) {
+                 setError('This email is already in use. Please log in.');
+                 return;
+            }
+
+            onSignupSuccess(); 
+        } catch (error: any) {
+            console.error("Supabase Agent Signup Error", error);
+            setError(error.message || "Failed to sign up.");
+        }
     };
     
     return (
@@ -264,7 +366,6 @@ const InvestorSignupView: React.FC<{ onSignupSuccess: () => void, setError: (e: 
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', phone: '', investmentType: 'Individual', companyName: '', agreeToTerms: false });
     const [idDoc, setIdDoc] = useState<File | null>(null);
 
-    // FIX: Broadened event type to handle all possible form elements used in signup forms.
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
@@ -277,16 +378,40 @@ const InvestorSignupView: React.FC<{ onSignupSuccess: () => void, setError: (e: 
         setStep(step + 1);
     };
 
-    // FIX: addUser is async, must await it and mark handler as async.
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (!idDoc) { setError("Please upload your Proof of Identity."); return; }
         if (!formData.agreeToTerms) { setError("You must agree to the Investor Terms & Conditions."); return; }
 
-        const newInvestor: User = { username: formData.email, fullName: formData.fullName, email: formData.email, password: formData.password, role: 'investor', phone: formData.phone, investmentType: formData.investmentType as 'Individual' | 'Corporate', companyName: formData.companyName, proofOfIdentityUrl: idDoc.name };
-        const result = await addUser(newInvestor);
-        if (result.success) onSignupSuccess(); else { setError(result.message); setStep(1); }
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        full_name: formData.fullName,
+                        role: 'investor',
+                        phone: formData.phone,
+                        investment_type: formData.investmentType,
+                        company_name: formData.companyName,
+                    }
+                }
+            });
+            if (error) throw error;
+            
+            if (data.user && data.user.identities && data.user.identities.length === 0) {
+                 setError('This email is already in use. Please log in.');
+                 setStep(1);
+                 return;
+            }
+
+            onSignupSuccess(); 
+        } catch (error: any) {
+            console.error("Supabase Investor Signup Error", error);
+            setError(error.message || "Failed to sign up.");
+            setStep(1);
+        }
     };
 
     const renderStep = () => {
@@ -340,9 +465,23 @@ const PendingVerificationView: React.FC<{ onSwitchToLogin: () => void, userType:
     </div>
 );
 
-const ForgotPasswordView: React.FC<{ onResetSent: () => void, onBackToLogin: () => void }> = ({ onResetSent, onBackToLogin }) => {
+const ForgotPasswordView: React.FC<{ onResetSent: () => void, onBackToLogin: () => void, setError: (e: string) => void }> = ({ onResetSent, onBackToLogin, setError }) => {
     const [email, setEmail] = useState('');
-    const handleReset = (e: React.FormEvent) => { e.preventDefault(); onResetSent(); };
+    
+    const handleReset = async (e: React.FormEvent) => { 
+        e.preventDefault(); 
+        setError('');
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+              redirectTo: window.location.origin + '?reset=true',
+            });
+            if (error) throw error;
+            onResetSent(); 
+        } catch (error: any) {
+            console.error("Supabase Password Reset Error", error);
+            setError(error.message || "Failed to send reset link.");
+        }
+    };
 
     return (
         <div className="space-y-4 animate-fade-in">
@@ -368,8 +507,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     const [view, setView] = useState<AuthView>(initialView || 'login');
     const [error, setError] = useState('');
     
-    const handleLoginSuccess = (user: User) => {
-        onLogin(user);
+    const handleLoginSuccess = () => {
+        onLogin();
     };
     
     const switchView = (targetView: AuthView) => {
@@ -400,29 +539,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     
     const currentTitle = titles[view] || 'Welcome';
 
-    const handleSignupRole = async (role: 'user' | 'agent' | 'investor') => {
+    const handleSignupRole = (role: 'user' | 'agent' | 'investor') => {
         setError('');
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const firebaseUser = result.user;
-            
-            const user: User = {
-                username: firebaseUser.email || firebaseUser.uid,
-                fullName: firebaseUser.displayName || 'Google User',
-                email: firebaseUser.email || '',
-                role: role,
-            };
-            
-            await addUser(user);
-            handleLoginSuccess(user);
-        } catch (error: any) {
-            console.error("Firebase Signup Error", error);
-            if (error.code === 'auth/popup-closed-by-user') {
-                setError(''); // Ignore if user just closed the popup
-            } else {
-                setError(error.message || "Failed to sign up with Google.");
-            }
-        }
+        if (role === 'user') switchView('userSignup');
+        if (role === 'agent') switchView('agentSignup');
+        if (role === 'investor') switchView('investorSignup');
     };
 
   return (
@@ -445,6 +566,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
 
                 {view === 'login' && <LoginView onLoginSuccess={handleLoginSuccess} onSwitchToSignup={() => switchView('signup')} onSwitchToForgotPassword={() => switchView('forgotPassword')} setError={setError} />}
                 {view === 'signup' && <SignupView onSwitchToLogin={() => switchView('login')} onSignupRole={handleSignupRole} />}
+                {view === 'userSignup' && <UserSignupView onSignupSuccess={handleLoginSuccess} onSwitchToLogin={() => switchView('login')} setError={setError} />}
+                {view === 'agentSignup' && <AgentSignupView onSignupSuccess={() => switchView('pendingVerificationAgent')} onSwitchToLogin={() => switchView('login')} setError={setError} />}
+                {view === 'investorSignup' && <InvestorSignupView onSignupSuccess={() => switchView('pendingVerificationInvestor')} onSwitchToLogin={() => switchView('login')} setError={setError} />}
+                {view === 'pendingVerificationAgent' && <PendingVerificationView onSwitchToLogin={() => switchView('login')} userType="agent" />}
+                {view === 'pendingVerificationInvestor' && <PendingVerificationView onSwitchToLogin={() => switchView('login')} userType="investor" />}
+                {view === 'forgotPassword' && <ForgotPasswordView onResetSent={() => switchView('resetConfirmation')} onBackToLogin={() => switchView('login')} setError={setError} />}
+                {view === 'resetConfirmation' && <ResetConfirmationView onSwitchToLogin={() => switchView('login')} />}
             </div>
         </div>
         <style>{`
