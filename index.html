@@ -53,39 +53,12 @@
               'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
             },
             colors: {
-              'brand-primary': '#000000',
-              'brand-secondary': '#000000',
-              'brand-accent': '#000000',
-              'brand-gold': '#000000',
-              'brand-light': '#ffffff',
-              'brand-dark': '#000000',
-              
-              'slate': {
-                50: '#ffffff',
-                100: '#ffffff',
-                200: '#e5e5e5',
-                300: '#cccccc',
-                400: '#999999',
-                500: '#666666',
-                600: '#333333',
-                700: '#000000',
-                800: '#000000',
-                900: '#000000',
-              },
-              'blue': {
-                 50: '#ffffff',
-                 100: '#ffffff',
-                 500: '#000000',
-                 600: '#000000',
-                 700: '#000000',
-              },
-              amber: { 400: '#000000', 500: '#000000' }, 
-              yellow: { 100: '#ffffff', 800: '#000000' },
-              green: { 50: '#ffffff', 500: '#000000', 600: '#000000', 800: '#000000', 900: '#000000' },
-              red: { 50: '#ffffff', 100: '#ffffff', 400: '#000000', 500: '#000000', 600: '#000000', 700: '#000000' },
-              white: '#ffffff',
-              black: '#000000',
-              transparent: 'transparent'
+              'brand-primary': '#7d9789',
+              'brand-secondary': '#acbcae',
+              'brand-accent': '#dae2d9',
+              'brand-gold': '#c19541',
+              'brand-light': '#faf9f5',
+              'brand-dark': '#2c3931',
             },
           },
         },
@@ -97,50 +70,34 @@
             font-size: 15px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: #ffffff;
-            color: #000000;
         }
         body {
-          @apply font-sans min-h-screen overflow-x-hidden;
-          background-color: #ffffff !important;
-          color: #000000 !important;
-        }
-        
-        h1, h2, h3, h4, h5, h6, p, span, div, label, input, select, textarea, button, a {
-          color: #000000;
-        }
-
-        /* Modals and overlays should be white */
-        .bg-black.bg-opacity-60, .bg-black.bg-opacity-70, 
-        .bg-black.bg-opacity-80, .bg-black.bg-opacity-90, 
-        .bg-black\/80 {
-          background-color: rgba(255, 255, 255, 0.9) !important;
+          @apply font-sans min-h-screen overflow-x-hidden bg-brand-light text-brand-dark dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300;
         }
 
         .mono-text {
           @apply font-mono;
         }
         input, select, textarea {
-            @apply text-sm rounded-md border-black bg-white focus:ring-black focus:border-black;
-            border: 1px solid #000000 !important;
+            @apply text-sm rounded-md border-slate-300 bg-white focus:ring-brand-primary focus:border-brand-primary dark:bg-slate-800 dark:border-slate-600 dark:text-white;
         }
       }
       
       @layer components {
         .glass-panel {
-          @apply bg-white border border-black rounded-xl;
+          @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-white/60 dark:border-slate-700/60 rounded-xl shadow-lg;
         }
         .glass-header {
-          @apply bg-white border-b border-black;
+          @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 shadow-sm;
         }
         .glass-card {
-          @apply bg-white hover:bg-slate-100 border border-black transition-all duration-300 rounded-xl;
+          @apply bg-white dark:bg-slate-800 hover:bg-brand-light/50 dark:hover:bg-slate-700/50 border border-slate-200 dark:border-slate-700 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md;
         }
         .glass-button {
-          @apply bg-white hover:bg-slate-100 border border-black transition-all rounded-lg text-black;
+          @apply bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all rounded-lg text-brand-dark dark:text-slate-200 shadow-sm;
         }
         .glass-badge {
-          @apply bg-white border border-black text-black rounded-full flex items-center justify-center;
+          @apply bg-brand-light dark:bg-slate-800 border border-brand-accent dark:border-brand-primary text-brand-dark dark:text-brand-light rounded-full flex items-center justify-center;
         }
       }
     </style>

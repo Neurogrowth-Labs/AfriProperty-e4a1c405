@@ -150,11 +150,11 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
         
         {property.images.length > 1 && (
             <>
-                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white text-black p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-slate-100 shadow-sm border border-slate-200">
-                    <ChevronLeftIcon className="w-4 h-4 text-black" />
+                <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white text-brand-dark p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-slate-100 shadow-sm border border-slate-200">
+                    <ChevronLeftIcon className="w-4 h-4 text-brand-dark" />
                 </button>
-                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-slate-100 shadow-sm border border-slate-200">
-                    <ChevronRightIcon className="w-4 h-4 text-black" />
+                <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-brand-dark p-1.5 rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity z-10 hover:bg-slate-100 shadow-sm border border-slate-200">
+                    <ChevronRightIcon className="w-4 h-4 text-brand-dark" />
                 </button>
                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                     {property.images.map((_, index) => (
@@ -178,7 +178,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
             </button>
             <button
                 onClick={(e) => handleActionClick(e, onToggleCompare)}
-                className={`bg-white p-2 border border-slate-200 rounded-full text-slate-700 hover:bg-slate-50 transition-all duration-300 z-10 shadow-sm ${isCompared ? 'text-black font-bold' : ''}`}
+                className={`bg-white p-2 border border-slate-200 rounded-full text-slate-700 hover:bg-slate-50 transition-all duration-300 z-10 shadow-sm ${isCompared ? 'text-brand-dark font-bold' : ''}`}
                 aria-label={isCompared ? "Remove from comparison" : "Add to comparison"}
             >
                 <Square2StackIcon className="w-5 h-5" />
@@ -186,7 +186,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
             {property.vrTourUrl && (
                 <button
                     onClick={handleVrTourClick}
-                    className="bg-white text-black p-2 rounded-full shadow-sm border border-slate-200 hover:scale-105 hover:bg-slate-50 transition-all duration-300 z-10"
+                    className="bg-white text-brand-dark p-2 rounded-full shadow-sm border border-slate-200 hover:scale-105 hover:bg-slate-50 transition-all duration-300 z-10"
                     aria-label="Open VR Tour"
                 >
                     <VrHeadsetIcon className="w-5 h-5" />
@@ -208,7 +208,7 @@ const PropertyCard: React.FC<PropertyCardProps> = (props) => {
 
         {isOwner && (
             <div className="absolute bottom-3 left-3 flex space-x-2 z-10">
-                <button onClick={(e) => handleActionClick(e, onEdit)} className="bg-white text-black border border-slate-200 p-2 rounded-full shadow-sm hover:bg-slate-50 transition-all">
+                <button onClick={(e) => handleActionClick(e, onEdit)} className="bg-white text-brand-dark border border-slate-200 p-2 rounded-full shadow-sm hover:bg-slate-50 transition-all">
                     <PencilIcon className="w-4 h-4" />
                 </button>
                 <button onClick={(e) => handleIdActionClick(e, onDelete)} className="bg-white text-red-600 border border-slate-200 p-2 rounded-full shadow-sm hover:bg-red-50 transition-all">

@@ -18,12 +18,12 @@ const Hero: React.FC<HeroProps> = (props) => {
     <div className="relative pt-16 pb-20 flex items-center justify-center text-center overflow-hidden bg-white">
       <div className="relative z-10 px-4 w-full max-w-5xl mx-auto">
         <h1 
-          className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 tracking-tight animate-fade-in-up text-black" 
+          className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 tracking-tight animate-fade-in-up text-brand-dark dark:text-brand-light" 
         >
           {t.hero.title}
         </h1>
         <p 
-          className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium opacity-90 animate-fade-in-up delay-100 text-black"
+          className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium opacity-90 animate-fade-in-up delay-100 text-brand-dark dark:text-brand-light"
         >
           {t.hero.subtitle}
         </p>
