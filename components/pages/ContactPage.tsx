@@ -123,8 +123,8 @@ const ContactPage: React.FC = () => {
                                     <a href="tel:+27233442564" className="hover:text-brand-primary">+27 23 344 2564</a>
                                 </ContactInfoItem>
                                 <ContactInfoItem icon={EnvelopeIcon} title="Email">
-                                    <a href="mailto:info@afriproperty.co.za" className="block hover:text-brand-primary">info@afriproperty.co.za</a>
-                                    <a href="mailto:support@afriproperty.co.za" className="block hover:text-brand-primary">support@afriproperty.co.za</a>
+                                    <a href="mailto:info@AfriEstate.co.za" className="block hover:text-brand-primary">info@AfriEstate.co.za</a>
+                                    <a href="mailto:support@AfriEstate.co.za" className="block hover:text-brand-primary">support@AfriEstate.co.za</a>
                                 </ContactInfoItem>
                                 <ContactInfoItem icon={LocationPinIcon} title="Office Address">
                                     123 Main Street, The Hub Building<br/>Urbanville, Gauteng, South Africa

@@ -162,7 +162,7 @@ const AIVoiceChat: React.FC<AIVoiceChatProps> = ({ isOpen, onClose }) => {
           responseModalities: [Modality.AUDIO],
           inputAudioTranscription: {},
           outputAudioTranscription: {},
-          systemInstruction: 'You are a friendly and helpful real estate assistant for AfriProperty. Keep your answers concise and helpful.',
+          systemInstruction: 'You are a friendly and helpful real estate assistant for AfriEstate. Keep your answers concise and helpful.',
         },
       });
 

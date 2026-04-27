@@ -102,7 +102,7 @@ const TabButton: React.FC<{id: SupportTab, label: string, icon: React.ElementTyp
 // --- Chat Support Component ---
 const ChatSupport: React.FC = () => {
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { sender: 'support', text: 'Hello! Welcome to AfriProperty Admin Support. How can I assist you today?' }
+        { sender: 'support', text: 'Hello! Welcome to AfriEstate Admin Support. How can I assist you today?' }
     ]);
     const [input, setInput] = useState('');
     const endOfMessagesRef = useRef<HTMLDivElement>(null);

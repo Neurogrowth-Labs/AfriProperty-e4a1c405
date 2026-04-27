@@ -20,11 +20,11 @@ const handleError = (error: any, message: string) => {
                              errorMessage.includes('connection error');
 
         if (isNetworkError) {
-             console.warn(`[AfriProperty] Network/Backend unreachable. Using mock data for: ${message}`);
+             console.warn(`[AfriEstate] Network/Backend unreachable. Using mock data for: ${message}`);
              return true;
         }
 
-        console.error(`[AfriProperty] Error ${message}: ${errorMessage}`);
+        console.error(`[AfriEstate] Error ${message}: ${errorMessage}`);
         return true;
     }
     return false;
@@ -55,8 +55,8 @@ export const getAgentProfile = async (username: string): Promise<AgentProfile> =
 
     return {
         username: username,
-        bio: `Welcome to AfriProperty! Tell clients a bit about yourself.`,
-        email: `${username.toLowerCase().replace(/\s+/g, '.')}@afriproperty.co.za`,
+        bio: `Welcome to AfriEstate! Tell clients a bit about yourself.`,
+        email: `${username.toLowerCase().replace(/\s+/g, '.')}@AfriEstate.co.za`,
         phone: 'Please add your phone number.',
         profilePicture: `https://i.pravatar.cc/150?u=${encodeURIComponent(username)}`,
         socials: { twitter: '', linkedin: '', facebook: '' }
@@ -195,7 +195,7 @@ export const getProperties = async (): Promise<Property[]> => {
 
     } catch (criticalErr: any) {
         if (criticalErr.message && (criticalErr.message.includes('Failed to fetch') || criticalErr.message.includes('Network request failed'))) {
-            console.warn('[AfriProperty] Backend unreachable (fetch exception). Using mock data.');
+            console.warn('[AfriEstate] Backend unreachable (fetch exception). Using mock data.');
         } else {
             console.warn("Failed to fetch properties from Supabase, using mock data.", criticalErr);
         }

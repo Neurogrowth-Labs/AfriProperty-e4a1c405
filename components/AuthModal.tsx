@@ -527,7 +527,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     
     const titles: Record<AuthView, string> = {
         login: 'Welcome Back',
-        signup: 'Join AfriProperty',
+        signup: 'Join AfriEstate',
         userSignup: 'Create Your Account',
         agentSignup: 'Agent & Agency Registration',
         investorSignup: 'Investor Registration',

@@ -20,7 +20,7 @@ interface ShareMenuProps {
 const ShareMenu: React.FC<ShareMenuProps> = ({ propertyTitle, propertyUrl }) => {
   const [copied, setCopied] = useState(false);
 
-  const shareText = `Check out this amazing property I found on AfriProperty: ${propertyTitle}`;
+  const shareText = `Check out this amazing property I found on AfriEstate: ${propertyTitle}`;
   
   const socialLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyUrl)}&quote=${encodeURIComponent(shareText)}`,

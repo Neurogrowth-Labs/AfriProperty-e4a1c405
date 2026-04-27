@@ -1,5 +1,5 @@
 {
-  "name": "AfriProperty - Real Estate Marketplace",
+  "name": "AfriEstate - Real Estate Marketplace",
   "description": "An online property listing marketplace connecting landlords, agents, and developers with tenants, buyers, and investors. The platform focuses on affordable housing, student rentals, and township/rural properties, alongside general residential and commercial markets.",
   "requestFramePermissions": [
     "camera",

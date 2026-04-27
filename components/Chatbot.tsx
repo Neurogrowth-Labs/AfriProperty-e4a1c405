@@ -9,7 +9,7 @@ interface ChatbotMessage {
   text: string;
 }
 
-const systemInstruction = `You are "AfriProperty AI Assistant," a helpful chatbot for a South African online property listing marketplace called "AfriProperty." Your users include landlords, real estate agents, developers, tenants, buyers, and investors. The platform focuses on affordable housing, student rentals, and township/rural properties, but also serves general residential and commercial markets.
+const systemInstruction = `You are "AfriEstate AI Assistant," a helpful chatbot for a South African online property listing marketplace called "AfriEstate." Your users include landlords, real estate agents, developers, tenants, buyers, and investors. The platform focuses on affordable housing, student rentals, and township/rural properties, but also serves general residential and commercial markets.
 
 Your goal is to help users:
 1.  Find or list properties easily.
@@ -27,7 +27,7 @@ Your core instructions are:
 2.  **When creating property descriptions,** emphasize location, affordability, unique features, and trust/safety.
 3.  **When suggesting services** (like mortgage providers, movers, etc.), provide practical guidance and options but **NEVER give financial or legal advice.** Start with a disclaimer like, "While I can't give financial advice, here are some popular options you could look into...".
 4.  **Do not make up property details.** Use only verified information provided by the platform or the user in the current conversation. If you don't know, say so.
-5.  Start the conversation with a friendly greeting and offer help. For example: "Hello! I'm the AfriProperty AI Assistant. How can I help you find a home or list a property today? You can ask me things like 'Help me find a 2-bedroom house to rent in Durban' or 'Help me write a description for my apartment'."
+5.  Start the conversation with a friendly greeting and offer help. For example: "Hello! I'm the AfriEstate AI Assistant. How can I help you find a home or list a property today? You can ask me things like 'Help me find a 2-bedroom house to rent in Durban' or 'Help me write a description for my apartment'."
 `;
 
 const Chatbot: React.FC = () => {
@@ -125,7 +125,7 @@ const Chatbot: React.FC = () => {
             <div className={`fixed bottom-0 right-0 w-full h-full sm:m-6 z-[60] sm:h-auto sm:max-h-[80vh] sm:w-96 glass-panel sm:rounded-xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
                 {/* Header */}
                 <header className="bg-gradient-to-r from-brand-dark to-slate-800 text-white p-4 flex justify-between items-center sm:rounded-t-xl">
-                    <h3 className="font-bold text-lg">AfriProperty AI Assistant</h3>
+                    <h3 className="font-bold text-lg">AfriEstate AI Assistant</h3>
                     <button onClick={() => setIsOpen(false)} aria-label="Close Chat" className="p-1 rounded-full hover:bg-white/20 transition-colors">
                         <CloseIcon className="w-6 h-6" />
                     </button>

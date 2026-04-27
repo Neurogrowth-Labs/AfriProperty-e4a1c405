@@ -290,7 +290,7 @@ const App: React.FC = () => {
 
             try {
                 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-                const prompt = `Generate 3 educational, industry-relevant blog posts for a real estate marketplace called AfriProperty. Provide a JSON array.
+                const prompt = `Generate 3 educational, industry-relevant blog posts for a real estate marketplace called AfriEstate. Provide a JSON array.
 
 Each object must have the following fields: 'title', 'author', 'date', 'image', 'summary', and 'content'.
 

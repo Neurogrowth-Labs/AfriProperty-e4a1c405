@@ -25,7 +25,7 @@ export const translations = {
       privacyPolicy: 'Privacy Policy',
       termsOfService: 'Terms of Service',
       followUs: 'Follow Us',
-      copyright: '© {{year}} AfriProperty. All rights reserved.',
+      copyright: '© {{year}} AfriEstate. All rights reserved.',
     },
     hero: {
       title: 'Find Your Next Home',
@@ -96,10 +96,10 @@ export const translations = {
         subtitle: 'Get the latest tips, trends, and market news from our team of real estate experts.',
     },
     chatbot: {
-        greeting: "Hello! I'm your AfriProperty AI Assistant. How can I help you find a home or list a property today?",
+        greeting: "Hello! I'm your AfriEstate AI Assistant. How can I help you find a home or list a property today?",
     },
     aboutModal: {
-        title: 'About AfriProperty',
+        title: 'About AfriEstate',
         tagline: 'Redefining Real Estate Through Technology, Trust, and Transparency.',
         missionTitle: 'Our Mission',
         missionDesc: 'To democratize property ownership by creating an inclusive, transparent, and efficient marketplace for everyone—from first-time buyers in developing townships to global investors seeking high-yield assets.',
@@ -121,7 +121,7 @@ export const translations = {
         formSend: 'Send Message',
     },
     homeModal: {
-        welcome: 'Welcome to AfriProperty.',
+        welcome: 'Welcome to AfriEstate.',
         desc: "Your journey to finding the perfect property—or the perfect buyer—starts here. We combine cutting-edge technology with a focus on community to make real estate simple, transparent, and accessible for everyone.",
         aiTitle: 'AI-Powered Insights',
         aiDesc: 'Discover personalized matches and get real-time market analysis to make smarter decisions, faster.',
@@ -192,7 +192,7 @@ export const translations = {
       section1Title: '1. Information We Collect',
       section1Content: 'We collect information you provide directly to us, such as when you create an account, list a property, or communicate with other users. This may include your name, email, phone number, and property details. We also collect information automatically, such as your IP address and browsing activity.',
       section2Title: '2. How We Use Your Information',
-      section2Content: 'We use the information we collect to operate, maintain, and provide you with the features and functionality of the AfriProperty platform. This includes connecting you with other users, personalizing your experience, and for security purposes.',
+      section2Content: 'We use the information we collect to operate, maintain, and provide you with the features and functionality of the AfriEstate platform. This includes connecting you with other users, personalizing your experience, and for security purposes.',
       section3Title: '3. Data Sharing',
       section3Content: 'We do not sell your personal data. We may share information with third-party vendors and service providers that perform services on our behalf. We may also share information with other users as necessary to facilitate transactions (e.g., sharing your contact info with an agent when you request a tour).',
       section4Title: '4. Data Security',
@@ -204,7 +204,7 @@ export const translations = {
       title: 'Terms of Service',
       lastUpdated: 'Last Updated: October 27, 2023',
       section1Title: '1. Acceptance of Terms',
-      section1Content: 'By accessing or using the AfriProperty platform, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.',
+      section1Content: 'By accessing or using the AfriEstate platform, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.',
       section2Title: '2. User Accounts',
       section2Content: 'When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.',
       section3Title: '3. Content',
@@ -215,7 +215,7 @@ export const translations = {
       section5Content: 'We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.',
     },
     careersModal: {
-      title: 'Careers at AfriProperty',
+      title: 'Careers at AfriEstate',
       subtitle: 'Join us in reshaping real estate.',
       intro: 'We are a passionate team of innovators, builders, and dreamers dedicated to making property ownership accessible to everyone. If you are driven by impact and technology, we would love to hear from you. Explore our open positions below.',
       job1Title: 'Senior Frontend Engineer (React)',

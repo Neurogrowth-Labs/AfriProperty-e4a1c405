@@ -67,7 +67,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose, onPlanSele
       >
         <header className="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-700">
           <div>
-            <h2 className="text-xl font-bold text-brand-dark dark:text-white">Choose Your Role on AfriProperty</h2>
+            <h2 className="text-xl font-bold text-brand-dark dark:text-white">Choose Your Role on AfriEstate</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">Select a plan that best fits your needs to get started.</p>
           </div>
           <button onClick={onClose} className="p-1 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">

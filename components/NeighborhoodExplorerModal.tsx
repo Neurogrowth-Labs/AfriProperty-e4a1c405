@@ -20,7 +20,7 @@ type Tab = 'overview' | 'community' | 'utilities';
 const ShareMenu: React.FC<{ neighborhood: NeighborhoodGuide }> = ({ neighborhood }) => {
   const [copied, setCopied] = useState(false);
   const url = `${window.location.href.split('?')[0]}?neighborhood=${neighborhood.id}`;
-  const shareText = `Check out the ${neighborhood.name} neighborhood on AfriProperty!`;
+  const shareText = `Check out the ${neighborhood.name} neighborhood on AfriEstate!`;
   
   const handleCopy = () => {
     navigator.clipboard.writeText(url);

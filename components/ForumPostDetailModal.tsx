@@ -23,7 +23,7 @@ const ShareMenu: React.FC<{ postTitle: string }> = ({ postTitle }) => {
   const [copied, setCopied] = useState(false);
   const postUrl = window.location.href; // Mock URL for sharing
 
-  const shareText = `Check out this discussion on AfriProperty: ${postTitle}`;
+  const shareText = `Check out this discussion on AfriEstate: ${postTitle}`;
   
   const socialLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}&quote=${encodeURIComponent(shareText)}`,

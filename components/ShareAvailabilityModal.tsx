@@ -32,7 +32,7 @@ const ShareAvailabilityModal: React.FC<ShareAvailabilityModalProps> = ({ isOpen,
     const handleGenerateLink = () => {
         if (selectedSlots.size > 0) {
             const mockId = Math.random().toString(36).substring(2, 8);
-            setGeneratedLink(`https://afriproperty.co.za/book/jane-doe/${mockId}`);
+            setGeneratedLink(`https://AfriEstate.co.za/book/jane-doe/${mockId}`);
         }
     };
     

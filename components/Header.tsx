@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { HomeIcon, GlobeAltIcon } from './icons/NavIcons';
+import { GlobeAltIcon } from './icons/NavIcons';
 import { BellIcon, UserCircleIcon, CheckBadgeIcon, BanknotesIcon } from './icons/ActionIcons';
 import type { User, Notification } from '../types';
 import { Language, Currency } from '../types';
@@ -81,8 +81,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     <header className="glass-header sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
       <div className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <button onClick={onHomeClick} className="flex items-center space-x-2 flex-shrink-0 group">
-          <HomeIcon className="w-7 h-7 text-brand-primary group-hover:text-brand-secondary transition-colors" />
-          <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">AfriProperty</span>
+          <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">AfriEstate</span>
         </button>
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium">
           <a href="#" onClick={(e) => { e.preventDefault(); onHomeClick(); }} className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition duration-200">{t.header.home}</a>

@@ -56,13 +56,13 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                         123 Main Street, Urbanville, 10001, SA
                     </ContactInfoItem>
                      <ContactInfoItem icon={EnvelopeIcon} title={t.contactModal.inquiries}>
-                        info@afriproperty.co.za
+                        info@AfriEstate.co.za
                     </ContactInfoItem>
                      <ContactInfoItem icon={PhoneIcon} title={t.contactModal.hotline}>
                         +27 21 456 7890
                     </ContactInfoItem>
                     <ContactInfoItem icon={GlobeAltIcon} title="Website">
-                        <a href="https://www.afriproperty.co.za" target="_blank" rel="noopener noreferrer" className="hover:underline">www.afriproperty.co.za</a>
+                        <a href="https://www.AfriEstate.co.za" target="_blank" rel="noopener noreferrer" className="hover:underline">www.AfriEstate.co.za</a>
                     </ContactInfoItem>
                 </div>
             </div>

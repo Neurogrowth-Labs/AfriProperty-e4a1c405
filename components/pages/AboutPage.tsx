@@ -39,7 +39,7 @@ const AboutPage: React.FC = () => {
       {/* Hero Section */}
       <header className="glass-panel py-20 text-center">
         <div className="container mx-auto px-6">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-brand-dark dark:text-white tracking-tight">About AfriProperty</h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold text-brand-dark dark:text-white tracking-tight">About AfriEstate</h1>
           <p className="mt-4 text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
             Empowering Real Estate Dreams Across Africa with Technology and Trust.
           </p>
@@ -49,7 +49,7 @@ const AboutPage: React.FC = () => {
       {/* Our Story */}
       <Section title="Our Story">
           <div className="max-w-4xl mx-auto text-center text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
-            <p>AfriProperty was born from a simple yet powerful idea: to make real estate in Africa accessible, transparent, and efficient for everyone. Our founders, deeply rooted in local communities, saw a gap between aspiring homeowners and available properties, particularly in underserved markets like affordable housing, student rentals, and township areas.</p>
+            <p>AfriEstate was born from a simple yet powerful idea: to make real estate in Africa accessible, transparent, and efficient for everyone. Our founders, deeply rooted in local communities, saw a gap between aspiring homeowners and available properties, particularly in underserved markets like affordable housing, student rentals, and township areas.</p>
             <p>What started as a small project to connect local landlords with tenants has evolved into a sophisticated, AI-powered platform. Our journey has been one of constant innovation, driven by our commitment to solving real-world challenges. Today, we stand as a bridge connecting not just buyers and sellers, but also global investors with tangible opportunities, all while championing security and transparency through technology.</p>
           </div>
       </Section>
@@ -102,7 +102,7 @@ const AboutPage: React.FC = () => {
                <StatCard value="25,000+" label="Successful Connections Made" />
            </div>
            <div className="max-w-2xl mx-auto mt-12 text-center italic glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-               <p className="text-slate-600 dark:text-slate-300">"AfriProperty made finding our first family home in Soweto a reality. The process was so much easier and more transparent than we ever imagined."</p>
+               <p className="text-slate-600 dark:text-slate-300">"AfriEstate made finding our first family home in Soweto a reality. The process was so much easier and more transparent than we ever imagined."</p>
                <p className="font-semibold text-brand-dark dark:text-white mt-2">- The Mokoena Family</p>
            </div>
        </Section>

@@ -83,7 +83,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ onServiceClick }) => {
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark dark:text-white">Our Services</h1>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-            At AfriProperty, we go beyond listings. Our goal is to provide a comprehensive suite of services that empower you at every stage of your real estate journey, ensuring a seamless, secure, and successful experience.
+            At AfriEstate, we go beyond listings. Our goal is to provide a comprehensive suite of services that empower you at every stage of your real estate journey, ensuring a seamless, secure, and successful experience.
           </p>
         </div>
       </section>
@@ -172,7 +172,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ onServiceClick }) => {
 
           {/* Why Choose Us */}
           <section>
-            <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Why Choose AfriProperty</h2>
+            <h2 className="text-3xl font-bold text-center text-brand-dark dark:text-white mb-12">Why Choose AfriEstate</h2>
             <div className="grid md:grid-cols-3 gap-8">
                 <div className="glass-panel p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                     <TrophyIcon className="w-8 h-8 text-brand-gold mb-3"/>

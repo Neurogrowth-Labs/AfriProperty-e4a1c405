@@ -1,6 +1,5 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { HomeIcon } from './icons/NavIcons';
 import { FacebookIcon, TwitterIcon, InstagramIcon } from './icons/SocialIcons';
 import { useTranslations } from '../contexts/LanguageContext';
 import { useCurrency } from '../contexts/CurrencyContext';
@@ -53,8 +52,7 @@ const Footer: React.FC<FooterProps> = ({ onAboutClick, onContactClick, onBlogCli
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div className="md:col-span-1">
             <button onClick={(e) => handleLinkClick(e, () => window.scrollTo({ top: 0, behavior: 'smooth' }))} className="flex items-center space-x-2 mb-4">
-              <HomeIcon className="w-8 h-8 text-brand-gold" />
-              <h2 className="text-2xl font-semibold text-white">AfriProperty</h2>
+              <h2 className="text-2xl font-semibold text-white">AfriEstate</h2>
             </button>
             <p className="text-slate-400">{t.footer.tagline}</p>
           </div>
