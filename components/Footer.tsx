@@ -76,13 +76,13 @@ const Footer: React.FC<FooterProps> = ({ onAboutClick, onContactClick, onBlogCli
           <div>
             <h3 className="font-bold text-white mb-4 tracking-wide">{t.footer.followUs}</h3>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition" aria-label="Facebook">
+              <a href="https://www.facebook.com/afriestate" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition" aria-label="Facebook">
                 <FacebookIcon className="w-6 h-6" />
               </a>
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition" aria-label="Twitter">
                 <TwitterIcon className="w-6 h-6" />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition" aria-label="Instagram">
+              <a href="https://www.instagram.com/afriestate" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition" aria-label="Instagram">
                 <InstagramIcon className="w-6 h-6" />
               </a>
             </div>
