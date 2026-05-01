@@ -7,7 +7,7 @@ import { EyeIcon, EyeSlashIcon, CheckIcon, CameraIcon, ArrowUpTrayIcon, CheckBad
 import { BuildingStorefrontIcon, UserIcon } from '@heroicons/react/24/solid';
 import { BanknotesIcon } from './icons/ActionIcons';
 
-type AuthView = 'login' | 'signup' | 'userSignup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation';
+type AuthView = 'login' | 'signup' | 'userSignup' | 'agentSignup' | 'investorSignup' | 'pendingVerificationAgent' | 'pendingVerificationInvestor' | 'forgotPassword' | 'resetConfirmation' | 'confirmEmail';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -238,7 +238,7 @@ const SignupView: React.FC<{ onSwitchToLogin: () => void; onSignupRole: (role: '
     </div>
 );
 
-const UserSignupView: React.FC<{onSignupSuccess: () => void, onSwitchToLogin: () => void, setError: (e: string) => void}> = ({ onSignupSuccess, onSwitchToLogin, setError }) => {
+const UserSignupView: React.FC<{onSignupSuccess: () => void, onRequireEmailConfirmation: () => void, onSwitchToLogin: () => void, setError: (e: string) => void}> = ({ onSignupSuccess, onRequireEmailConfirmation, onSwitchToLogin, setError }) => {
     const [formData, setFormData] = useState({ fullName: '', email: '', password: '', agreeToTerms: false });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,7 +271,11 @@ const UserSignupView: React.FC<{onSignupSuccess: () => void, onSwitchToLogin: ()
                  return;
             }
 
-            onSignupSuccess();
+            if (!data.session) {
+                onRequireEmailConfirmation();
+            } else {
+                onSignupSuccess();
+            }
         } catch (error: any) {
             console.error("Supabase Signup Error", error);
             setError(error.message || "Failed to sign up.");
@@ -465,6 +469,17 @@ const PendingVerificationView: React.FC<{ onSwitchToLogin: () => void, userType:
     </div>
 );
 
+const ConfirmEmailView: React.FC<{ onSwitchToLogin: () => void }> = ({ onSwitchToLogin }) => (
+    <div className="space-y-4 text-center animate-fade-in">
+        <div className="glass-card p-4 inline-block rounded-full mb-2 bg-green-50 dark:bg-green-900/20">
+             <CheckBadgeIcon className="w-12 h-12 text-green-500" />
+        </div>
+        <h3 className="text-xl font-bold dark:text-white">Check Your Email</h3>
+        <p className="text-slate-600 dark:text-slate-300">We've sent a confirmation link to your email address. Please click the link to verify your account before logging in.</p>
+        <button onClick={onSwitchToLogin} className="w-full btn-primary mt-4">Go to Login</button>
+    </div>
+);
+
 const ForgotPasswordView: React.FC<{ onResetSent: () => void, onBackToLogin: () => void, setError: (e: string) => void }> = ({ onResetSent, onBackToLogin, setError }) => {
     const [email, setEmail] = useState('');
     
@@ -534,7 +549,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
         pendingVerificationAgent: 'Application Received',
         pendingVerificationInvestor: 'Application Received',
         forgotPassword: 'Reset Your Password',
-        resetConfirmation: 'Check Your Email'
+        resetConfirmation: 'Check Your Email',
+        confirmEmail: 'Check Your Email'
     };
     
     const currentTitle = titles[view] || 'Welcome';
@@ -566,13 +582,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
 
                 {view === 'login' && <LoginView onLoginSuccess={handleLoginSuccess} onSwitchToSignup={() => switchView('signup')} onSwitchToForgotPassword={() => switchView('forgotPassword')} setError={setError} />}
                 {view === 'signup' && <SignupView onSwitchToLogin={() => switchView('login')} onSignupRole={handleSignupRole} />}
-                {view === 'userSignup' && <UserSignupView onSignupSuccess={handleLoginSuccess} onSwitchToLogin={() => switchView('login')} setError={setError} />}
+                {view === 'userSignup' && <UserSignupView onSignupSuccess={handleLoginSuccess} onRequireEmailConfirmation={() => switchView('confirmEmail')} onSwitchToLogin={() => switchView('login')} setError={setError} />}
                 {view === 'agentSignup' && <AgentSignupView onSignupSuccess={() => switchView('pendingVerificationAgent')} onSwitchToLogin={() => switchView('login')} setError={setError} />}
                 {view === 'investorSignup' && <InvestorSignupView onSignupSuccess={() => switchView('pendingVerificationInvestor')} onSwitchToLogin={() => switchView('login')} setError={setError} />}
                 {view === 'pendingVerificationAgent' && <PendingVerificationView onSwitchToLogin={() => switchView('login')} userType="agent" />}
                 {view === 'pendingVerificationInvestor' && <PendingVerificationView onSwitchToLogin={() => switchView('login')} userType="investor" />}
                 {view === 'forgotPassword' && <ForgotPasswordView onResetSent={() => switchView('resetConfirmation')} onBackToLogin={() => switchView('login')} setError={setError} />}
                 {view === 'resetConfirmation' && <ResetConfirmationView onSwitchToLogin={() => switchView('login')} />}
+                {view === 'confirmEmail' && <ConfirmEmailView onSwitchToLogin={() => switchView('login')} />}
             </div>
         </div>
         <style>{`

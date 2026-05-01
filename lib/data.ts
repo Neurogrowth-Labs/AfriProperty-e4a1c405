@@ -153,7 +153,7 @@ export const addReview = async (reviewData: Omit<Review, 'id' | 'timestamp'>): P
 };
 
 // --- Property Management ---
-export const getProperties = async (): Promise<Property[]> => {
+export const getProperties = async (excludeMock = false): Promise<Property[]> => {
     try {
         const { data, error } = await supabase
             .from('properties')
@@ -161,10 +161,10 @@ export const getProperties = async (): Promise<Property[]> => {
 
         if (error) {
             handleError(error, 'fetching properties');
-            return initialProperties;
+            return excludeMock ? [] : initialProperties;
         }
 
-        if (!data || data.length === 0) return initialProperties;
+        if (!data || data.length === 0) return excludeMock ? [] : initialProperties;
 
         const mappedData = data.map(p => ({
             ...p,
@@ -199,7 +199,7 @@ export const getProperties = async (): Promise<Property[]> => {
         } else {
             console.warn("Failed to fetch properties from Supabase, using mock data.", criticalErr);
         }
-        return initialProperties;
+        return excludeMock ? [] : initialProperties;
     }
 };
 
@@ -313,9 +313,6 @@ export const authenticateUser = async (email: string, password: string): Promise
         
         return { user };
     } catch (e) {
-        if (email === 'peter.vdm@example.com') {
-             return { user: { username: 'Peter Van der Merwe', fullName: 'Peter Van der Merwe', email, role: 'agent', isVerified: true, profilePicture: 'https://i.pravatar.cc/150?u=Peter' } as any };
-        }
         return { user: null, error: 'Database connection failed.' };
     }
 };
@@ -534,16 +531,15 @@ export const getNotifications = async (user: User): Promise<Notification[]> => {
     try {
         const { data, error } = await supabase.from('notifications').select('*').eq('username', user.username);
         if (error) {
-             if (error.message.includes('Failed to fetch')) return MOCK_NOTIFICATIONS as any;
-             throw error;
+             return [];
         }
         return data.map(n => ({
             ...n,
             isRead: n.is_read,
             propertyId: n.property_id
-        })) || (MOCK_NOTIFICATIONS as any);
+        })) || [];
     } catch (e) {
-        return (MOCK_NOTIFICATIONS as any);
+        return [];
     }
 };
 

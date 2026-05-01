@@ -241,7 +241,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
         setIsLoadingProperties(true);
-        const allProps = await getProperties();
+        const allProps = await getProperties(!!currentUser);
         const investmentProps = allProps.filter(p => p.listingType === ListingType.FOR_INVESTMENT);
 
         setAllProperties(allProps);
